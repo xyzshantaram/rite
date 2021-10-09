@@ -13954,8 +13954,116 @@ var campfire_default = {
 // static/src/main.ts
 var import_codemirror = __toModule(require_codemirror());
 var import_gfm = __toModule(require_gfm());
+
+// static/src/prompt.ts
+var fuzzySearch = (str, query) => {
+  var string = str.toLowerCase();
+  var compare = query.toLowerCase();
+  var matches = 0;
+  if (string.indexOf(compare) > -1)
+    return true;
+  for (var i10 = 0; i10 < compare.length; i10++) {
+    string.indexOf(compare[i10]) > -1 ? matches += 1 : matches -= 1;
+  }
+  return query === "" ? 1 : matches / str.length;
+};
+var initialisePrompt = () => {
+  const mask = campfire_default.insert(campfire_default.nu("div#mask"), { atEndOf: document.body });
+  const prompt = campfire_default.insert(campfire_default.nu("div#prompt"), { atEndOf: mask });
+  const promptWrapper = campfire_default.insert(campfire_default.nu("div#prompt-msg-wrapper"), { atEndOf: prompt });
+  const msg = campfire_default.insert(campfire_default.nu("span#prompt-message"), { atEndOf: promptWrapper });
+  const field = campfire_default.insert(campfire_default.nu("input#prompt-field", {
+    a: { type: "text", autocomplete: "off" }
+  }), { atEndOf: promptWrapper });
+  const options = campfire_default.insert(campfire_default.nu("div#prompt-options"), { atEndOf: prompt });
+  let currentChoices = [];
+  let currIndex = -1;
+  let allowNonOptions = true;
+  let allowBlank = false;
+  let appendChoice = (choice) => {
+    options.append(campfire_default.nu(".prompt-option", {
+      c: choice,
+      a: { "data-choice": choice }
+    }));
+  };
+  const hide = () => {
+    mask.style.display = "none";
+  };
+  field.oninput = (e4) => {
+    let value = field.value.trim();
+    for (let choice of currentChoices) {
+      const elt = document.querySelector(`div[data-choice=${choice}]`);
+      if (fuzzySearch(choice, value) > 0.5) {
+        if (elt === null)
+          appendChoice(choice);
+      } else {
+        if (elt)
+          elt.remove();
+      }
+    }
+  };
+  const completePromptFlow = (value) => {
+    msg.innerHTML = "";
+    field.value = "";
+    options.innerHTML = "";
+    allowNonOptions = true;
+    allowBlank = false;
+    currentCb(value);
+    hide();
+  };
+  const setSelectedOption = (idx) => {
+    options.querySelector(`.prompt-option.selected`)?.classList.remove("selected");
+    options.querySelector(`.prompt-option:nth-child(${idx})`)?.classList.add("selected");
+  };
+  prompt.onkeydown = (e4) => {
+    if (e4.key === "ArrowDown") {
+      if (currIndex >= currentChoices.length)
+        currIndex = currentChoices.length - 1;
+      setSelectedOption(currIndex += 1);
+    } else if (e4.key === "ArrowUp") {
+      if (currIndex < 0)
+        currIndex = 0;
+      setSelectedOption(currIndex -= 1);
+    } else if (e4.key === "Enter") {
+      let value = field.value.trim();
+      let selected = document.querySelector(".prompt-option.selected")?.getAttribute("data-choice");
+      if (!allowBlank && !value && !selected)
+        return;
+      if (selected) {
+        completePromptFlow(selected);
+        return;
+      }
+      if (allowNonOptions || currentChoices.includes(value)) {
+        completePromptFlow(value);
+      }
+    }
+  };
+  const cfg = new campfire_default.Store({});
+  let currentCb = (str) => {
+  };
+  const setChoices = (choices) => {
+    currentChoices = choices;
+    options.innerHTML = "";
+    choices.forEach(appendChoice);
+  };
+  cfg.on("update", (options2) => {
+    console.log(options2);
+    msg.innerHTML = options2.message || "";
+    setChoices(options2.choices || []);
+    currentCb = options2.callback || currentCb;
+    console.log(allowBlank);
+  });
+  const show = (options2) => {
+    cfg.update(options2);
+    mask.style.display = "flex";
+    field.focus();
+  };
+  return [show, hide];
+};
+
+// static/src/main.ts
 window.addEventListener("DOMContentLoaded", async () => {
-  const editorRoot = campfire_default.insert(campfire_default.nu("div#editor", {}), { atStartOf: document.body });
+  const editorRoot = campfire_default.insert(campfire_default.nu("div#editor"), { atStartOf: document.querySelector("#app") });
   const editor = (0, import_codemirror.default)(editorRoot, {
     mode: "gfm",
     lineNumbers: true
@@ -13967,6 +14075,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   } catch (e4) {
     campfire_default.extend(statusLine, { c: `Error fetching config dir: ${e4}` });
   }
+  const [show, hide] = initialisePrompt();
 });
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.

@@ -423,10 +423,10 @@ camelcase@^6.2.0:
   resolved "https://registry.npmjs.org/camelcase/-/camelcase-6.2.0.tgz"
   integrity sha512-c7wVvbw3f37nuobQNtgsgG9POC9qMbNuMQmTCqZv23b6MIz0fcYpBiOlv9gEN/hdLdnZTDQhg6e9Dq5M1vKvfg==
 
-campfire.js@^2.2.3:
-  version "2.2.3"
-  resolved "https://registry.yarnpkg.com/campfire.js/-/campfire.js-2.2.3.tgz#87750e1484b89d2ec415b9a0f1d7c44d4bfa4a97"
-  integrity sha512-8gOLJfYMyxIlvngXPSAp5vGMwamDTdhj+K8Ng08sHjAWg3IPzbmVCmBC9IqH+ERXK5VgDJQSSYSVPTSxJPy+OA==
+campfire.js@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/campfire.js/-/campfire.js-2.3.0.tgz#5c86dd4773e7c7145178e64926b08a37abe20331"
+  integrity sha512-K9qReauUxGOQwqXofoSFrWNv8//XE+mdro/jDK7cuitvtUOfnioY3hG/P8wiSb2Mwdq0XbGweHiijT3mMeAaww==
 
 caw@^2.0.0, caw@^2.0.1:
   version "2.0.1"

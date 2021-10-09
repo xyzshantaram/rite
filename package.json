@@ -6,7 +6,7 @@
   "devDependencies": {
     "@tauri-apps/cli": "^1.0.0-beta.10",
     "@types/codemirror": "^5.60.4",
-    "campfire.js": "^2.2.3",
+    "campfire.js": "^2.3.0",
     "codemirror": "^5.63.1",
     "esbuild": "^0.13.4",
     "marked": "^3.0.7"

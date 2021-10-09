@@ -5,14 +5,35 @@ body, html {
     margin: 0;
 }
 
+:root {
+    --background-ui: #202020;
+    --background-root: #101010;
+    --background-main: #303030;
+    --color-auxiliary: #555555;
+    --color-primary: #f5f4f0;
+    --color-secondary: white;
+    --color-selection: rgba(255, 255, 255, 0.2);
+}
+
 * {
     font-family: monospace;
 }
 
 body {
+    background-color: var(--background-root);
+}
+
+#app {
     display: flex;
     align-items: center;
-    background-color: #202020;
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 #editor {
@@ -23,29 +44,30 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    user-select: none;
 }
 
 #editor>.CodeMirror {
     width: 100%;
     height: 100%;
-    max-width: 80ch;
+    max-width: 100ch;
     resize: none;
     box-sizing: border-box;
     font-size: 1rem;
 }
 
 .CodeMirror-gutters {
-    border-right-color: #555555;
+    border-right-color: var(--color-auxiliary);
 }
 
 .CodeMirror-gutters, #editor>.CodeMirror {
-    background-color: #303030;
-    color: #f5f4f0;
+    background-color: var(--background-main);
+    color: var(--color-primary);
 }
 
 .CodeMirror-cursors .CodeMirror-cursor {
     background-color: transparent;
-    border-left: 2px solid #f5f4f0;
+    border-left: 2px solid var(--color-primary);
 }
 
 .CodeMirror-linenumbers .CodeMirror-linenumber {
@@ -53,7 +75,7 @@ body {
 }
 
 #editor>.cm-s-default .cm-header {
-    color: white;
+    color: var(--color-secondary);
 }
 
 .cm-header-1 {
@@ -81,17 +103,19 @@ body {
 }
 
 .cm-s-default .cm-variable-2 {
-    color: #eeeeee;
+    color: var(--color-secondary);
 }
 
 .cm-s-default .CodeMirror-selected {
-    background: rgba(255, 255, 255, 0.4);
+    background: var(--color-selection);
 }
 
 #statusline {
     height: 1.2rem;
-    max-width: 80ch;
-    color: #777777;
+    max-width: 100ch;
+    color: var(--color-auxiliary);
+    width: 100%;
+    background: var(--background-ui);
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;

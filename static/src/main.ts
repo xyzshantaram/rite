@@ -2,13 +2,12 @@ import { invoke } from '@tauri-apps/api';
 import cf from 'campfire.js';
 import CodeMirror from 'codemirror';
 import 'codemirror/mode/gfm/gfm';
+import { initialisePrompt } from './prompt';
 
 window.addEventListener('DOMContentLoaded', async () => {
     const editorRoot = cf.insert(
-        cf.nu('div#editor', {
-
-        }),
-        { atStartOf: document.body }
+        cf.nu('div#editor'),
+        { atStartOf: document.querySelector('#app') }
     ) as HTMLElement;
 
     const editor = CodeMirror(editorRoot, {
@@ -28,4 +27,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     catch (e) {
         cf.extend(statusLine, { c: `Error fetching config dir: ${e}` })
     }
+
+    const [show, hide] = initialisePrompt();
 })
