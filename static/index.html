@@ -11,6 +11,10 @@
             padding: 0;
             margin: 0;
         }
+        
+        * {
+            font-family: monospace;
+        }
 
         body {
             display: flex;
@@ -93,6 +97,11 @@
 
         #statusline {
             height: 1.2rem;
+            max-width: 80ch;
+            color: #777777;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
         }
     </style>
 </head>
