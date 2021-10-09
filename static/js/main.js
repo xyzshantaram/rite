@@ -12385,7 +12385,7 @@ var import_codemirror = __toModule(require_codemirror());
 var import_gfm = __toModule(require_gfm());
 window.addEventListener("DOMContentLoaded", () => {
   const editorRoot = campfire_default.insert(campfire_default.nu("div#editor", {}), { atStartOf: document.body });
-  const cm = (0, import_codemirror.default)(editorRoot, {
+  const editor = (0, import_codemirror.default)(editorRoot, {
     mode: "gfm",
     lineNumbers: true
   });
