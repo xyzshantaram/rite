@@ -1,0 +1,15 @@
+{
+  "name": "rite",
+  "scripts": {
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^1.0.0-beta.10",
+    "campfire.js": "^2.2.2",
+    "esbuild": "^0.13.4"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^1.0.0-beta.8"
+  },
+  "license": "MIT"
+}
