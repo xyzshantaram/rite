@@ -1,15 +1,44 @@
 import { invoke } from '@tauri-apps/api';
+import { EditorState } from './EditorState';
+
+export type CommandHandler = (state: EditorState, args: string) => void;
 
 export interface RiteSettings {
-    font: string
+    font: string,
+    keybinds: Record<string, string>
 }
 
-export interface promptArgs {
+export interface RiteKeybind {
+    checker: Function,
+    action: string
+}
+
+export interface RiteFile {
+    path: string,
+    contents: string
+}
+
+export interface PromptArgs {
     message: string,
-    choices: string[],
+    choices: PromptChoice[],
     callback: Function,
     allowBlank?: boolean,
     allowNonOptions?: boolean
+}
+
+export interface PromptChoice {
+    title: string,
+    description?: string
+}
+
+export interface RiteCommand {
+    description: string,
+    action: CommandHandler,
+    nonPalette?: boolean
+}
+
+export interface RiteCommands {
+    [key: string]: RiteCommand;
 }
 
 export const getConfigDir = () => invoke<string>('get_config_dir')
