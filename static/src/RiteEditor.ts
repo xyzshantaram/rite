@@ -4,7 +4,7 @@ import { COMMANDS } from "./commands";
 import { dumpJSON, RiteCommands, RiteFile, RiteSettings, setAppFont } from "./utils";
 import { parseCommand } from "./commands";
 import { parseKeybind } from "./keybinds";
-import { editorAlert, editorConfirm } from "./prompt";
+import { editorAlert, editorAlertFatal, editorConfirm } from "./prompt";
 import { dialog, path } from "@tauri-apps/api";
 import { writeFile } from "@tauri-apps/api/fs";
 import cf from 'campfire.js';
@@ -167,7 +167,11 @@ export class RiteEditor {
         let file: RiteFile;
         if (this.currentFile === null || isSaveAs) {
             const savePath = await dialog.save();
-            if (!savePath) return;
+            if (!savePath) {
+                this.statusLine.setDirty('save cancelled.');
+                setTimeout(() => this.setDirty(this.dirty), 5000);
+                return;
+            };
 
             file = { path: savePath, contents: '' };
         }
@@ -179,16 +183,14 @@ export class RiteEditor {
         this.currentFile = { path: file.path, contents: this.editor.getValue() };
         this.dirty = false;
 
-        setTimeout(() => {
-            this.setDirty(this.dirty);
-        }, 5000);
+        setTimeout(() => this.setDirty(this.dirty), 5000);
 
         try {
             await this.saveFile();
             this.statusLine.setDirty('saved.');
         }
         catch (e) {
-            await editorAlert(`Error saving: ${e}`);
+            await editorAlertFatal(`Error saving: ${e}`);
         }
     }
 
