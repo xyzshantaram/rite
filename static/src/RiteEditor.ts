@@ -87,7 +87,7 @@ export class RiteEditor {
         const keybinds = Object.keys(rawKeybinds).map(elem => {
             return {
                 checker: parseKeybind(elem),
-                action: DEFAULT_KEYBINDS[elem]
+                action: rawKeybinds[elem]
             };
         })
 
