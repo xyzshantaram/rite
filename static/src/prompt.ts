@@ -147,6 +147,20 @@ const initialisePrompt = () => {
 
 const [show, hide] = initialisePrompt();
 
+const editorAlertFatal = (msg: string): Promise<void> => {
+    return new Promise((resolve, reject) => {
+        show({
+            message: msg,
+            choices: [],
+            callback: (_: any) => void(0),
+            allowBlank: false,
+            allowNonOptions: false
+        })
+
+        resolve();
+    })
+}
+
 const editorAlert = (msg: string, callback: Function = () => {}): Promise<void> => {
     return new Promise((resolve, reject) => {
         try {
@@ -212,5 +226,5 @@ const editorConfirm = (msg: string, choices: PromptChoice[] = [{title: 'yes'}, {
 };
 
 export {
-    show, hide, editorChoose, editorPrompt, editorAlert, editorConfirm, fuzzySearch
+    show, hide, editorChoose, editorPrompt, editorAlert, editorAlertFatal, editorConfirm, fuzzySearch
 }
