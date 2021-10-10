@@ -1,8 +1,10 @@
 import { createDir, writeFile } from "@tauri-apps/api/fs";
 import { dirname } from "@tauri-apps/api/path";
 import { exit } from "@tauri-apps/api/process";
+import { EditorState } from "./EditorState";
+import { DEFAULT_KEYBINDS } from "./keybinds";
 import { editorConfirm, editorAlert, editorPrompt } from "./prompt";
-import { exists, RiteSettings, setEditorFont } from "./utils";
+import { exists, RiteKeybind, RiteSettings, setEditorFont as setGlobalFont } from "./utils";
 
 export const createConfig = async (configPath): Promise<string> => {
     return new Promise(async (resolve, reject) => {
@@ -12,7 +14,8 @@ export const createConfig = async (configPath): Promise<string> => {
             if (!confirm) await editorAlert('Exiting...', () => exit(1));
 
             const tmp: Record<string, any> = {
-                font: await editorPrompt('Pick a font.')
+                font: await editorPrompt('Pick a font.'),
+                keybinds: DEFAULT_KEYBINDS
             };
 
             const dir = await dirname(configPath);
@@ -30,6 +33,7 @@ export const createConfig = async (configPath): Promise<string> => {
     })
 }
 
-export const loadConfig = (config: RiteSettings) => {
-    setEditorFont(config.font);
+export const loadConfig = async (state: EditorState, config: RiteSettings) => {
+    setGlobalFont(config.font);
+    await state.registerKeybinds(config.keybinds);
 }
