@@ -6,8 +6,8 @@
     "build": {
         "distDir": "../static",
         "devPath": "../static",
-        "beforeDevCommand": "",
-        "beforeBuildCommand": ""
+        "beforeDevCommand": "node esbuild.config.js",
+        "beforeBuildCommand": "node esbuild.config.js"
     },
     "tauri": {
         "bundle": {
