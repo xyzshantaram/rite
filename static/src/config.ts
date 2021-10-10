@@ -1,7 +1,6 @@
 import { createDir, writeFile } from "@tauri-apps/api/fs";
 import { dirname } from "@tauri-apps/api/path";
 import { exit } from "@tauri-apps/api/process";
-import { RiteEditor } from "./RiteEditor";
 import { DEFAULT_KEYBINDS } from "./keybinds";
 import { editorConfirm, editorAlert, editorPrompt } from "./prompt";
 import { dumpJSON, exists } from "./utils";
