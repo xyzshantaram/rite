@@ -2,7 +2,7 @@ import { createDir, writeFile } from "@tauri-apps/api/fs";
 import { dirname } from "@tauri-apps/api/path";
 import { exit } from "@tauri-apps/api/process";
 import { editorConfirm, editorAlert, editorPrompt } from "./prompt";
-import { exists } from "./utils";
+import { exists, RiteSettings, setEditorFont } from "./utils";
 
 export const createConfig = async (configPath): Promise<string> => {
     return new Promise(async (resolve, reject) => {
@@ -28,4 +28,8 @@ export const createConfig = async (configPath): Promise<string> => {
             reject(e);
         }
     })
+}
+
+export const loadConfig = (config: RiteSettings) => {
+    setEditorFont(config.font);
 }

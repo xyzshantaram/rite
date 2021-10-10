@@ -2,8 +2,8 @@ import { readTextFile } from '@tauri-apps/api/fs';
 import cf from 'campfire.js';
 import CodeMirror from 'codemirror';
 import 'codemirror/mode/gfm/gfm';
-import { createConfig } from './config';
-import { getConfigPath } from './utils';
+import { createConfig, loadConfig } from './config';
+import { getConfigPath, RiteSettings } from './utils';
 
 // TODO: implement surrounding code
 const parseKeybind = (keybind: string, e: KeyboardEvent) => {
@@ -25,14 +25,14 @@ window.addEventListener('DOMContentLoaded', async () => {
     let contents = null;
 
     try {
-        console.log(configPath);
-        const contents = await readTextFile(configPath);
+        contents = await readTextFile(configPath);
     }
     catch (e) {
         contents = await createConfig(configPath);
     }
-
-    const config = JSON.parse(contents);
+    
+    const config = JSON.parse(contents) as RiteSettings;
+    loadConfig(config);
 
     const editorRoot = cf.insert(
         cf.nu('div#editor'),
