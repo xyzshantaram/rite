@@ -3,7 +3,7 @@ require('esbuild').build({
     bundle: true,
     outfile: 'static/js/main.js',
     format: 'esm',
-    sourcemap: true
+    sourcemap: false
 }).catch((err) => {
     console.error(err)
     process.exit(1)
