@@ -36,7 +36,7 @@ const openAndReadFile = async (): Promise<RiteFile> => {
 const openFileCommand: CommandHandler = async (editor: RiteEditor, args: string) => {
     const file = await openAndReadFile();
     if (file.path === '') return;
-    await editor.setCurrentFile(file);
+    editor.loadFile(file);
 }
 
 export const parseCommand = (command: string) => {

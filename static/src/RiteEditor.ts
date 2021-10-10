@@ -3,9 +3,9 @@ import { Editor, Position } from "codemirror";
 import { COMMANDS } from "./commands";
 import { RiteCommands, RiteFile } from "./utils";
 import { parseCommand } from "./commands";
-import { DEFAULT_KEYBINDS, parseKeybind } from "./keybinds";
+import { parseKeybind } from "./keybinds";
 import { editorAlert, editorConfirm } from "./prompt";
-import { dialog } from "@tauri-apps/api";
+import { dialog, path } from "@tauri-apps/api";
 import { writeFile } from "@tauri-apps/api/fs";
 import cf from 'campfire.js';
 import CodeMirror from "codemirror";
@@ -38,39 +38,55 @@ const StatusLine = (parent: HTMLElement) => {
 
 export class RiteEditor {
     currentFile: RiteFile | null = null;
-    currentFileName: string | null = null;
     editor: Editor;
     commands: RiteCommands;
     statusLine: StatusLineControls;
     editorRoot: HTMLElement;
     dirty: boolean = true;
 
+    setDirty(dirty: boolean) {
+        this.dirty = dirty;
+        this.statusLine.setDirty(this.dirty ? '*' : '');
+    }
+
+    updateDocInfo() {
+        let pos: Position = this.editor.getCursor();
+        this.statusLine.setRightMost(`Ln ${pos.line + 1}, Col ${pos.ch + 1}`);
+    }
+
+    updateFileName() {
+        if (this.currentFile === null) {
+            this.statusLine.setFileName('<new file>');
+        }
+        else {
+            basename(this.currentFile.path)
+                .then(name => this.statusLine.setFileName(name))
+                .catch(err => this.statusLine.setFileName("Error: couldn't get file name."));
+        }
+    }
+
     constructor(editorRoot: HTMLElement, commands: RiteCommands) {
         this.commands = commands;
         this.editorRoot = editorRoot;
         this.editor = CodeMirror(editorRoot, {
-            mode: 'gfm',
-            lineNumbers: true
+            mode: 'gfm', lineNumbers: true
         });
 
         this.statusLine = StatusLine(this.editorRoot);
-        this.statusLine.setDirty('*');
-        this.statusLine.setFileName('<new file>');
+        this.setDirty(true);
+        this.updateFileName();
+        this.updateDocInfo();
 
         this.editor.on('change', () => {
-            this.dirty = true;
-            this.statusLine.setDirty('*');
-            let pos: Position = this.editor.getCursor();
+            this.setDirty(true);
 
-            this.statusLine.setRightMost(`Ln ${pos.line}, Col ${pos.ch}`)
         })
     }
 
-    async setCurrentFile(file: RiteFile) {
+    loadFile(file: RiteFile) {
         this.currentFile = file;
-        this.currentFileName = await basename(file.path);
         this.editor.setValue(file.contents);
-        this.statusLine.setFileName(this.currentFileName || '<new file>');
+        this.updateFileName();
     }
 
     async execCommand(raw: string) {
@@ -95,18 +111,20 @@ export class RiteEditor {
             for (const keybind of keybinds) {
                 if (keybind.checker(e)) {
                     await this.execCommand(keybind.action);
+                    return;
                 }
             }
         })
     }
 
-    async save(asName: string | null = null) {
+    async save(isSaveAs: boolean = false) {
         this.statusLine.setDirty('saving...');
+
         let file: RiteFile;
-        if (this.currentFile === null) {
-            const savePath = asName || await dialog.save();
-            
+        if (this.currentFile === null || isSaveAs) {
+            const savePath = await dialog.save();
             if (!savePath) return;
+
             file = { path: savePath, contents: '' };
         }
         else {
@@ -118,10 +136,16 @@ export class RiteEditor {
         this.dirty = false;
         
         setTimeout(() => {
-            this.statusLine.setDirty(this.dirty ? '*' : '')
-        }, 3000);
+            this.setDirty(this.dirty);
+        }, 5000);
 
-        return this.saveFile();
+        try {
+            await this.saveFile();
+            this.statusLine.setDirty('saved.');
+        }
+        catch (e) {
+            await editorAlert(`Error saving: ${e}`);
+        }
     }
 
     async saveFile() {
