@@ -49,8 +49,8 @@ const initialisePrompt = () => {
         let value = field.value.trim();
 
         for (let choice of currentChoices) {
-            console.log(`div[data-choice=${choice}]`);
-            const elt = document.querySelector(`div[data-choice=${choice}]`);
+            console.log(`div[data-choice=${choice.title}]`);
+            const elt = document.querySelector(`div[data-choice=${choice.title}]`);
             if (fuzzySearch(choice, value) > 0.5) {
                 if (elt === null) appendChoice(choice);
             }
