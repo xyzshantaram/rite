@@ -56,12 +56,11 @@ fn main() {
         .build(tauri::generate_context!())
         .expect("Error building application.");
 
-    app.run(|_handle, e| match e {
+    app.run(|handle, e| match e {
         Event::CloseRequested { label, api, .. } => {
-            let handle = _handle.clone();
             let window = handle.get_window(&label).unwrap();
             api.prevent_close();
-            window.emit("closerequest", ()).unwrap_or_default();
+            let _ = window.emit("closerequest", ());
         }
         _ => {}
     });
