@@ -23,7 +23,7 @@
     border-radius: 0.3rem;
     display: flex;
     flex-direction: column;
-    color: var(--color-primary);
+    color: var(--color-secondary);
 }
 
 #prompt-msg-wrapper {
@@ -67,6 +67,15 @@
 
 .prompt-option.selected {
     background: var(--color-selection);
+}
+
+.prompt-option-desc {
+    color: var(--color-auxiliary);
+    font-style: italic;
+}
+
+.prompt-option.selected .prompt-option-desc {
+    color: var(--color-secondary);
 }
 
 #prompt-message {
