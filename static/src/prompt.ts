@@ -166,7 +166,10 @@ const editorAlert = (msg: string, callback: Function = () => {}): Promise<void> 
             show({
                 message: msg,
                 choices: [],
-                callback: (_: any) => resolve(),
+                callback: (_: any) => {
+                    callback();
+                    resolve();
+                },
                 allowBlank: true,
                 allowNonOptions: true
             })
