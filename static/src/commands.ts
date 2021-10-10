@@ -58,7 +58,7 @@ const openPalette = async (editor: RiteEditor) => {
         }
     }
 
-    await editor.execCommand(await editorChoose('Command:', choices));
+    await editor.execCommand(await editorChoose('Command:', choices, true, true));
 }
 
 export const saveFile = async (editor: RiteEditor) => {

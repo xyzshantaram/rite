@@ -1,5 +1,5 @@
 import cf from 'campfire.js';
-import { PromptArgs, PromptChoice } from './utils';
+import { clamp, PromptArgs, PromptChoice } from './utils';
 
 const fuzzySearch = (str: string, query: string): number => {
     var string = str.toLowerCase();
@@ -27,7 +27,7 @@ const initialisePrompt = () => {
     const options = cf.insert(cf.nu('div#prompt-options',), { atEndOf: prompt }) as HTMLElement;
 
     let currentChoices: PromptChoice[] = [];
-    let currIndex = -1;
+    let currIndex = 1;
     let allowNonOptions = true;
     let allowEmpty = false;
 
@@ -59,7 +59,6 @@ const initialisePrompt = () => {
     field.oninput = (e) => {
         let value = field.value.trim();
         for (let choice of currentChoices) {
-            console.log(`div[data-choice=${choice.title}]`);
             const elt = document.querySelector(`div[data-choice=${choice.title}]`);
             if (fuzzySearch(choice.title, value) > 0.5) {
                 if (elt === null) appendChoice(choice);
@@ -106,16 +105,16 @@ const initialisePrompt = () => {
         if (e.key === 'Tab') {
             e.preventDefault();
         }
-        if (e.key === 'Escape' && field.value === '') {
-            tryCompletingPromptFlow();
-        }
         if (e.key === 'ArrowDown') {
-            if (currIndex >= currentChoices.length) currIndex = currentChoices.length - 1;
-            setSelectedIdx(currIndex += 1);
+            currIndex = clamp(currIndex, 1, currentChoices.length);
+            setSelectedIdx(currIndex++);
+            field.focus();
         }
         else if (e.key === 'ArrowUp') {
-            if (currIndex < 0) currIndex = 1;
-            setSelectedIdx(currIndex -= 1);
+            currIndex = clamp(currIndex, 1, currentChoices.length);
+            setSelectedIdx(currIndex--);
+            field.focus();
+            
         }
         else if (e.key === 'Enter') {
             tryCompletingPromptFlow();
@@ -188,7 +187,8 @@ const editorPrompt = (msg: string, allowEmpty = false): Promise<string> => {
                 message: msg,
                 choices: [],
                 callback: (val: string) => resolve(val),
-                allowNonOptions: true
+                allowNonOptions: true,
+                allowEmpty: !!allowEmpty
             })
         }
         catch (e) {
@@ -197,15 +197,15 @@ const editorPrompt = (msg: string, allowEmpty = false): Promise<string> => {
     })
 }
 
-const editorChoose = (msg: string, choices: PromptChoice[], nonOptions = false): Promise<string> => {
+const editorChoose = (msg: string, choices: PromptChoice[], nonOptions = false, allowEmpty = false): Promise<string> => {
     return new Promise((resolve, reject) => {
         try {
             show({
                 message: msg,
                 choices: choices,
                 callback: (val: string) => resolve(val),
-                allowEmpty: false,
-                allowNonOptions: nonOptions
+                allowEmpty: !!allowEmpty,
+                allowNonOptions: !!nonOptions
             })
         }
 
