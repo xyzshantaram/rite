@@ -12,7 +12,6 @@ const fuzzySearch = (str: string, query: string): number => {
     return query === "" ? 1 : matches / str.length;
 };
 
-
 const initialisePrompt = () => {
     const mask = cf.insert(cf.nu('div#mask'), { atEndOf: document.body }) as HTMLElement;
     const prompt = cf.insert(cf.nu('div#prompt'), { atEndOf: mask }) as HTMLElement;

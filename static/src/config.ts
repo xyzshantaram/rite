@@ -14,7 +14,8 @@ export const createConfig = async (configPath: string): Promise<string> => {
 
             const tmp: Record<string, any> = {
                 font: await editorPrompt('Pick a font.'),
-                keybinds: DEFAULT_KEYBINDS
+                keybinds: DEFAULT_KEYBINDS,
+                lineNumbers: await editorConfirm('Enable line numbers?')
             };
 
             const dir = await dirname(configPath);

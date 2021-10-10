@@ -62,7 +62,6 @@ export class RiteEditor {
 
         this.editor.on('change', () => {
             this.setDirty(true);
-
         })
     }
 
@@ -107,6 +106,7 @@ export class RiteEditor {
         this.config = config;
         setAppFont(config.font);
         await this.registerKeybinds(config.keybinds);
+        this.editor.setOption('lineNumbers', config.lineNumbers);
     }
 
     getConfig() {
