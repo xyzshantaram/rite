@@ -63,8 +63,8 @@ export const initialisePrompt = () => {
         options.innerHTML = '';
         allowNonOptions = true;
         allowBlank = false;
-        currentCb(value);
         hide();
+        currentCb(value);
     }
 
     const setSelectedOption = (idx) => {

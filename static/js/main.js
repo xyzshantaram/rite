@@ -12882,8 +12882,8 @@ var initialisePrompt = () => {
     options.innerHTML = "";
     allowNonOptions = true;
     allowBlank = false;
-    currentCb(value);
     hide2();
+    currentCb(value);
   };
   const setSelectedOption = (idx) => {
     options.querySelector(`.prompt-option.selected`)?.classList.remove("selected");
