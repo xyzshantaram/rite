@@ -3,11 +3,9 @@ import { dirname } from '@tauri-apps/api/path';
 import cf from 'campfire.js';
 import CodeMirror from 'codemirror';
 import 'codemirror/mode/gfm/gfm';
-import { initialisePrompt } from './prompt';
 import { getConfigDir, rustLog, exists, getConfigPath } from './utils';
 import { exit } from '@tauri-apps/api/process';
-
-const [show, hide] = initialisePrompt();
+import { editorAlert, editorPrompt, editorChoose, editorConfirm } from './prompt';
 
 // TODO: implement surrounding code
 const parseKeybind = (keybind: string, e: KeyboardEvent) => {
@@ -24,56 +22,45 @@ const parseKeybind = (keybind: string, e: KeyboardEvent) => {
     return (toCheck.every((bool) => !!bool) && e.key.toLocaleLowerCase() == alpha);
 }
 
-const createConfig = async (confirm, configPath) => {
-    if (confirm === "no") {
-        show({
-            callback: () => exit(1),
-            message: "Exiting...",
-            choices: [''],
-            allowBlank: true,
-            allowNonOptions: true
-        })
-    }
-    const tmp: Record<string, any> = {};
-    show({
-        callback: (val) => tmp.font = val,
-        message: "Pick a font.",
-        choices: [],
-        allowBlank: true,
-        allowNonOptions: true
-    })
+const createConfig = async (configPath): Promise<string> => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const confirm = await editorConfirm('Config file not found. Would you like to create one?');
 
-    const dir = await dirname(configPath);
-    if (!(await exists(dir))) {
-        await createDir(dir, {
-            recursive: true
-        })
-    }
+            if (!confirm) await editorAlert('Exiting...', () => exit(1));
 
-    await writeFile({
-        contents: JSON.stringify(tmp),
-        path: configPath
+            const tmp: Record<string, any> = {
+                font: await editorPrompt('Pick a font.')
+            };
+
+            const dir = await dirname(configPath);
+            if (!(await exists(dir))) await createDir(dir, { recursive: true })
+
+            const string = JSON.stringify(tmp);
+            await writeFile({ contents: string, path: configPath })
+            await editorAlert(`Saved choices to ${configPath}`);
+            resolve(string);
+        }
+
+        catch (e) {
+            reject(e);
+        }
     })
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
     let configPath = await getConfigPath();
-    let config = null;
+    let contents = null;
 
     try {
         console.log(configPath);
         const contents = await readTextFile(configPath);
-        config = JSON.parse(contents);
     }
-    catch(e) {
-        show({
-            message: "Config file not found. Would you like to create one?",
-            choices: ["yes", "no"],
-            callback: (confirm) => createConfig(confirm, configPath),
-            allowBlank: false,
-            allowNonOptions: false
-        });
+    catch (e) {
+        contents = await createConfig(configPath);
     }
+
+    const config = JSON.parse(contents);
 
     const editorRoot = cf.insert(
         cf.nu('div#editor'),

@@ -1,7 +1,7 @@
 import cf from 'campfire.js';
 import { promptArgs } from './utils';
 
-export const fuzzySearch = (str, query) => {
+const fuzzySearch = (str, query) => {
     var string = str.toLowerCase();
     var compare = query.toLowerCase();
     var matches = 0;
@@ -13,7 +13,7 @@ export const fuzzySearch = (str, query) => {
 };
 
 
-export const initialisePrompt = () => {
+const initialisePrompt = () => {
     const mask = cf.insert(cf.nu('div#mask'), { atEndOf: document.body }) as HTMLElement;
     const prompt = cf.insert(cf.nu('div#prompt'), { atEndOf: mask }) as HTMLElement;
     const promptWrapper = cf.insert(cf.nu('div#prompt-msg-wrapper'), { atEndOf: prompt }) as HTMLElement;
@@ -118,4 +118,75 @@ export const initialisePrompt = () => {
     }
 
     return [show, hide];
+}
+
+const [show, hide] = initialisePrompt();
+
+const editorAlert = (msg: string, callback: Function = () => {}): Promise<void> => {
+    return new Promise((resolve, reject) => {
+        try {
+            show({
+                message: msg,
+                choices: [],
+                callback: (_: any) => resolve(),
+                allowBlank: true,
+                allowNonOptions: true
+            })
+        }
+
+        catch (e) {
+            reject(e);
+        }
+    })
+}
+
+const editorPrompt = (msg: string, allowBlank = false): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        try {
+            show({
+                message: msg,
+                choices: [],
+                callback: (val: string) => resolve(val),
+                allowNonOptions: true
+            })
+        }
+        catch (e) {
+            reject(e);
+        }
+    })
+}
+
+const editorChoose = (msg: string, choices: string[]): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        try {
+            show({
+                message: msg,
+                choices: choices,
+                callback: (val: string) => resolve(val),
+                allowBlank: false,
+                allowNonOptions: false
+            })
+        }
+
+        catch (e) {
+            reject(e);
+        }
+    })
+}
+
+const editorConfirm = (msg: string, choices = ['yes', 'no']): Promise<boolean> => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let result = await editorChoose(msg, choices);
+            console.log(result);
+            resolve(result === choices[0]);
+        }
+        catch (e) {
+            reject(e);
+        }
+    })
+};
+
+export {
+    show, hide, editorChoose, editorPrompt, editorAlert, editorConfirm, fuzzySearch
 }
