@@ -26,3 +26,11 @@ export const exists = (path: string) => {
         path: path
     });
 }
+
+export const setEditorFont = (name: string) => {
+    setCSSVar('font', name);
+}
+
+export const setCSSVar = (key: string, value: string) => {
+    document.documentElement.style.setProperty(`--${key}`, value);
+}
