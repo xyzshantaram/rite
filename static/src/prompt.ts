@@ -28,7 +28,7 @@ const initialisePrompt = () => {
     const options = cf.insert(cf.nu('div#prompt-options',), { atEndOf: prompt }) as HTMLElement;
 
     let currentChoices: PromptChoice[] = [];
-    let currIndex = -1;
+    let currIndex = 0;
     let allowNonOptions = true;
     let allowBlank = false;
 
@@ -37,17 +37,28 @@ const initialisePrompt = () => {
             c: `<span class='prompt-option-name'>${choice.title}</span>
             ${choice.description ? `<span class='prompt-option-desc'>${choice.description}</span>` : ''}`,
             a: { 'data-choice': choice.title },
+            on: {
+                click: function(e) {
+                    field.value = choice.title;
+                    setSelectedOption(this);
+                    field.focus();
+                }
+            },
             raw: true
         }))
     }
 
     const hide = () => {
+        msg.innerHTML = '';
+        field.value = '';
+        options.innerHTML = '';
+        allowNonOptions = true;
+        allowBlank = false;
         mask.style.display = 'none';
     }
 
     field.oninput = (e) => {
         let value = field.value.trim();
-
         for (let choice of currentChoices) {
             console.log(`div[data-choice=${choice.title}]`);
             const elt = document.querySelector(`div[data-choice=${choice.title}]`);
@@ -61,48 +72,58 @@ const initialisePrompt = () => {
     }
 
     const completePromptFlow = (value: string) => {
-        msg.innerHTML = '';
-        field.value = '';
-        options.innerHTML = '';
-        allowNonOptions = true;
-        allowBlank = false;
         hide();
         currentCb(value);
     }
 
-    const setSelectedOption = (idx: number) => {
+    const setSelectedIdx = (idx: number) => {
+        const selected: HTMLElement | null = options.querySelector(`.prompt-option:nth-child(${idx})`);
+        if (selected) setSelectedOption(selected);
+    }
+
+    const setSelectedOption = (choice: HTMLElement) => {
         options.querySelector(`.prompt-option.selected`)?.classList.remove('selected');
-        options.querySelector(`.prompt-option:nth-child(${idx})`)?.classList.add('selected');
+        choice.classList.add('selected');
+        field.value = choice.getAttribute('data-choice')!;
+    }
+
+    const tryCompletingPromptFlow = () => {
+        let value = field.value.trim();
+        let selected = document.querySelector('.prompt-option.selected')?.getAttribute('data-choice');
+
+        if (!allowBlank && !value && !selected) return;
+
+        if (selected) {
+            completePromptFlow(selected);
+            return;
+        }
+
+        if (allowNonOptions || Object.values(currentChoices).some(elem => elem.title === value)) {
+            completePromptFlow(value);
+        }
     }
 
     prompt.onkeydown = (e) => {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+        }
+        if (e.key === 'Escape' && field.value === '') {
+            tryCompletingPromptFlow();
+        }
         if (e.key === 'ArrowDown') {
             if (currIndex >= currentChoices.length) currIndex = currentChoices.length - 1;
-            setSelectedOption(currIndex += 1);
-
+            setSelectedIdx(currIndex += 1);
         }
         else if (e.key === 'ArrowUp') {
-            if (currIndex < 0) currIndex = 0;
-            setSelectedOption(currIndex -= 1);
+            if (currIndex < 0) currIndex = 1;
+            setSelectedIdx(currIndex -= 1);
         }
         else if (e.key === 'Enter') {
-            let value = field.value.trim();
-            let selected = document.querySelector('.prompt-option.selected')?.getAttribute('data-choice');
-
-            if (!allowBlank && !value && !selected) return;
-
-            if (selected) {
-                completePromptFlow(selected);
-                return;
-            }
-
-            if (allowNonOptions || Object.values(currentChoices).some(elem => elem.title === value)) {
-                completePromptFlow(value);
-            }
+            tryCompletingPromptFlow();
         }
     }
 
-    let currentCb: Function = (str) => { };
+    let currentCb: Function = (str: string) => { };
 
     const setChoices = (choices: PromptChoice[]) => {
         currentChoices = choices;
@@ -111,11 +132,12 @@ const initialisePrompt = () => {
     }
 
     const show = (options: PromptArgs) => {
+        hide();
         msg.innerHTML = <string>options.message || "";
         setChoices(options.choices || []);
         currentCb = <Function>options.callback || currentCb;
-        allowBlank = options.allowBlank;
-        allowNonOptions = options.allowNonOptions;
+        allowBlank = options.allowBlank || false;
+        allowNonOptions = options.allowNonOptions || true;
         mask.style.display = 'flex';
         field.focus();
     }
@@ -181,7 +203,7 @@ const editorConfirm = (msg: string, choices: PromptChoice[] = [{title: 'yes'}, {
     return new Promise(async (resolve, reject) => {
         try {
             let result = await editorChoose(msg, choices);
-            resolve(result === choices[0].title);
+            resolve(result !== '' && result === choices[0].title);
         }
         catch (e) {
             reject(e);
