@@ -7,3 +7,4 @@
 - [] more settings
 - [] docs
 - [] syntax highlighting
+- [] Esc to close command list
