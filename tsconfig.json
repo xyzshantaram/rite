@@ -12,7 +12,7 @@
         "esModuleInterop": true
     },
     "include": [
-        "./src/**/*"
+        "static/src/**/*"
     ]
 }
 
