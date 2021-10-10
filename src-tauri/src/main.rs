@@ -28,8 +28,7 @@ fn log(line: String) {
 
 fn main() {
   tauri::Builder::default()
-    .invoke_handler(tauri::generate_handler![get_config_dir])
-    .invoke_handler(tauri::generate_handler![log])
+    .invoke_handler(tauri::generate_handler![get_config_dir, log])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
