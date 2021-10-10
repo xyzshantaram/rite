@@ -13,6 +13,11 @@ body, html {
     --color-primary: #d8d8d8;
     --color-secondary: #f5f4f0;
     --color-selection: rgba(255, 255, 255, 0.2);
+    --color-md-heading: var(--color-primary);
+    --color-md-link: #94cfff;
+    --color-md-url: #d568b6;
+    --color-md-string: #85c77c;
+    --color-md-quote: #b1b1b1;
     --font: monospace;
 }
 
@@ -22,6 +27,7 @@ body, html {
 
 body {
     background-color: var(--background-root);
+    color: var(--color-primary);
 }
 
 #app {
@@ -76,8 +82,28 @@ body {
     font-size: 1rem;
 }
 
-#editor>.cm-s-default .cm-header {
+#editor .cm-header {
     color: var(--color-primary);
+}
+
+#editor .cm-link {
+    color: var(--color-md-link);
+}
+
+#editor .cm-url {
+    color: var(--color-md-url);
+}
+
+#editor .cm-string {
+    color: var(--color-md-string);
+}
+
+#editor .cm-comment {
+    color: var(--color-md-string);
+}
+
+#editor .cm-quote {
+    color: var(--color-md-quote);
 }
 
 .cm-header-1 {
@@ -124,6 +150,19 @@ body {
     user-select: none;
     cursor: default;
     -webkit-user-select: none;
+    display: flex;
+}
+
+#statusline-dirty-state {
+    margin-left: 0.5rem;
+    color: var(--color-auxiliary);
+
+}
+
+#statusline-rightmost {
+    margin-left: auto;
+    color: var(--color-auxiliary);
+    margin-right: 0.5rem;
 }
 
 *::-webkit-scrollbar {

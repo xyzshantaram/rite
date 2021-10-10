@@ -1,10 +1,10 @@
+import { listen } from '@tauri-apps/api/event';
 import { readTextFile } from '@tauri-apps/api/fs';
 import cf from 'campfire.js';
-import CodeMirror from 'codemirror';
 import 'codemirror/mode/gfm/gfm';
 import { COMMANDS } from './commands';
 import { createConfig, loadConfig } from './config';
-import { EditorState } from './EditorState';
+import { RiteEditor as RiteEditor } from './RiteEditor';
 import { getConfigPath, RiteSettings } from './utils';
 
 window.addEventListener('DOMContentLoaded', async () => {
@@ -13,7 +13,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         { atStartOf: document.querySelector('#app') }
     ) as HTMLElement;
 
-    const editor = new EditorState(editorRoot, COMMANDS);
+    const editor = new RiteEditor(editorRoot, COMMANDS);
 
     let configPath = await getConfigPath();
     let contents = null;
@@ -26,5 +26,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 
     const config = JSON.parse(contents) as RiteSettings;
+
+    const unlisten = await listen('closerequest', () => {
+        editor.close();
+    });
+
     loadConfig(editor, config);
 })

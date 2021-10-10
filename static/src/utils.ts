@@ -1,7 +1,7 @@
 import { invoke } from '@tauri-apps/api';
-import { EditorState } from './EditorState';
+import { RiteEditor } from './RiteEditor';
 
-export type CommandHandler = (state: EditorState, args: string) => void;
+export type CommandHandler = (editor: RiteEditor, args: string) => void;
 
 export interface RiteSettings {
     font: string,

@@ -1,6 +1,6 @@
 import { dialog } from "@tauri-apps/api"
 import { readTextFile } from "@tauri-apps/api/fs"
-import { EditorState } from "./EditorState"
+import { RiteEditor } from "./RiteEditor"
 import { editorAlert, editorChoose, editorPrompt } from "./prompt"
 import { CommandHandler, PromptChoice, RiteCommands, RiteFile } from "./utils"
 
@@ -33,10 +33,10 @@ const openAndReadFile = async (): Promise<RiteFile> => {
     })
 }
 
-const openFileCommand: CommandHandler = async (state, args: string) => {
+const openFileCommand: CommandHandler = async (editor: RiteEditor, args: string) => {
     const file = await openAndReadFile();
     if (file.path === '') return;
-    await state.setCurrentFile(file);
+    await editor.setCurrentFile(file);
 }
 
 export const parseCommand = (command: string) => {
@@ -47,7 +47,7 @@ export const parseCommand = (command: string) => {
     };
 }
 
-const openPalette = async (state: EditorState) => {
+const openPalette = async (editor: RiteEditor) => {
     const choices: PromptChoice[] = [];
     for (const cmd in COMMANDS) {
         if (!COMMANDS[cmd].nonPalette) {
@@ -58,11 +58,11 @@ const openPalette = async (state: EditorState) => {
         }
     }
 
-    await state.execCommand(await editorChoose('Command:', choices));
+    await editor.execCommand(await editorChoose('Command:', choices));
 }
 
-export const saveFile = async (state: EditorState) => {
-    await state.save();
+export const saveFile = async (editor: RiteEditor) => {
+    await editor.save();
 }
 
 export const COMMANDS: RiteCommands = {

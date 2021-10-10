@@ -4,11 +4,12 @@ import { COMMANDS } from "./commands";
 import { RiteCommands, RiteFile } from "./utils";
 import { parseCommand } from "./commands";
 import { DEFAULT_KEYBINDS, parseKeybind } from "./keybinds";
-import { editorAlert } from "./prompt";
+import { editorAlert, editorConfirm } from "./prompt";
 import { dialog } from "@tauri-apps/api";
 import { writeFile } from "@tauri-apps/api/fs";
 import cf from 'campfire.js';
 import CodeMirror from "codemirror";
+import { exit } from "@tauri-apps/api/process";
 
 interface StatusLineControls {
     elem: HTMLElement;
@@ -21,19 +22,11 @@ const StatusLine = (parent: HTMLElement) => {
     const elem = cf.insert(cf.nu('div#statusline'), { atEndOf: parent }) as HTMLElement;
     const filenameElem = cf.insert(cf.nu('div'), { atEndOf: elem }) as HTMLElement;
     const dirtyStateElem = cf.insert(
-        cf.nu('div', {
-            s: {
-                marginLeft: '1rem',
-                fontStyle: 'italic',
-                color: 'var(--color-auxilliary)'
-            }
-        }), { atEndOf: elem }
+        cf.nu('div#statusline-dirty-state'), { atEndOf: elem }
     ) as HTMLElement;
 
     const rightMostElem = cf.insert(
-        cf.nu('div', {
-            s: { marginLeft: 'auto', color: 'var(--color-auxilliary)' }
-        }), { atEndOf: elem }
+        cf.nu('div#statusline-rightmost'), { atEndOf: elem }
     ) as HTMLElement;
 
     const setFileName = (value: string) => cf.extend(filenameElem, { c: value });
@@ -43,7 +36,7 @@ const StatusLine = (parent: HTMLElement) => {
     return { elem, setFileName, setDirty, setRightMost };
 }
 
-export class EditorState {
+export class RiteEditor {
     currentFile: RiteFile | null = null;
     currentFileName: string | null = null;
     editor: Editor;
@@ -133,5 +126,19 @@ export class EditorState {
 
     async saveFile() {
         return writeFile(this.currentFile);
+    }
+
+    async close() {
+        if (this.dirty) {
+            if (await editorConfirm('Are you sure you want to exit? Changes you made have not been saved.')) {
+                await exit(1);
+            }
+            else {
+                return;
+            }
+        }
+        else {
+            await exit(0);
+        }
     }
 }

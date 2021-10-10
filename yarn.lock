@@ -1882,6 +1882,11 @@ lru-cache@^6.0.0:
   dependencies:
     yallist "^4.0.0"
 
+macrolight@^1.3.1:
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/macrolight/-/macrolight-1.3.1.tgz#e8d187b2b36a2916a84d40f2961adc213553f1df"
+  integrity sha512-bxp6zUypbzg4BFlMGIopAkURz5ztROokjerAeBYWkaKzCF5nq4F+kh92xu17JyYMFqO0QxDCY+mBnZsdIiIdww==
+
 make-dir@^1.0.0, make-dir@^1.2.0:
   version "1.3.0"
   resolved "https://registry.npmjs.org/make-dir/-/make-dir-1.3.0.tgz"
