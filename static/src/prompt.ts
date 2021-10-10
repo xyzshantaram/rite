@@ -1,4 +1,5 @@
 import cf from 'campfire.js';
+import { promptArgs } from './utils';
 
 export const fuzzySearch = (str, query) => {
     var string = str.toLowerCase();
@@ -106,11 +107,12 @@ export const initialisePrompt = () => {
         choices.forEach(appendChoice);
     }
 
-    const show = (options: Record<string, string | Function>) => {
+    const show = (options: promptArgs) => {
         msg.innerHTML = <string>options.message || "";
         setChoices(options.choices || []);
         currentCb = <Function>options.callback || currentCb;
-        console.log(allowBlank);
+        allowBlank = options.allowBlank;
+        allowNonOptions = options.allowNonOptions;
         mask.style.display = 'flex';
         field.focus();
     }

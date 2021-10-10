@@ -12442,167 +12442,55 @@ var h = Object.freeze({ __proto__: null, get BaseDirectory() {
   return r2;
 }, readTextFile: o2, readBinaryFile: n3, writeFile: u2, writeBinaryFile: s, readDir: c2, createDir: d, removeDir: f, copyFile: l, removeFile: m, renameFile: p });
 
-// node_modules/@tauri-apps/api/http-46ccd227.js
-var o3;
-!function(t2) {
-  t2[t2.JSON = 1] = "JSON", t2[t2.Text = 2] = "Text", t2[t2.Binary = 3] = "Binary";
-}(o3 || (o3 = {}));
-var i2 = function() {
-  function t2(t3, e4) {
-    this.type = t3, this.payload = e4;
-  }
-  return t2.form = function(e4) {
-    return new t2("Form", e4);
-  }, t2.json = function(e4) {
-    return new t2("Json", e4);
-  }, t2.text = function(e4) {
-    return new t2("Text", e4);
-  }, t2.bytes = function(e4) {
-    return new t2("Bytes", e4);
-  }, t2;
-}();
-var u3 = function(t2) {
-  this.url = t2.url, this.status = t2.status, this.ok = this.status >= 200 && this.status < 300, this.headers = t2.headers, this.data = t2.data;
-};
-var s2 = function() {
-  function i10(t2) {
-    this.id = t2;
-  }
-  return i10.prototype.drop = function() {
-    return r(this, void 0, void 0, function() {
-      return o(this, function(t2) {
-        return [2, n2({ __tauriModule: "Http", message: { cmd: "dropClient", client: this.id } })];
-      });
-    });
-  }, i10.prototype.request = function(n10) {
-    return r(this, void 0, void 0, function() {
-      var t2;
-      return o(this, function(e4) {
-        return (t2 = !n10.responseType || n10.responseType === o3.JSON) && (n10.responseType = o3.Text), [2, n2({ __tauriModule: "Http", message: { cmd: "httpRequest", client: this.id, options: n10 } }).then(function(e5) {
-          var n11 = new u3(e5);
-          if (t2) {
-            try {
-              n11.data = JSON.parse(n11.data);
-            } catch (t3) {
-              if (n11.ok)
-                throw Error("Failed to parse response `" + n11.data + "` as JSON: " + t3 + ";\n              try setting the `responseType` option to `ResponseType.Text` or `ResponseType.Binary` if the API does not return a JSON response.");
-            }
-            return n11;
-          }
-          return n11;
-        })];
-      });
-    });
-  }, i10.prototype.get = function(r7, o12) {
-    return r(this, void 0, void 0, function() {
-      return o(this, function(t2) {
-        return [2, this.request(e({ method: "GET", url: r7 }, o12))];
-      });
-    });
-  }, i10.prototype.post = function(r7, o12, i11) {
-    return r(this, void 0, void 0, function() {
-      return o(this, function(t2) {
-        return [2, this.request(e({ method: "POST", url: r7, body: o12 }, i11))];
-      });
-    });
-  }, i10.prototype.put = function(r7, o12, i11) {
-    return r(this, void 0, void 0, function() {
-      return o(this, function(t2) {
-        return [2, this.request(e({ method: "PUT", url: r7, body: o12 }, i11))];
-      });
-    });
-  }, i10.prototype.patch = function(r7, o12) {
-    return r(this, void 0, void 0, function() {
-      return o(this, function(t2) {
-        return [2, this.request(e({ method: "PATCH", url: r7 }, o12))];
-      });
-    });
-  }, i10.prototype.delete = function(r7, o12) {
-    return r(this, void 0, void 0, function() {
-      return o(this, function(t2) {
-        return [2, this.request(e({ method: "DELETE", url: r7 }, o12))];
-      });
-    });
-  }, i10;
-}();
-function a3(n10) {
-  return r(this, void 0, void 0, function() {
-    return o(this, function(t2) {
-      return [2, n2({ __tauriModule: "Http", message: { cmd: "createClient", options: n10 } }).then(function(t3) {
-        return new s2(t3);
-      })];
-    });
-  });
-}
-var c3 = null;
-function h2(r7, o12) {
-  var i10;
-  return r(this, void 0, void 0, function() {
-    return o(this, function(t2) {
-      switch (t2.label) {
-        case 0:
-          return c3 !== null ? [3, 2] : [4, a3()];
-        case 1:
-          c3 = t2.sent(), t2.label = 2;
-        case 2:
-          return [2, c3.request(e({ url: r7, method: (i10 = o12 == null ? void 0 : o12.method) !== null && i10 !== void 0 ? i10 : "GET" }, o12))];
-      }
-    });
-  });
-}
-var d2 = Object.freeze({ __proto__: null, getClient: a3, fetch: h2, Body: i2, Client: s2, Response: u3, get ResponseType() {
-  return o3;
-} });
-
 // node_modules/@tauri-apps/api/os-check-094ffe86.js
 function n4() {
   return navigator.appVersion.includes("Win");
 }
 
 // node_modules/@tauri-apps/api/path-237dd15f.js
-function o4() {
+function o3() {
   return r(this, void 0, void 0, function() {
     return o(this, function(t2) {
       return [2, n2({ __tauriModule: "Path", message: { cmd: "resolvePath", path: "", directory: r2.App } })];
     });
   });
 }
-function u4() {
+function u3() {
   return r(this, void 0, void 0, function() {
     return o(this, function(t2) {
       return [2, n2({ __tauriModule: "Path", message: { cmd: "resolvePath", path: "", directory: r2.Audio } })];
     });
   });
 }
-function a4() {
+function a3() {
   return r(this, void 0, void 0, function() {
     return o(this, function(t2) {
       return [2, n2({ __tauriModule: "Path", message: { cmd: "resolvePath", path: "", directory: r2.Cache } })];
     });
   });
 }
-function s3() {
+function s2() {
   return r(this, void 0, void 0, function() {
     return o(this, function(t2) {
       return [2, n2({ __tauriModule: "Path", message: { cmd: "resolvePath", path: "", directory: r2.Config } })];
     });
   });
 }
-function c4() {
+function c3() {
   return r(this, void 0, void 0, function() {
     return o(this, function(t2) {
       return [2, n2({ __tauriModule: "Path", message: { cmd: "resolvePath", path: "", directory: r2.Data } })];
     });
   });
 }
-function d3() {
+function d2() {
   return r(this, void 0, void 0, function() {
     return o(this, function(t2) {
       return [2, n2({ __tauriModule: "Path", message: { cmd: "resolvePath", path: "", directory: r2.Desktop } })];
     });
   });
 }
-function h3() {
+function h2() {
   return r(this, void 0, void 0, function() {
     return o(this, function(t2) {
       return [2, n2({ __tauriModule: "Path", message: { cmd: "resolvePath", path: "", directory: r2.Document } })];
@@ -12748,9 +12636,412 @@ function R(i10) {
     });
   });
 }
-var q = Object.freeze({ __proto__: null, appDir: o4, audioDir: u4, cacheDir: a4, configDir: s3, dataDir: c4, desktopDir: d3, documentDir: h3, downloadDir: f2, executableDir: v, fontDir: m2, homeDir: l2, localDataDir: _, pictureDir: P, publicDir: p2, resourceDir: g, runtimeDir: D, templateDir: M, videoDir: y, currentDir: b, get BaseDirectory() {
+var q = Object.freeze({ __proto__: null, appDir: o3, audioDir: u3, cacheDir: a3, configDir: s2, dataDir: c3, desktopDir: d2, documentDir: h2, downloadDir: f2, executableDir: v, fontDir: m2, homeDir: l2, localDataDir: _, pictureDir: P, publicDir: p2, resourceDir: g, runtimeDir: D, templateDir: M, videoDir: y, currentDir: b, get BaseDirectory() {
   return r2;
 }, sep: j, delimiter: x, resolve: A, normalize: k, join: z, dirname: C, extname: w, basename: B, isAbsolute: R });
+
+// node_modules/campfire.js/dist/campfire.esm.js
+var _parseEltString = (str) => {
+  var _a;
+  const matches = str ? str.match(/([0-9a-zA-Z\-]*)?(#[0-9a-zA-Z\-]*)?((.[0-9a-zA-Z\-]+)*)/) : void 0;
+  const results = matches ? (_a = matches.slice(1, 4)) === null || _a === void 0 ? void 0 : _a.map((elem) => elem ? elem.trim() : void 0) : Array(3).fill(void 0);
+  if (results && results[1])
+    results[1] = results[1].replace(/#*/g, "");
+  return matches ? {
+    tag: results[0] || void 0,
+    id: results[1] || void 0,
+    classes: results[2] ? results[2].split(".").filter((elem) => elem.trim()) : void 0
+  } : {};
+};
+var extend = (elem, args = {}) => {
+  let { contents, c: c11, misc, m: m4, style, s: s10, on, attrs, a: a11, raw } = args;
+  contents = contents || c11 || "";
+  contents = raw ? contents : escape(contents);
+  elem.innerHTML = contents;
+  Object.assign(elem, misc || m4);
+  Object.assign(elem.style, style || s10);
+  Object.entries(on || {}).forEach(([evt, listener]) => elem.addEventListener(evt, listener));
+  Object.entries(attrs || a11 || {}).forEach(([attr, value]) => elem.setAttribute(attr, value));
+  return elem;
+};
+var nu = (eltInfo, args = {}) => {
+  let { tag, id, classes } = _parseEltString(eltInfo);
+  if (!tag)
+    tag = "div";
+  let elem = document.createElement(tag);
+  if (id)
+    elem.id = id;
+  (classes || []).forEach((cls) => elem.classList.add(cls));
+  return extend(elem, args);
+};
+var insert = (elem, where) => {
+  const keys = Object.keys(where);
+  if (keys.length !== 1) {
+    throw new Error("Too many or too few positions specified.");
+  }
+  const ref = Object.values(where)[0];
+  let position = "afterend";
+  if (where.after) {
+    position = "afterend";
+  } else if (where.before) {
+    position = "beforebegin";
+  } else if (where.atStartOf) {
+    position = "afterbegin";
+  } else if (where.atEndOf) {
+    position = "beforeend";
+  }
+  ref.insertAdjacentElement(position, elem);
+  return elem;
+};
+var Store = class {
+  constructor(value) {
+    this.value = null;
+    this._subscribers = {};
+    this._subscriberCounts = {};
+    this._dead = false;
+    this.value = value;
+  }
+  on(type, fn, callNow = false) {
+    this._subscriberCounts[type] = this._subscriberCounts[type] || 0;
+    this._subscribers[type] = this._subscribers[type] || {};
+    this._subscribers[type][this._subscriberCounts[type]] = fn;
+    if (callNow && !["push", "remove", "mutation", "setAt"].includes(type)) {
+      fn(this.value);
+    }
+    return this._subscriberCounts[type]++;
+  }
+  unsubscribe(type, id) {
+    delete this._subscribers[type][id];
+  }
+  update(value) {
+    if (this._dead)
+      return;
+    this.value = value;
+    this._sendEvent("update", value);
+  }
+  refresh() {
+    this._sendEvent("refresh", this.value);
+  }
+  _sendEvent(type, value) {
+    if (this._dead)
+      return;
+    this._subscribers[type] = this._subscribers[type] || {};
+    for (const idx in Object.keys(this._subscribers[type])) {
+      this._subscribers[type][idx](value);
+    }
+  }
+  dispose() {
+    this._dead = true;
+    this._subscribers = {};
+    this._subscriberCounts = {};
+  }
+};
+var ListStore = class extends Store {
+  constructor(ls) {
+    super(ls);
+  }
+  clear() {
+    this.update([]);
+  }
+  push(val) {
+    this.value.push(val);
+    this._sendEvent("push", {
+      value: val,
+      idx: this.value.length - 1
+    });
+  }
+  remove(idx) {
+    if (idx < 0 || idx >= this.value.length)
+      throw new RangeError("Invalid index.");
+    this._sendEvent("remove", {
+      value: this.value.splice(idx, 1)[0],
+      idx
+    });
+  }
+  get(idx) {
+    if (idx < 0 || idx > this.value.length)
+      throw new RangeError("Invalid index.");
+    return this.value instanceof Array && this.value[idx];
+  }
+  setAt(idx, val) {
+    if (idx < 0 || idx >= this.value.length)
+      throw new RangeError("Invalid index.");
+    this.value[idx] = val;
+    this._sendEvent("mutation", {
+      value: val,
+      idx
+    });
+  }
+  get length() {
+    return this.value.length;
+  }
+};
+var _mustache = (string, data = {}) => {
+  const escapeExpr = new RegExp("\\\\({{\\s*" + Object.keys(data).join("|") + "\\s*}})", "gi");
+  new RegExp(Object.keys(data).join("|"), "gi");
+  return string.replace(new RegExp("(^|[^\\\\]){{\\s*(" + Object.keys(data).join("|") + ")\\s*}}", "gi"), function(matched, p1, p22) {
+    return `${p1 || ""}${data[p22]}`;
+  }).replace(escapeExpr, "$1");
+};
+var mustache = (string, data = {}, shouldEscape = true) => {
+  let escaped = Object.assign({}, data);
+  if (shouldEscape) {
+    escaped = Object.fromEntries(Object.entries(escaped).map(([key, value]) => {
+      return [key, escape(value)];
+    }));
+  }
+  return _mustache(string, escaped);
+};
+var template = (str, shouldEscape) => {
+  return (data) => mustache(str, data, shouldEscape);
+};
+var escape = (str) => {
+  if (!str)
+    return "";
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+};
+var unescape = (str) => {
+  if (!str)
+    return "";
+  const expr = /&(?:amp|lt|gt|quot|#(0+)?39);/g;
+  const entities = {
+    "&amp;": "&",
+    "&lt;": "<",
+    "&gt;": ">",
+    "&quot;": '"',
+    "&#39;": "'"
+  };
+  return str.replace(expr, (entity) => entities[entity] || "'");
+};
+var campfire_default = {
+  Store,
+  ListStore,
+  nu,
+  mustache,
+  template,
+  escape,
+  unescape,
+  extend,
+  insert
+};
+
+// static/src/main.ts
+var import_codemirror = __toModule(require_codemirror());
+var import_gfm = __toModule(require_gfm());
+
+// static/src/prompt.ts
+var fuzzySearch = (str, query) => {
+  var string = str.toLowerCase();
+  var compare = query.toLowerCase();
+  var matches = 0;
+  if (string.indexOf(compare) > -1)
+    return true;
+  for (var i10 = 0; i10 < compare.length; i10++) {
+    string.indexOf(compare[i10]) > -1 ? matches += 1 : matches -= 1;
+  }
+  return query === "" ? 1 : matches / str.length;
+};
+var initialisePrompt = () => {
+  const mask = campfire_default.insert(campfire_default.nu("div#mask"), { atEndOf: document.body });
+  const prompt = campfire_default.insert(campfire_default.nu("div#prompt"), { atEndOf: mask });
+  const promptWrapper = campfire_default.insert(campfire_default.nu("div#prompt-msg-wrapper"), { atEndOf: prompt });
+  const msg = campfire_default.insert(campfire_default.nu("span#prompt-message"), { atEndOf: promptWrapper });
+  const field = campfire_default.insert(campfire_default.nu("input#prompt-field", {
+    a: { type: "text", autocomplete: "off" }
+  }), { atEndOf: promptWrapper });
+  const options = campfire_default.insert(campfire_default.nu("div#prompt-options"), { atEndOf: prompt });
+  let currentChoices = [];
+  let currIndex = -1;
+  let allowNonOptions = true;
+  let allowBlank = false;
+  let appendChoice = (choice) => {
+    options.append(campfire_default.nu(".prompt-option", {
+      c: choice,
+      a: { "data-choice": choice }
+    }));
+  };
+  const hide2 = () => {
+    mask.style.display = "none";
+  };
+  field.oninput = (e4) => {
+    let value = field.value.trim();
+    for (let choice of currentChoices) {
+      const elt = document.querySelector(`div[data-choice=${choice}]`);
+      if (fuzzySearch(choice, value) > 0.5) {
+        if (elt === null)
+          appendChoice(choice);
+      } else {
+        if (elt)
+          elt.remove();
+      }
+    }
+  };
+  const completePromptFlow = (value) => {
+    msg.innerHTML = "";
+    field.value = "";
+    options.innerHTML = "";
+    allowNonOptions = true;
+    allowBlank = false;
+    currentCb(value);
+    hide2();
+  };
+  const setSelectedOption = (idx) => {
+    options.querySelector(`.prompt-option.selected`)?.classList.remove("selected");
+    options.querySelector(`.prompt-option:nth-child(${idx})`)?.classList.add("selected");
+  };
+  prompt.onkeydown = (e4) => {
+    if (e4.key === "ArrowDown") {
+      if (currIndex >= currentChoices.length)
+        currIndex = currentChoices.length - 1;
+      setSelectedOption(currIndex += 1);
+    } else if (e4.key === "ArrowUp") {
+      if (currIndex < 0)
+        currIndex = 0;
+      setSelectedOption(currIndex -= 1);
+    } else if (e4.key === "Enter") {
+      let value = field.value.trim();
+      let selected = document.querySelector(".prompt-option.selected")?.getAttribute("data-choice");
+      if (!allowBlank && !value && !selected)
+        return;
+      if (selected) {
+        completePromptFlow(selected);
+        return;
+      }
+      if (allowNonOptions || currentChoices.includes(value)) {
+        completePromptFlow(value);
+      }
+    }
+  };
+  let currentCb = (str) => {
+  };
+  const setChoices = (choices) => {
+    currentChoices = choices;
+    options.innerHTML = "";
+    choices.forEach(appendChoice);
+  };
+  const show2 = (options2) => {
+    msg.innerHTML = options2.message || "";
+    setChoices(options2.choices || []);
+    currentCb = options2.callback || currentCb;
+    allowBlank = options2.allowBlank;
+    allowNonOptions = options2.allowNonOptions;
+    mask.style.display = "flex";
+    field.focus();
+  };
+  return [show2, hide2];
+};
+
+// node_modules/@tauri-apps/api/http-46ccd227.js
+var o4;
+!function(t2) {
+  t2[t2.JSON = 1] = "JSON", t2[t2.Text = 2] = "Text", t2[t2.Binary = 3] = "Binary";
+}(o4 || (o4 = {}));
+var i2 = function() {
+  function t2(t3, e4) {
+    this.type = t3, this.payload = e4;
+  }
+  return t2.form = function(e4) {
+    return new t2("Form", e4);
+  }, t2.json = function(e4) {
+    return new t2("Json", e4);
+  }, t2.text = function(e4) {
+    return new t2("Text", e4);
+  }, t2.bytes = function(e4) {
+    return new t2("Bytes", e4);
+  }, t2;
+}();
+var u4 = function(t2) {
+  this.url = t2.url, this.status = t2.status, this.ok = this.status >= 200 && this.status < 300, this.headers = t2.headers, this.data = t2.data;
+};
+var s3 = function() {
+  function i10(t2) {
+    this.id = t2;
+  }
+  return i10.prototype.drop = function() {
+    return r(this, void 0, void 0, function() {
+      return o(this, function(t2) {
+        return [2, n2({ __tauriModule: "Http", message: { cmd: "dropClient", client: this.id } })];
+      });
+    });
+  }, i10.prototype.request = function(n10) {
+    return r(this, void 0, void 0, function() {
+      var t2;
+      return o(this, function(e4) {
+        return (t2 = !n10.responseType || n10.responseType === o4.JSON) && (n10.responseType = o4.Text), [2, n2({ __tauriModule: "Http", message: { cmd: "httpRequest", client: this.id, options: n10 } }).then(function(e5) {
+          var n11 = new u4(e5);
+          if (t2) {
+            try {
+              n11.data = JSON.parse(n11.data);
+            } catch (t3) {
+              if (n11.ok)
+                throw Error("Failed to parse response `" + n11.data + "` as JSON: " + t3 + ";\n              try setting the `responseType` option to `ResponseType.Text` or `ResponseType.Binary` if the API does not return a JSON response.");
+            }
+            return n11;
+          }
+          return n11;
+        })];
+      });
+    });
+  }, i10.prototype.get = function(r7, o12) {
+    return r(this, void 0, void 0, function() {
+      return o(this, function(t2) {
+        return [2, this.request(e({ method: "GET", url: r7 }, o12))];
+      });
+    });
+  }, i10.prototype.post = function(r7, o12, i11) {
+    return r(this, void 0, void 0, function() {
+      return o(this, function(t2) {
+        return [2, this.request(e({ method: "POST", url: r7, body: o12 }, i11))];
+      });
+    });
+  }, i10.prototype.put = function(r7, o12, i11) {
+    return r(this, void 0, void 0, function() {
+      return o(this, function(t2) {
+        return [2, this.request(e({ method: "PUT", url: r7, body: o12 }, i11))];
+      });
+    });
+  }, i10.prototype.patch = function(r7, o12) {
+    return r(this, void 0, void 0, function() {
+      return o(this, function(t2) {
+        return [2, this.request(e({ method: "PATCH", url: r7 }, o12))];
+      });
+    });
+  }, i10.prototype.delete = function(r7, o12) {
+    return r(this, void 0, void 0, function() {
+      return o(this, function(t2) {
+        return [2, this.request(e({ method: "DELETE", url: r7 }, o12))];
+      });
+    });
+  }, i10;
+}();
+function a4(n10) {
+  return r(this, void 0, void 0, function() {
+    return o(this, function(t2) {
+      return [2, n2({ __tauriModule: "Http", message: { cmd: "createClient", options: n10 } }).then(function(t3) {
+        return new s3(t3);
+      })];
+    });
+  });
+}
+var c4 = null;
+function h3(r7, o12) {
+  var i10;
+  return r(this, void 0, void 0, function() {
+    return o(this, function(t2) {
+      switch (t2.label) {
+        case 0:
+          return c4 !== null ? [3, 2] : [4, a4()];
+        case 1:
+          c4 = t2.sent(), t2.label = 2;
+        case 2:
+          return [2, c4.request(e({ url: r7, method: (i10 = o12 == null ? void 0 : o12.method) !== null && i10 !== void 0 ? i10 : "GET" }, o12))];
+      }
+    });
+  });
+}
+var d3 = Object.freeze({ __proto__: null, getClient: a4, fetch: h3, Body: i2, Client: s3, Response: u4, get ResponseType() {
+  return o4;
+} });
 
 // node_modules/@tauri-apps/api/shell-9c83a2e9.js
 function o5(t2, o12, s10, u11) {
@@ -13766,316 +14057,49 @@ function r6(t2) {
 }({ exports: {} });
 var i9 = i;
 
-// node_modules/campfire.js/dist/campfire.esm.js
-var _parseEltString = (str) => {
-  var _a;
-  const matches = str ? str.match(/([0-9a-zA-Z\-]*)?(#[0-9a-zA-Z\-]*)?((.[0-9a-zA-Z\-]+)*)/) : void 0;
-  const results = matches ? (_a = matches.slice(1, 4)) === null || _a === void 0 ? void 0 : _a.map((elem) => elem ? elem.trim() : void 0) : Array(3).fill(void 0);
-  if (results && results[1])
-    results[1] = results[1].replace(/#*/g, "");
-  return matches ? {
-    tag: results[0] || void 0,
-    id: results[1] || void 0,
-    classes: results[2] ? results[2].split(".").filter((elem) => elem.trim()) : void 0
-  } : {};
-};
-var extend = (elem, args = {}) => {
-  let { contents, c: c11, misc, m: m4, style, s: s10, on, attrs, a: a11, raw } = args;
-  contents = contents || c11 || "";
-  contents = raw ? contents : escape(contents);
-  elem.innerHTML = contents;
-  Object.assign(elem, misc || m4);
-  Object.assign(elem.style, style || s10);
-  Object.entries(on || {}).forEach(([evt, listener]) => elem.addEventListener(evt, listener));
-  Object.entries(attrs || a11 || {}).forEach(([attr, value]) => elem.setAttribute(attr, value));
-  return elem;
-};
-var nu = (eltInfo, args = {}) => {
-  let { tag, id, classes } = _parseEltString(eltInfo);
-  if (!tag)
-    tag = "div";
-  let elem = document.createElement(tag);
-  if (id)
-    elem.id = id;
-  (classes || []).forEach((cls) => elem.classList.add(cls));
-  return extend(elem, args);
-};
-var insert = (elem, where) => {
-  const keys = Object.keys(where);
-  if (keys.length !== 1) {
-    throw new Error("Too many or too few positions specified.");
-  }
-  const ref = Object.values(where)[0];
-  let position = "afterend";
-  if (where.after) {
-    position = "afterend";
-  } else if (where.before) {
-    position = "beforebegin";
-  } else if (where.atStartOf) {
-    position = "afterbegin";
-  } else if (where.atEndOf) {
-    position = "beforeend";
-  }
-  ref.insertAdjacentElement(position, elem);
-  return elem;
-};
-var Store = class {
-  constructor(value) {
-    this.value = null;
-    this._subscribers = {};
-    this._subscriberCounts = {};
-    this._dead = false;
-    this.value = value;
-  }
-  on(type, fn, callNow = false) {
-    this._subscriberCounts[type] = this._subscriberCounts[type] || 0;
-    this._subscribers[type] = this._subscribers[type] || {};
-    this._subscribers[type][this._subscriberCounts[type]] = fn;
-    if (callNow && !["push", "remove", "mutation", "setAt"].includes(type)) {
-      fn(this.value);
-    }
-    return this._subscriberCounts[type]++;
-  }
-  unsubscribe(type, id) {
-    delete this._subscribers[type][id];
-  }
-  update(value) {
-    if (this._dead)
-      return;
-    this.value = value;
-    this._sendEvent("update", value);
-  }
-  refresh() {
-    this._sendEvent("refresh", this.value);
-  }
-  _sendEvent(type, value) {
-    if (this._dead)
-      return;
-    this._subscribers[type] = this._subscribers[type] || {};
-    for (const idx in Object.keys(this._subscribers[type])) {
-      this._subscribers[type][idx](value);
-    }
-  }
-  dispose() {
-    this._dead = true;
-    this._subscribers = {};
-    this._subscriberCounts = {};
-  }
-};
-var ListStore = class extends Store {
-  constructor(ls) {
-    super(ls);
-  }
-  clear() {
-    this.update([]);
-  }
-  push(val) {
-    this.value.push(val);
-    this._sendEvent("push", {
-      value: val,
-      idx: this.value.length - 1
-    });
-  }
-  remove(idx) {
-    if (idx < 0 || idx >= this.value.length)
-      throw new RangeError("Invalid index.");
-    this._sendEvent("remove", {
-      value: this.value.splice(idx, 1)[0],
-      idx
-    });
-  }
-  get(idx) {
-    if (idx < 0 || idx > this.value.length)
-      throw new RangeError("Invalid index.");
-    return this.value instanceof Array && this.value[idx];
-  }
-  setAt(idx, val) {
-    if (idx < 0 || idx >= this.value.length)
-      throw new RangeError("Invalid index.");
-    this.value[idx] = val;
-    this._sendEvent("mutation", {
-      value: val,
-      idx
-    });
-  }
-  get length() {
-    return this.value.length;
-  }
-};
-var _mustache = (string, data = {}) => {
-  const escapeExpr = new RegExp("\\\\({{\\s*" + Object.keys(data).join("|") + "\\s*}})", "gi");
-  new RegExp(Object.keys(data).join("|"), "gi");
-  return string.replace(new RegExp("(^|[^\\\\]){{\\s*(" + Object.keys(data).join("|") + ")\\s*}}", "gi"), function(matched, p1, p22) {
-    return `${p1 || ""}${data[p22]}`;
-  }).replace(escapeExpr, "$1");
-};
-var mustache = (string, data = {}, shouldEscape = true) => {
-  let escaped = Object.assign({}, data);
-  if (shouldEscape) {
-    escaped = Object.fromEntries(Object.entries(escaped).map(([key, value]) => {
-      return [key, escape(value)];
-    }));
-  }
-  return _mustache(string, escaped);
-};
-var template = (str, shouldEscape) => {
-  return (data) => mustache(str, data, shouldEscape);
-};
-var escape = (str) => {
-  if (!str)
-    return "";
-  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
-};
-var unescape = (str) => {
-  if (!str)
-    return "";
-  const expr = /&(?:amp|lt|gt|quot|#(0+)?39);/g;
-  const entities = {
-    "&amp;": "&",
-    "&lt;": "<",
-    "&gt;": ">",
-    "&quot;": '"',
-    "&#39;": "'"
-  };
-  return str.replace(expr, (entity) => entities[entity] || "'");
-};
-var campfire_default = {
-  Store,
-  ListStore,
-  nu,
-  mustache,
-  template,
-  escape,
-  unescape,
-  extend,
-  insert
-};
-
-// static/src/main.ts
-var import_codemirror = __toModule(require_codemirror());
-var import_gfm = __toModule(require_gfm());
-
-// static/src/prompt.ts
-var fuzzySearch = (str, query) => {
-  var string = str.toLowerCase();
-  var compare = query.toLowerCase();
-  var matches = 0;
-  if (string.indexOf(compare) > -1)
-    return true;
-  for (var i10 = 0; i10 < compare.length; i10++) {
-    string.indexOf(compare[i10]) > -1 ? matches += 1 : matches -= 1;
-  }
-  return query === "" ? 1 : matches / str.length;
-};
-var initialisePrompt = () => {
-  const mask = campfire_default.insert(campfire_default.nu("div#mask"), { atEndOf: document.body });
-  const prompt = campfire_default.insert(campfire_default.nu("div#prompt"), { atEndOf: mask });
-  const promptWrapper = campfire_default.insert(campfire_default.nu("div#prompt-msg-wrapper"), { atEndOf: prompt });
-  const msg = campfire_default.insert(campfire_default.nu("span#prompt-message"), { atEndOf: promptWrapper });
-  const field = campfire_default.insert(campfire_default.nu("input#prompt-field", {
-    a: { type: "text", autocomplete: "off" }
-  }), { atEndOf: promptWrapper });
-  const options = campfire_default.insert(campfire_default.nu("div#prompt-options"), { atEndOf: prompt });
-  let currentChoices = [];
-  let currIndex = -1;
-  let allowNonOptions = true;
-  let allowBlank = false;
-  let appendChoice = (choice) => {
-    options.append(campfire_default.nu(".prompt-option", {
-      c: choice,
-      a: { "data-choice": choice }
-    }));
-  };
-  const hide = () => {
-    mask.style.display = "none";
-  };
-  field.oninput = (e4) => {
-    let value = field.value.trim();
-    for (let choice of currentChoices) {
-      const elt = document.querySelector(`div[data-choice=${choice}]`);
-      if (fuzzySearch(choice, value) > 0.5) {
-        if (elt === null)
-          appendChoice(choice);
-      } else {
-        if (elt)
-          elt.remove();
-      }
-    }
-  };
-  const completePromptFlow = (value) => {
-    msg.innerHTML = "";
-    field.value = "";
-    options.innerHTML = "";
-    allowNonOptions = true;
-    allowBlank = false;
-    currentCb(value);
-    hide();
-  };
-  const setSelectedOption = (idx) => {
-    options.querySelector(`.prompt-option.selected`)?.classList.remove("selected");
-    options.querySelector(`.prompt-option:nth-child(${idx})`)?.classList.add("selected");
-  };
-  prompt.onkeydown = (e4) => {
-    if (e4.key === "ArrowDown") {
-      if (currIndex >= currentChoices.length)
-        currIndex = currentChoices.length - 1;
-      setSelectedOption(currIndex += 1);
-    } else if (e4.key === "ArrowUp") {
-      if (currIndex < 0)
-        currIndex = 0;
-      setSelectedOption(currIndex -= 1);
-    } else if (e4.key === "Enter") {
-      let value = field.value.trim();
-      let selected = document.querySelector(".prompt-option.selected")?.getAttribute("data-choice");
-      if (!allowBlank && !value && !selected)
-        return;
-      if (selected) {
-        completePromptFlow(selected);
-        return;
-      }
-      if (allowNonOptions || currentChoices.includes(value)) {
-        completePromptFlow(value);
-      }
-    }
-  };
-  const cfg = new campfire_default.Store({});
-  let currentCb = (str) => {
-  };
-  const setChoices = (choices) => {
-    currentChoices = choices;
-    options.innerHTML = "";
-    choices.forEach(appendChoice);
-  };
-  cfg.on("update", (options2) => {
-    console.log(options2);
-    msg.innerHTML = options2.message || "";
-    setChoices(options2.choices || []);
-    currentCb = options2.callback || currentCb;
-    console.log(allowBlank);
+// static/src/utils.ts
+var getConfigDir = () => i9("get_config_dir");
+var rustLog = (line) => {
+  i9("log", {
+    line
   });
-  const show = (options2) => {
-    cfg.update(options2);
-    mask.style.display = "flex";
-    field.focus();
-  };
-  return [show, hide];
 };
 
 // static/src/main.ts
+var [show, hide] = initialisePrompt();
+var configCreation = (value) => {
+  if (value === "no") {
+    show({
+      callback: () => i7(1),
+      message: "Exiting...",
+      choices: [""],
+      allowBlank: true,
+      allowNonOptions: true
+    });
+  }
+};
 window.addEventListener("DOMContentLoaded", async () => {
+  let config = null;
+  try {
+    const config2 = await z(await getConfigDir(), "config.json");
+    await rustLog(config2);
+    const contents = await o2(config2);
+    await rustLog(contents);
+  } catch (e4) {
+    show({
+      message: "Config file not found. Would you like to create one?",
+      choices: ["yes", "no"],
+      callback: configCreation,
+      allowBlank: false,
+      allowNonOptions: false
+    });
+  }
   const editorRoot = campfire_default.insert(campfire_default.nu("div#editor"), { atStartOf: document.querySelector("#app") });
   const editor = (0, import_codemirror.default)(editorRoot, {
     mode: "gfm",
     lineNumbers: true
   });
   const statusLine = campfire_default.insert(campfire_default.nu("div#statusline"), { atEndOf: editorRoot });
-  try {
-    const cfgDir = await i9("get_config_dir");
-    campfire_default.extend(statusLine, { c: `config dir: ${cfgDir}` });
-  } catch (e4) {
-    campfire_default.extend(statusLine, { c: `Error fetching config dir: ${e4}` });
-  }
-  const [show, hide] = initialisePrompt();
 });
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
