@@ -13,10 +13,11 @@ body, html {
     --color-primary: #f5f4f0;
     --color-secondary: white;
     --color-selection: rgba(255, 255, 255, 0.2);
+    --font: monospace;
 }
 
 * {
-    font-family: monospace;
+    font-family: var(--font);
 }
 
 body {
@@ -45,6 +46,7 @@ body {
     align-items: center;
     justify-content: center;
     user-select: none;
+    -webkit-user-select: none;
 }
 
 #editor>.CodeMirror {
@@ -119,4 +121,7 @@ body {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+    user-select: none;
+    cursor: default;
+    -webkit-user-select: none;
 }
