@@ -8,3 +8,4 @@
 - [] docs
 - [] syntax highlighting
 - [] Esc to close command list
+- [] toggleable line counter
