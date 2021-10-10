@@ -1,7 +1,7 @@
 import { basename } from "@tauri-apps/api/path";
 import { Editor, Position } from "codemirror";
 import { COMMANDS } from "./commands";
-import { RiteCommands, RiteFile } from "./utils";
+import { dumpJSON, RiteCommands, RiteFile, RiteSettings, setAppFont } from "./utils";
 import { parseCommand } from "./commands";
 import { parseKeybind } from "./keybinds";
 import { editorAlert, editorConfirm } from "./prompt";
@@ -37,12 +37,34 @@ const StatusLine = (parent: HTMLElement) => {
 }
 
 export class RiteEditor {
+
     currentFile: RiteFile | null = null;
     editor: Editor;
     commands: RiteCommands;
     statusLine: StatusLineControls;
     editorRoot: HTMLElement;
+    config: RiteSettings;
     dirty: boolean = true;
+    configPath: string;
+    keyDownListener: EventListener | null;
+
+    constructor(editorRoot: HTMLElement, commands: RiteCommands) {
+        this.commands = commands;
+        this.editorRoot = editorRoot;
+        this.editor = CodeMirror(editorRoot, {
+            mode: 'gfm', lineNumbers: true
+        });
+
+        this.statusLine = StatusLine(this.editorRoot);
+        this.setDirty(true);
+        this.updateFileName();
+        this.updateDocInfo();
+
+        this.editor.on('change', () => {
+            this.setDirty(true);
+
+        })
+    }
 
     setDirty(dirty: boolean) {
         this.dirty = dirty;
@@ -65,22 +87,38 @@ export class RiteEditor {
         }
     }
 
-    constructor(editorRoot: HTMLElement, commands: RiteCommands) {
-        this.commands = commands;
-        this.editorRoot = editorRoot;
-        this.editor = CodeMirror(editorRoot, {
-            mode: 'gfm', lineNumbers: true
+    async loadConfig(contents: string) {
+        const config = JSON.parse(contents) as RiteSettings;
+        await this.setConfig(config);
+    }
+
+    async updateConfig(key: string, value: any) {
+        const currentConfig = this.getConfig();
+        currentConfig[key] = value;
+        this.setConfig(currentConfig);
+    
+        return await writeFile({
+            path: this.getConfigPath(),
+            contents: dumpJSON(currentConfig)
         });
+    }
 
-        this.statusLine = StatusLine(this.editorRoot);
-        this.setDirty(true);
-        this.updateFileName();
-        this.updateDocInfo();
+    async setConfig(config: RiteSettings) {
+        this.config = config;
+        setAppFont(config.font);
+        await this.registerKeybinds(config.keybinds);
+    }
 
-        this.editor.on('change', () => {
-            this.setDirty(true);
+    getConfig() {
+        return this.config;
+    }
 
-        })
+    setConfigPath(configPath: string) {
+        this.configPath = configPath;
+    }
+
+    getConfigPath() {
+        return this.configPath;
     }
 
     loadFile(file: RiteFile) {
@@ -107,14 +145,20 @@ export class RiteEditor {
             };
         })
 
-        window.addEventListener('keyup', async (e) => {
+        if (this.keyDownListener) {
+            window.removeEventListener('keydown', this.keyDownListener);
+        }
+
+        this.keyDownListener = async (e) => {
             for (const keybind of keybinds) {
-                if (keybind.checker(e)) {
+                if (keybind.checker(<KeyboardEvent>e)) {
                     await this.execCommand(keybind.action);
                     return;
                 }
             }
-        })
+        };
+
+        window.addEventListener('keyup', this.keyDownListener);
     }
 
     async save(isSaveAs: boolean = false) {
@@ -134,7 +178,7 @@ export class RiteEditor {
         this.statusLine.setFileName(file.path);
         this.currentFile = { path: file.path, contents: this.editor.getValue() };
         this.dirty = false;
-        
+
         setTimeout(() => {
             this.setDirty(this.dirty);
         }, 5000);
@@ -149,7 +193,7 @@ export class RiteEditor {
     }
 
     async saveFile() {
-        return writeFile(this.currentFile);
+        if (this.currentFile) return writeFile(this.currentFile);
     }
 
     async close() {

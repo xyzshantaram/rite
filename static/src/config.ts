@@ -4,9 +4,9 @@ import { exit } from "@tauri-apps/api/process";
 import { RiteEditor } from "./RiteEditor";
 import { DEFAULT_KEYBINDS } from "./keybinds";
 import { editorConfirm, editorAlert, editorPrompt } from "./prompt";
-import { exists, RiteKeybind, RiteSettings, setEditorFont as setGlobalFont } from "./utils";
+import { dumpJSON, exists } from "./utils";
 
-export const createConfig = async (configPath): Promise<string> => {
+export const createConfig = async (configPath: string): Promise<string> => {
     return new Promise(async (resolve, reject) => {
         try {
             const confirm = await editorConfirm('Config file not found. Would you like to create one?');
@@ -21,7 +21,7 @@ export const createConfig = async (configPath): Promise<string> => {
             const dir = await dirname(configPath);
             if (!(await exists(dir))) await createDir(dir, { recursive: true })
 
-            const string = JSON.stringify(tmp, null, 4);
+            const string = dumpJSON(tmp);
             await writeFile({ contents: string, path: configPath })
             await editorAlert(`Saved choices to ${configPath}`);
             resolve(string);
@@ -31,9 +31,4 @@ export const createConfig = async (configPath): Promise<string> => {
             reject(e);
         }
     })
-}
-
-export const loadConfig = async (editor: RiteEditor, config: RiteSettings) => {
-    setGlobalFont(config.font);
-    await editor.registerKeybinds(config.keybinds);
 }

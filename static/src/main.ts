@@ -3,9 +3,9 @@ import { readTextFile } from '@tauri-apps/api/fs';
 import cf from 'campfire.js';
 import 'codemirror/mode/gfm/gfm';
 import { COMMANDS } from './commands';
-import { createConfig, loadConfig } from './config';
+import { createConfig } from './config';
 import { RiteEditor as RiteEditor } from './RiteEditor';
-import { getConfigPath, RiteSettings } from './utils';
+import { getConfigPath } from './utils';
 
 window.addEventListener('DOMContentLoaded', async () => {
     const editorRoot = cf.insert(
@@ -17,6 +17,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     let configPath = await getConfigPath();
     let contents = null;
+    editor.setConfigPath(configPath);
 
     try {
         contents = await readTextFile(configPath);
@@ -25,11 +26,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         contents = await createConfig(configPath);
     }
 
-    const config = JSON.parse(contents) as RiteSettings;
+    await editor.loadConfig(contents);
 
-    const unlisten = await listen('closerequest', () => {
+    await listen('closerequest', () => {
         editor.close();
     });
-
-    loadConfig(editor, config);
 })

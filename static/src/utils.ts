@@ -3,10 +3,7 @@ import { RiteEditor } from './RiteEditor';
 
 export type CommandHandler = (editor: RiteEditor, args: string) => void;
 
-export interface RiteSettings {
-    font: string,
-    keybinds: Record<string, string>
-}
+export type RiteSettings = Record<string, any>;
 
 export interface RiteKeybind {
     checker: Function,
@@ -56,10 +53,14 @@ export const exists = (path: string) => {
     });
 }
 
-export const setEditorFont = (name: string) => {
+export const setAppFont = (name: string) => {
     setCSSVar('font', name);
 }
 
 export const setCSSVar = (key: string, value: string) => {
     document.documentElement.style.setProperty(`--${key}`, value);
+}
+
+export const dumpJSON = (obj: any, indent = 4) => {
+    return JSON.stringify(obj, null, indent);
 }
