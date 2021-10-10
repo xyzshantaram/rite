@@ -17,7 +17,7 @@ export const initialisePrompt = () => {
     const mask = cf.insert(cf.nu('div#mask'), { atEndOf: document.body }) as HTMLElement;
     const prompt = cf.insert(cf.nu('div#prompt'), { atEndOf: mask }) as HTMLElement;
     const promptWrapper = cf.insert(cf.nu('div#prompt-msg-wrapper'), { atEndOf: prompt }) as HTMLElement;
-    const msg = cf.insert(cf.nu('span#prompt-message'), { atEndOf: promptWrapper }) as HTMLElement;
+    const msg = cf.insert(cf.nu('div#prompt-message'), { atEndOf: promptWrapper }) as HTMLElement;
     const field = cf.insert(
         cf.nu('input#prompt-field', {
             a: { type: 'text', autocomplete: 'off' }

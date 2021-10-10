@@ -27,26 +27,24 @@
 }
 
 #prompt-msg-wrapper {
-    align-items: center;
+    justify-content: center;
     display: flex;
     border-bottom: 2px solid var(--color-auxiliary);
-}
-
-#prompt-message::after {
-    content: ':';
+    flex-direction: column;
 }
 
 #prompt-field {
-    width: calc(100% - 1rem);
-    margin-left: 1rem;
+    width: 100%;
     height: 1rem;
     background: inherit;
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
     margin: 0;
+    margin-left: 0.25rem;
     color: inherit;
     border: none;
     outline: none;
+    font-size: inherit;
 }
 
 #prompt-field:focus, #prompt-field:active {
@@ -56,6 +54,8 @@
 #prompt-options {
     display: flex;
     flex-direction: column;
+    overflow-y: scroll;
+    height: 100%;
 }
 
 .prompt-option {
@@ -71,4 +71,6 @@
 
 #prompt-message {
     white-space: nowrap;
+    padding-left: 0.25rem;
+    padding-top: 0.25rem;
 }
