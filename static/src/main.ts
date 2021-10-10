@@ -13,12 +13,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         { atStartOf: document.querySelector('#app') }
     ) as HTMLElement;
 
-    const cmEditor = CodeMirror(editorRoot, {
-        mode: 'gfm',
-        lineNumbers: true
-    });
-
-    const editor = new EditorState(cmEditor, COMMANDS);
+    const editor = new EditorState(editorRoot, COMMANDS);
 
     let configPath = await getConfigPath();
     let contents = null;
@@ -32,9 +27,4 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     const config = JSON.parse(contents) as RiteSettings;
     loadConfig(editor, config);
-
-    const statusLine = cf.insert(
-        cf.nu('div#statusline'),
-        { atEndOf: editorRoot }
-    ) as HTMLElement;
 })

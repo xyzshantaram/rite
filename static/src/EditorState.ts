@@ -1,32 +1,87 @@
 import { basename } from "@tauri-apps/api/path";
-import { Editor } from "codemirror";
+import { Editor, Position } from "codemirror";
 import { COMMANDS } from "./commands";
-import { RiteCommands, RiteFile, RiteKeybind } from "./utils";
+import { RiteCommands, RiteFile } from "./utils";
 import { parseCommand } from "./commands";
 import { DEFAULT_KEYBINDS, parseKeybind } from "./keybinds";
-import { editorAlert, editorPrompt } from "./prompt";
+import { editorAlert } from "./prompt";
 import { dialog } from "@tauri-apps/api";
 import { writeFile } from "@tauri-apps/api/fs";
+import cf from 'campfire.js';
+import CodeMirror from "codemirror";
+
+interface StatusLineControls {
+    elem: HTMLElement;
+    setFileName: (value: string) => any;
+    setDirty: (value: string) => any;
+    setRightMost: (value: string) => any;
+}
+
+const StatusLine = (parent: HTMLElement) => {
+    const elem = cf.insert(cf.nu('div#statusline'), { atEndOf: parent }) as HTMLElement;
+    const filenameElem = cf.insert(cf.nu('div'), { atEndOf: elem }) as HTMLElement;
+    const dirtyStateElem = cf.insert(
+        cf.nu('div', {
+            s: {
+                marginLeft: '1rem',
+                fontStyle: 'italic',
+                color: 'var(--color-auxilliary)'
+            }
+        }), { atEndOf: elem }
+    ) as HTMLElement;
+
+    const rightMostElem = cf.insert(
+        cf.nu('div', {
+            s: { marginLeft: 'auto', color: 'var(--color-auxilliary)' }
+        }), { atEndOf: elem }
+    ) as HTMLElement;
+
+    const setFileName = (value: string) => cf.extend(filenameElem, { c: value });
+    const setDirty = (value: string) => cf.extend(dirtyStateElem, { c: value });
+    const setRightMost = (value: string) => cf.extend(rightMostElem, { c: value });
+
+    return { elem, setFileName, setDirty, setRightMost };
+}
 
 export class EditorState {
     currentFile: RiteFile | null = null;
     currentFileName: string | null = null;
     editor: Editor;
     commands: RiteCommands;
-    
-    constructor(editor: Editor, commands: RiteCommands) {
+    statusLine: StatusLineControls;
+    editorRoot: HTMLElement;
+    dirty: boolean = true;
+
+    constructor(editorRoot: HTMLElement, commands: RiteCommands) {
         this.commands = commands;
-        this.editor = editor;
+        this.editorRoot = editorRoot;
+        this.editor = CodeMirror(editorRoot, {
+            mode: 'gfm',
+            lineNumbers: true
+        });
+
+        this.statusLine = StatusLine(this.editorRoot);
+        this.statusLine.setDirty('*');
+        this.statusLine.setFileName('<new file>');
+
+        this.editor.on('change', () => {
+            this.dirty = true;
+            this.statusLine.setDirty('*');
+            let pos: Position = this.editor.getCursor();
+
+            this.statusLine.setRightMost(`Ln ${pos.line}, Col ${pos.ch}`)
+        })
     }
 
     async setCurrentFile(file: RiteFile) {
         this.currentFile = file;
         this.currentFileName = await basename(file.path);
         this.editor.setValue(file.contents);
+        this.statusLine.setFileName(this.currentFileName || '<new file>');
     }
 
     async execCommand(raw: string) {
-        const {cmd, args} = parseCommand(raw);
+        const { cmd, args } = parseCommand(raw);
         if (COMMANDS[cmd]) {
             COMMANDS[cmd].action(this, args);
         }
@@ -52,29 +107,26 @@ export class EditorState {
         })
     }
 
-    async save(as: string | null = null) {
+    async save(asName: string | null = null) {
+        this.statusLine.setDirty('saving...');
         let file;
-
         if (this.currentFile === null) {
-            const savePath = await dialog.save();
-            if (!savePath) {
-                await editorAlert('returning');
-                return;
-            }
-
-            file = {
-                path: savePath,
-                contents: ''
-            }
+            const savePath = asName || await dialog.save();
+            
+            if (!savePath) return;
+            file = { path: savePath, contents: '' };
         }
         else {
             file = this.currentFile;
         }
 
-        this.currentFile = {
-            path: file.path,
-            contents: this.editor.getValue()
-        };
+        this.statusLine.setFileName(file.path);
+        this.currentFile = { path: file.path, contents: this.editor.getValue() };
+        this.dirty = false;
+        
+        setTimeout(() => {
+            this.statusLine.setDirty(this.dirty ? '*' : '')
+        }, 3000);
 
         return this.saveFile();
     }
