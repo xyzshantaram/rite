@@ -27,7 +27,7 @@ const initialisePrompt = () => {
     const options = cf.insert(cf.nu('div#prompt-options',), { atEndOf: prompt }) as HTMLElement;
 
     let currentChoices: PromptChoice[] = [];
-    let currIndex = 0;
+    let currIndex = -1;
     let allowNonOptions = true;
     let allowBlank = false;
 
