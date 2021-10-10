@@ -6,3 +6,4 @@
 - [] word count
 - [] more settings
 - [] docs
+- [] syntax highlighting
