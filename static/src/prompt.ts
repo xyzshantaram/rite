@@ -178,7 +178,6 @@ const editorConfirm = (msg: string, choices = ['yes', 'no']): Promise<boolean> =
     return new Promise(async (resolve, reject) => {
         try {
             let result = await editorChoose(msg, choices);
-            console.log(result);
             resolve(result === choices[0]);
         }
         catch (e) {
