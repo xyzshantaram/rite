@@ -125,3 +125,16 @@ body {
     cursor: default;
     -webkit-user-select: none;
 }
+
+*::-webkit-scrollbar {
+    width: 8px;
+    /* width of the entire scrollbar */
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: var(--color-auxiliary);
+}
