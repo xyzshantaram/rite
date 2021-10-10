@@ -56,6 +56,7 @@
     flex-direction: column;
     overflow-y: scroll;
     height: 100%;
+    padding-left: var(--scrollbar-width);
 }
 
 .prompt-option {
@@ -75,7 +76,7 @@
 }
 
 .prompt-option.selected .prompt-option-desc {
-    color: var(--color-secondary);
+    color: var(--background-ui);
 }
 
 #prompt-message {
