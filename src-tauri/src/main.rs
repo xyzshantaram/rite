@@ -3,8 +3,11 @@
   windows_subsystem = "windows"
 )]
 
+use std::path::Path;
+use std::path::PathBuf;
+
 #[tauri::command]
-fn get_config_dir() -> std::path::PathBuf {
+fn get_config_dir() -> PathBuf {
   let key = "RITE_DIR";
 
   let mut default_path = dirs::config_dir().unwrap_or_default();
@@ -12,7 +15,7 @@ fn get_config_dir() -> std::path::PathBuf {
 
   match std::env::var_os(key) {
       Some(val) => {
-        let mut path = std::path::PathBuf::from(val);
+        let mut path = PathBuf::from(val);
         path.push("config");
         path
       }
@@ -21,14 +24,27 @@ fn get_config_dir() -> std::path::PathBuf {
 }
 
 #[tauri::command]
+fn get_config_path() -> PathBuf {
+  let mut dir = get_config_dir();
+  dir.push("config.json");
+
+  return dir;
+}
+
+#[tauri::command]
 fn log(line: String) {
   println!("{}", line);
+}
+
+#[tauri::command]
+fn dir_exists(path: PathBuf) -> bool {
+  Path::new(&path).is_dir()
 }
 
 
 fn main() {
   tauri::Builder::default()
-    .invoke_handler(tauri::generate_handler![get_config_dir, log])
+    .invoke_handler(tauri::generate_handler![get_config_dir, log, dir_exists, get_config_path])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }

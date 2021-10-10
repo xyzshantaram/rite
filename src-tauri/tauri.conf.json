@@ -54,9 +54,13 @@
             },
             "fs": {
                 "readTextFile": true,
-                "writeFile": true
+                "writeFile": true,
+                "createDir": true
             },
             "notification": {
+                "all": true
+            },
+            "path": {
                 "all": true
             }
         },
