@@ -1,10 +1,10 @@
-import { readTextFile } from '@tauri-apps/api/fs';
-import { join } from '@tauri-apps/api/path';
+import { createDir, readTextFile, writeFile } from '@tauri-apps/api/fs';
+import { dirname } from '@tauri-apps/api/path';
 import cf from 'campfire.js';
 import CodeMirror from 'codemirror';
 import 'codemirror/mode/gfm/gfm';
 import { initialisePrompt } from './prompt';
-import { getConfigDir, rustLog } from './utils';
+import { getConfigDir, rustLog, exists, getConfigPath } from './utils';
 import { exit } from '@tauri-apps/api/process';
 
 const [show, hide] = initialisePrompt();
@@ -24,8 +24,8 @@ const parseKeybind = (keybind: string, e: KeyboardEvent) => {
     return (toCheck.every((bool) => !!bool) && e.key.toLocaleLowerCase() == alpha);
 }
 
-const configCreation = (value) => {
-    if (value === "no") {
+const createConfig = async (confirm, configPath) => {
+    if (confirm === "no") {
         show({
             callback: () => exit(1),
             message: "Exiting...",
@@ -34,22 +34,42 @@ const configCreation = (value) => {
             allowNonOptions: true
         })
     }
+    const tmp: Record<string, any> = {};
+    show({
+        callback: (val) => tmp.font = val,
+        message: "Pick a font.",
+        choices: [],
+        allowBlank: true,
+        allowNonOptions: true
+    })
+
+    const dir = await dirname(configPath);
+    if (!(await exists(dir))) {
+        await createDir(dir, {
+            recursive: true
+        })
+    }
+
+    await writeFile({
+        contents: JSON.stringify(tmp),
+        path: configPath
+    })
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
+    let configPath = await getConfigPath();
     let config = null;
 
     try {
-        const config = await join(await getConfigDir(), 'config.json');
-        await rustLog(config);
-        const contents = await readTextFile(config);
-        await rustLog(contents);
+        console.log(configPath);
+        const contents = await readTextFile(configPath);
+        config = JSON.parse(contents);
     }
     catch(e) {
         show({
             message: "Config file not found. Would you like to create one?",
             choices: ["yes", "no"],
-            callback: configCreation,
+            callback: (confirm) => createConfig(confirm, configPath),
             allowBlank: false,
             allowNonOptions: false
         });
