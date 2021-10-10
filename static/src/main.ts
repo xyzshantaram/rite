@@ -2,25 +2,24 @@ import { readTextFile } from '@tauri-apps/api/fs';
 import cf from 'campfire.js';
 import CodeMirror from 'codemirror';
 import 'codemirror/mode/gfm/gfm';
+import { COMMANDS } from './commands';
 import { createConfig, loadConfig } from './config';
+import { EditorState } from './EditorState';
 import { getConfigPath, RiteSettings } from './utils';
 
-// TODO: implement surrounding code
-const parseKeybind = (keybind: string, e: KeyboardEvent) => {
-    let components = keybind.split("+");
-    let toCheck = [];
-    let alpha = components[1][0];
-
-    if (components[0].includes("C")) toCheck.push(e.ctrlKey);
-    if (components[0].includes("S")) toCheck.push(e.shiftKey);
-    if (components[0].includes("A")) toCheck.push(e.altKey);
-
-    throw new Error("Not implemented.");
-
-    return (toCheck.every((bool) => !!bool) && e.key.toLocaleLowerCase() == alpha);
-}
-
 window.addEventListener('DOMContentLoaded', async () => {
+    const editorRoot = cf.insert(
+        cf.nu('div#editor'),
+        { atStartOf: document.querySelector('#app') }
+    ) as HTMLElement;
+
+    const cmEditor = CodeMirror(editorRoot, {
+        mode: 'gfm',
+        lineNumbers: true
+    });
+
+    const editor = new EditorState(cmEditor, COMMANDS);
+
     let configPath = await getConfigPath();
     let contents = null;
 
@@ -30,19 +29,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     catch (e) {
         contents = await createConfig(configPath);
     }
-    
+
     const config = JSON.parse(contents) as RiteSettings;
-    loadConfig(config);
-
-    const editorRoot = cf.insert(
-        cf.nu('div#editor'),
-        { atStartOf: document.querySelector('#app') }
-    ) as HTMLElement;
-
-    const editor = CodeMirror(editorRoot, {
-        mode: 'gfm',
-        lineNumbers: true
-    });
+    loadConfig(editor, config);
 
     const statusLine = cf.insert(
         cf.nu('div#statusline'),
