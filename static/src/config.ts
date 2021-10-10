@@ -1,7 +1,7 @@
 import { createDir, writeFile } from "@tauri-apps/api/fs";
 import { dirname } from "@tauri-apps/api/path";
 import { exit } from "@tauri-apps/api/process";
-import { EditorState } from "./EditorState";
+import { RiteEditor } from "./RiteEditor";
 import { DEFAULT_KEYBINDS } from "./keybinds";
 import { editorConfirm, editorAlert, editorPrompt } from "./prompt";
 import { exists, RiteKeybind, RiteSettings, setEditorFont as setGlobalFont } from "./utils";
@@ -33,7 +33,7 @@ export const createConfig = async (configPath): Promise<string> => {
     })
 }
 
-export const loadConfig = async (state: EditorState, config: RiteSettings) => {
+export const loadConfig = async (editor: RiteEditor, config: RiteSettings) => {
     setGlobalFont(config.font);
-    await state.registerKeybinds(config.keybinds);
+    await editor.registerKeybinds(config.keybinds);
 }

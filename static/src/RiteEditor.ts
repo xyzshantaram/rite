@@ -102,7 +102,7 @@ export class RiteEditor {
 
     async save(asName: string | null = null) {
         this.statusLine.setDirty('saving...');
-        let file;
+        let file: RiteFile;
         if (this.currentFile === null) {
             const savePath = asName || await dialog.save();
             
