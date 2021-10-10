@@ -1,11 +1,11 @@
 import cf from 'campfire.js';
-import { promptArgs } from './utils';
+import { PromptArgs, PromptChoice } from './utils';
 
-const fuzzySearch = (str, query) => {
+const fuzzySearch = (str, query): number => {
     var string = str.toLowerCase();
     var compare = query.toLowerCase();
     var matches = 0;
-    if (string.indexOf(compare) > -1) return true; // covers basic partial matches
+    if (string.indexOf(compare) > -1) return 1; // covers basic partial matches
     for (var i = 0; i < compare.length; i++) {
         string.indexOf(compare[i]) > -1 ? matches += 1 : matches -= 1;
     }
@@ -27,15 +27,17 @@ const initialisePrompt = () => {
 
     const options = cf.insert(cf.nu('div#prompt-options',), { atEndOf: prompt }) as HTMLElement;
 
-    let currentChoices: string[] = [];
+    let currentChoices: PromptChoice[] = [];
     let currIndex = -1;
     let allowNonOptions = true;
     let allowBlank = false;
 
-    let appendChoice = (choice) => {
+    let appendChoice = (choice: PromptChoice) => {
         options.append(cf.nu('.prompt-option', {
-            c: choice,
-            a: { 'data-choice': choice }
+            c: `<span class='prompt-option-name'>${choice.title}</span>
+            ${choice.description ? `<span class='prompt-option-desc'>${choice.description}</span>` : ''}`,
+            a: { 'data-choice': choice.title },
+            raw: true
         }))
     }
 
@@ -47,6 +49,7 @@ const initialisePrompt = () => {
         let value = field.value.trim();
 
         for (let choice of currentChoices) {
+            console.log(`div[data-choice=${choice}]`);
             const elt = document.querySelector(`div[data-choice=${choice}]`);
             if (fuzzySearch(choice, value) > 0.5) {
                 if (elt === null) appendChoice(choice);
@@ -93,7 +96,7 @@ const initialisePrompt = () => {
                 return;
             }
 
-            if (allowNonOptions || currentChoices.includes(value)) {
+            if (allowNonOptions || Object.values(currentChoices).some(elem => elem.title === value)) {
                 completePromptFlow(value);
             }
         }
@@ -101,13 +104,13 @@ const initialisePrompt = () => {
 
     let currentCb: Function = (str) => { };
 
-    const setChoices = (choices) => {
+    const setChoices = (choices: PromptChoice[]) => {
         currentChoices = choices;
         options.innerHTML = '';
         choices.forEach(appendChoice);
     }
 
-    const show = (options: promptArgs) => {
+    const show = (options: PromptArgs) => {
         msg.innerHTML = <string>options.message || "";
         setChoices(options.choices || []);
         currentCb = <Function>options.callback || currentCb;
@@ -156,7 +159,7 @@ const editorPrompt = (msg: string, allowBlank = false): Promise<string> => {
     })
 }
 
-const editorChoose = (msg: string, choices: string[]): Promise<string> => {
+const editorChoose = (msg: string, choices: PromptChoice[]): Promise<string> => {
     return new Promise((resolve, reject) => {
         try {
             show({
@@ -174,11 +177,11 @@ const editorChoose = (msg: string, choices: string[]): Promise<string> => {
     })
 }
 
-const editorConfirm = (msg: string, choices = ['yes', 'no']): Promise<boolean> => {
+const editorConfirm = (msg: string, choices: PromptChoice[] = [{title: 'yes'}, {title: 'no'}]): Promise<boolean> => {
     return new Promise(async (resolve, reject) => {
         try {
             let result = await editorChoose(msg, choices);
-            resolve(result === choices[0]);
+            resolve(result === choices[0].title);
         }
         catch (e) {
             reject(e);
