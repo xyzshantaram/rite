@@ -1,7 +1,7 @@
 import cf from 'campfire.js';
 import { PromptArgs, PromptChoice } from './utils';
 
-const fuzzySearch = (str, query): number => {
+const fuzzySearch = (str: string, query: string): number => {
     var string = str.toLowerCase();
     var compare = query.toLowerCase();
     var matches = 0;
@@ -51,7 +51,7 @@ const initialisePrompt = () => {
         for (let choice of currentChoices) {
             console.log(`div[data-choice=${choice.title}]`);
             const elt = document.querySelector(`div[data-choice=${choice.title}]`);
-            if (fuzzySearch(choice, value) > 0.5) {
+            if (fuzzySearch(choice.title, value) > 0.5) {
                 if (elt === null) appendChoice(choice);
             }
             else {
@@ -60,7 +60,7 @@ const initialisePrompt = () => {
         }
     }
 
-    const completePromptFlow = (value) => {
+    const completePromptFlow = (value: string) => {
         msg.innerHTML = '';
         field.value = '';
         options.innerHTML = '';
@@ -70,7 +70,7 @@ const initialisePrompt = () => {
         currentCb(value);
     }
 
-    const setSelectedOption = (idx) => {
+    const setSelectedOption = (idx: number) => {
         options.querySelector(`.prompt-option.selected`)?.classList.remove('selected');
         options.querySelector(`.prompt-option:nth-child(${idx})`)?.classList.add('selected');
     }
