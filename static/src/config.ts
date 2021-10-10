@@ -21,7 +21,7 @@ export const createConfig = async (configPath): Promise<string> => {
             const dir = await dirname(configPath);
             if (!(await exists(dir))) await createDir(dir, { recursive: true })
 
-            const string = JSON.stringify(tmp);
+            const string = JSON.stringify(tmp, null, 4);
             await writeFile({ contents: string, path: configPath })
             await editorAlert(`Saved choices to ${configPath}`);
             resolve(string);
