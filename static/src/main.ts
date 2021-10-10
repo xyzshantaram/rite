@@ -10,7 +10,7 @@ import { getConfigPath } from './utils';
 window.addEventListener('DOMContentLoaded', async () => {
     const editorRoot = cf.insert(
         cf.nu('div#editor'),
-        { atStartOf: document.querySelector('#app') }
+        { atStartOf: document.querySelector('#app') as HTMLElement }
     ) as HTMLElement;
 
     const editor = new RiteEditor(editorRoot, COMMANDS);
