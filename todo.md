@@ -1,0 +1,8 @@
+- [] tutorial
+- [] command palette stuff
+- [] about menu
+- [] pdf export
+- [] other kinds of export? (html, gist, rentry?)
+- [] word count
+- [] more settings
+- [] docs
