@@ -11,7 +11,7 @@ export const createConfig = async (configPath: string): Promise<string> => {
         try {
             const confirm = await editorConfirm('Config file not found. Would you like to create one?');
 
-            if (!confirm) await editorAlert('Exiting...', () => exit(1));
+            if (!confirm) await editorAlert('Exiting...', async () => await exit(1));
 
             const tmp: Record<string, any> = {
                 font: await editorPrompt('Pick a font.'),
