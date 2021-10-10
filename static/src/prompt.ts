@@ -98,7 +98,6 @@ export const initialisePrompt = () => {
         }
     }
 
-    const cfg = new cf.Store({});
     let currentCb: Function = (str) => { };
 
     const setChoices = (choices) => {
@@ -107,16 +106,11 @@ export const initialisePrompt = () => {
         choices.forEach(appendChoice);
     }
 
-    cfg.on("update", (options: Record<string, unknown>) => {
-        console.log(options);
+    const show = (options: Record<string, string | Function>) => {
         msg.innerHTML = <string>options.message || "";
         setChoices(options.choices || []);
         currentCb = <Function>options.callback || currentCb;
         console.log(allowBlank);
-    })
-
-    const show = (options: Record<string, string>) => {
-        cfg.update(options);
         mask.style.display = 'flex';
         field.focus();
     }
