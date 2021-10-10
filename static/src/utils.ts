@@ -19,7 +19,7 @@ export interface PromptArgs {
     message: string,
     choices: PromptChoice[],
     callback: Function,
-    allowBlank?: boolean,
+    allowEmpty?: boolean,
     allowNonOptions?: boolean
 }
 

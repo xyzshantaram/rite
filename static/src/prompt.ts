@@ -29,7 +29,7 @@ const initialisePrompt = () => {
     let currentChoices: PromptChoice[] = [];
     let currIndex = -1;
     let allowNonOptions = true;
-    let allowBlank = false;
+    let allowEmpty = false;
 
     let appendChoice = (choice: PromptChoice) => {
         options.append(cf.nu('.prompt-option', {
@@ -52,7 +52,7 @@ const initialisePrompt = () => {
         field.value = '';
         options.innerHTML = '';
         allowNonOptions = true;
-        allowBlank = false;
+        allowEmpty = false;
         mask.style.display = 'none';
     }
 
@@ -90,7 +90,7 @@ const initialisePrompt = () => {
         let value = field.value.trim();
         let selected = document.querySelector('.prompt-option.selected')?.getAttribute('data-choice');
 
-        if (!allowBlank && !value && !selected) return;
+        if (!allowEmpty && !value && !selected) return;
 
         if (selected) {
             completePromptFlow(selected);
@@ -135,7 +135,7 @@ const initialisePrompt = () => {
         msg.innerHTML = <string>options.message || "";
         setChoices(options.choices || []);
         currentCb = <Function>options.callback || currentCb;
-        allowBlank = options.allowBlank || false;
+        allowEmpty = options.allowEmpty || false;
         allowNonOptions = options.allowNonOptions || true;
         mask.style.display = 'flex';
         field.focus();
@@ -152,7 +152,7 @@ const editorAlertFatal = (msg: string): Promise<void> => {
             message: msg,
             choices: [],
             callback: (_: any) => void(0),
-            allowBlank: false,
+            allowEmpty: false,
             allowNonOptions: false
         })
 
@@ -170,7 +170,7 @@ const editorAlert = (msg: string, callback: Function = () => {}): Promise<void> 
                     callback();
                     resolve();
                 },
-                allowBlank: true,
+                allowEmpty: true,
                 allowNonOptions: true
             })
         }
@@ -181,7 +181,7 @@ const editorAlert = (msg: string, callback: Function = () => {}): Promise<void> 
     })
 }
 
-const editorPrompt = (msg: string, allowBlank = false): Promise<string> => {
+const editorPrompt = (msg: string, allowEmpty = false): Promise<string> => {
     return new Promise((resolve, reject) => {
         try {
             show({
@@ -197,15 +197,15 @@ const editorPrompt = (msg: string, allowBlank = false): Promise<string> => {
     })
 }
 
-const editorChoose = (msg: string, choices: PromptChoice[]): Promise<string> => {
+const editorChoose = (msg: string, choices: PromptChoice[], nonOptions = false): Promise<string> => {
     return new Promise((resolve, reject) => {
         try {
             show({
                 message: msg,
                 choices: choices,
                 callback: (val: string) => resolve(val),
-                allowBlank: false,
-                allowNonOptions: false
+                allowEmpty: false,
+                allowNonOptions: nonOptions
             })
         }
 
