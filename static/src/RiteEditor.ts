@@ -142,8 +142,8 @@ export class RiteEditor {
             Object.assign(newKeyBinds, config.keybinds);
             config.keybinds = newKeyBinds;
         }
-
         await this.setConfig(config);
+        await this.dumpConfig();
     }
 
     async dumpConfig() {
@@ -281,12 +281,6 @@ export class RiteEditor {
     }
 
     async close() {
-        try {
-            await this.dumpConfig();
-        }
-        catch (e) {
-            await editorAlert(`Error saving config: ${e}`);
-        }
         if (this.dirty) {
             if (await editorConfirm('Are you sure you want to exit? Changes you made have not been saved.')) {
                 await exit(1);
