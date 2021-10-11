@@ -179,7 +179,7 @@ const editorAlert = (msg: string, callback: Function = () => {}): Promise<void> 
         try {
             show({
                 message: msg,
-                choices: [],
+                choices: toChoices(['okay']),
                 callback: (_: any) => {
                     callback();
                     resolve();
