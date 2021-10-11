@@ -181,7 +181,7 @@ export class RiteEditor {
         }
 
         if (config.fontSize) {
-            setCSSVar('font-size', config.fontSize);
+            setCSSVar('font-size', config.fontSize + 'px');
         }
     }
 
