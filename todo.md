@@ -7,3 +7,4 @@
 - [] docs
 - [] syntax highlighting for Marked
 - [] command line interface
+- [] dirty state fixes
