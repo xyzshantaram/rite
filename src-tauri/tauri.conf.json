@@ -12,8 +12,8 @@
     "tauri": {
         "bundle": {
             "active": true,
-            "targets": "all",
-            "identifier": "com.tauri.dev",
+            "targets": ["msi", "appimage", "dmg", "app"],
+            "identifier": "xyz.shantaram.rite",
             "icon": [
                 "icons/32x32.png",
                 "icons/128x128.png",
@@ -22,15 +22,10 @@
                 "icons/icon.ico"
             ],
             "resources": [],
-            "externalBin": [],
-            "copyright": "",
-            "category": "DeveloperTool",
-            "shortDescription": "",
+            "copyright": "Copyright 2021 Siddharth Singh, The MIT License",
+            "category": "Utility",
+            "shortDescription": "A distraction-free markdown text editor.",
             "longDescription": "",
-            "deb": {
-                "depends": [],
-                "useBootstrapper": false
-            },
             "macOS": {
                 "frameworks": [],
                 "minimumSystemVersion": "",
