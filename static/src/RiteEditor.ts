@@ -1,7 +1,7 @@
 import { basename } from "@tauri-apps/api/path";
 import { Editor, Position } from "codemirror";
 import { COMMANDS } from "./commands";
-import { dumpJSON, RiteCommands, RiteFile, RiteSettings, setAppFont } from "./utils";
+import { dumpJSON, RiteCommands, RiteFile, RiteSettings, setAppFont, setCSSVar } from "./utils";
 import { parseCommand } from "./commands";
 import { DEFAULT_KEYBINDS, parseKeybind } from "./keybinds";
 import { editorAlert, editorAlertFatal, editorConfirm } from "./prompt";
@@ -57,7 +57,7 @@ export class RiteEditor {
         this.commands = commands;
         this.editorRoot = editorRoot;
         this.editor = CodeMirror(editorRoot, {
-            mode: 'gfm', lineNumbers: true
+            mode: 'gfm', lineNumbers: true, lineWrapping: true
         });
 
         this.statusLine = StatusLine(this.editorRoot);
@@ -128,7 +128,7 @@ export class RiteEditor {
     async loadConfig(contents: string) {
         const config = JSON.parse(contents) as RiteSettings;
 
-        if (Object.keys(config.keybinds).length !== Object.keys(DEFAULT_KEYBINDS).length) {
+        if (Object.keys(config.keybinds).length < Object.keys(DEFAULT_KEYBINDS).length) {
             const newKeyBinds = {...DEFAULT_KEYBINDS};
             Object.assign(newKeyBinds, config.keybinds);
             config.keybinds = newKeyBinds;
@@ -148,7 +148,7 @@ export class RiteEditor {
         const currentConfig = this.getConfig();
         currentConfig[key] = value;
         this.setConfig(currentConfig);
-        await this.dumpConfig;
+        await this.dumpConfig();
     }
 
     async setConfig(config: RiteSettings) {
@@ -156,6 +156,17 @@ export class RiteEditor {
         setAppFont(config.font);
         await this.registerKeybinds(config.keybinds);
         this.editor.setOption('lineNumbers', config.lineNumbers);
+        const editorElem = this.editorRoot.querySelector('.CodeMirror') as HTMLElement;
+        if (config.portraitMode) {
+            editorElem.style.maxWidth = '100ch';
+        }
+        else {
+            editorElem.style.maxWidth = '100%';
+        }
+
+        if (config.fontSize) {
+            setCSSVar('font-size', config.fontSize);
+        }
     }
 
     getConfig() {

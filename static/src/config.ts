@@ -10,7 +10,11 @@ interface PromptDescription {
     message: string,
     choices?: PromptChoice[]
     allowEmpty?: boolean,
-    allowNonOptions?: boolean
+    allowNonOptions?: boolean,
+    validate?: {
+        re: RegExp,
+        msg: string
+    }
 }
 
 
@@ -19,10 +23,16 @@ const promptFromDescription = async (desc: PromptDescription) => {
         return await editorChoose(desc.message, desc.choices || [], desc.allowNonOptions);
     }
     else if (desc.type === 'confirm') {
-        return await editorConfirm(desc.message);
+        return await editorConfirm(desc.message, desc.choices || [{ title: 'yes' }, { title: 'no' }]);
     }
     else {
-        return await editorPrompt(desc.message, desc.allowEmpty);
+        let answer = await editorPrompt(desc.message, desc.allowEmpty);
+        if (desc.validate) {
+            if (!desc.validate.re.test(answer)) {
+                await editorAlert(`Incorrect format for answer. ${desc.validate.msg}`)
+                answer = await editorPrompt(desc.message, desc.allowEmpty);
+            }
+        }
     }
 }
 
@@ -36,10 +46,23 @@ export const MODIFIABLE_SETTINGS: Record<string, PromptDescription> = {
     lineNumbers: {
         type: 'confirm',
         message: 'Enable line numbers?'
+    },
+    fontSize: {
+        type: 'prompt',
+        message: 'Pick a font size (in pixels): ',
+        validate: {
+            re: /^\d+$/,
+            msg: 'You must enter only numbers!'
+        }
+    },
+    portraitMode: {
+        type: 'confirm',
+        message: 'Editor orientation? ',
+        choices: [{ title: 'portrait' }, { title: 'landscape' }]
     }
 }
 
-const defaultConfig = (): Promise<Record<string,any>> => {
+const defaultConfig = (): Promise<Record<string, any>> => {
     return new Promise(async (resolve, reject) => {
         const tmp: Record<string, any> = {
             keybinds: DEFAULT_KEYBINDS
@@ -62,17 +85,17 @@ export const createConfig = async (configPath: string): Promise<string> => {
         try {
             const confirm = await editorConfirm('Config file not found. Would you like to create one?');
             if (!confirm) await editorAlert('Exiting...', async () => await exit(1));
-            
+
             const tmp = await defaultConfig();
             const dir = await dirname(configPath);
-            
+
             if (!(await exists(dir))) await createDir(dir, { recursive: true })
-            
+
             const string = dumpJSON(tmp);
-            
+
             await writeFile({ contents: string, path: configPath })
             await editorAlert(`Saved choices to ${configPath}`);
-            
+
             resolve(string);
         }
 
