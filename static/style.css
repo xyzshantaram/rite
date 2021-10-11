@@ -5,6 +5,10 @@ body, html {
     margin: 0;
 }
 
+html {
+    font-size: var(--font-size, 1rem);
+}
+
 :root {
     --background-ui: #202020;
     --background-root: #101010;
@@ -154,7 +158,6 @@ body {
 
 #statusline {
     height: 1.2rem;
-    max-width: 100ch;
     color: var(--color-auxiliary);
     width: 100%;
     background: var(--background-ui);
