@@ -1,8 +1,8 @@
 name: "Publish release"
-on: 
+on:
     push:
         branches:
-        - release
+            - release
 
 jobs:
     publish-tauri:
@@ -24,19 +24,24 @@ jobs:
                   toolchain: stable
             - name: install tauri bundler
               run: cargo install tauri-bundler --force
-            - name: install webkit2gtk (ubuntu only)
+            - name: install webkit2gtk on Ubuntu runners
               if: matrix.platform == 'ubuntu-latest'
               run: |
                   sudo apt-get update
                   sudo apt-get install -y webkit2gtk-4.0
-            - name: install app dependencies and build it
+            - name: install dependencies and build app
               run: yarn && yarn tauri build
             - uses: tauri-apps/tauri-action@v0
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
-                  tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
-                  releaseName: "rite v__VERSION__"
-                  releaseBody: "# rite v__VERSION__:\n See the assets to download and install this version."
-                  releaseDraft: true
-                  prerelease: false
+                    tagName: rite-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
+                    releaseName: "rite v__VERSION__"
+                    releaseBody: "# rite v__VERSION__:\n See the assets to download and install this version. 
+                        Note that Windows users will need to have 
+                        [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
+                        installed.
+                        Additionally, the macOS build currently does not work on systems other than
+                        Big Sur."
+                    releaseDraft: true
+                    prerelease: false
