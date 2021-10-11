@@ -122,7 +122,6 @@ const initialisePrompt = () => {
             e.preventDefault();
         }
         if (e.key === 'ArrowDown') {
-            console.log(currIndex);
             setSelectedIdx(currIndex++);
             field.focus();
         }
