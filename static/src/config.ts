@@ -34,6 +34,7 @@ export const requestSetting = async (desc: Setting) => {
                 answer = await editorPrompt(desc.message, desc.allowEmpty);
             }
         }
+        return answer;
     }
 }
 

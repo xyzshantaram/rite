@@ -3,8 +3,6 @@
 - [] pdf export
 - [] other kinds of export? (html, gist, rentry?)
 - [] word count
-- [] more settings
+- [] color scheme configurator
 - [] docs
 - [] syntax highlighting for Marked
-- [] settings menu
-- [] create choices from string list
