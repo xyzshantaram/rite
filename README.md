@@ -11,6 +11,15 @@ Feel free to open an issue on the [issues](issues) page.
 
 ### Usage
 
+#### Preliminary
+
+Windows users will need to have
+[WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
+installed.
+
+Additionally, the macOS build currently does not work on systems other than Big
+Sur.
+
 - Download the latest release from the
   [Releases](https://github.com/xyzshantaram/rite/releases) page.
 - Install it the way you usually would for your operating system (the AppImage
@@ -39,4 +48,5 @@ Feel free to open an issue on the [issues](issues) page.
   Copyright © 2017 by [Marijn Haverbeke](mailto:marijnh@gmail.com) and others
 - rite is built with [tauri](tauri.studio). Tauri code is used under the terms
   of the MIT license.
-- fuzzySearch in prompt.ts is based on `https://stackoverflow.com/a/39905590/16595846`.
+- fuzzySearch in prompt.ts is based on
+  `https://stackoverflow.com/a/39905590/16595846`.

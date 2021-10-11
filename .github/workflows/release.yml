@@ -37,10 +37,14 @@ jobs:
               with:
                     tagName: rite-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
                     releaseName: "rite v__VERSION__"
-                    releaseBody: "# rite v__VERSION__:\n See the assets to download and install this version. 
+                    releaseBody: "# rite v__VERSION__:\nSee the assets to download and install this version. 
+
+                    
                         Note that Windows users will need to have 
                         [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
                         installed.
+
+                        
                         Additionally, the macOS build currently does not work on systems other than
                         Big Sur."
                     releaseDraft: true
