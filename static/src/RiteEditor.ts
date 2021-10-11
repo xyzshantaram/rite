@@ -3,13 +3,18 @@ import { Editor, Position } from "codemirror";
 import { COMMANDS } from "./commands";
 import { dumpJSON, RiteCommands, RiteFile, RiteSettings, setAppFont } from "./utils";
 import { parseCommand } from "./commands";
-import { parseKeybind } from "./keybinds";
+import { DEFAULT_KEYBINDS, parseKeybind } from "./keybinds";
 import { editorAlert, editorAlertFatal, editorConfirm } from "./prompt";
 import { dialog, path } from "@tauri-apps/api";
 import { writeFile } from "@tauri-apps/api/fs";
-import cf from 'campfire.js';
+import cf, { insert } from 'campfire.js';
 import CodeMirror from "codemirror";
 import { exit } from "@tauri-apps/api/process";
+import 'codemirror/addon/dialog/dialog';
+import 'codemirror/addon/search/searchcursor';
+import 'codemirror/addon/search/search';
+import 'codemirror/addon/search/jump-to-line';
+import { WindowManager } from "@tauri-apps/api/window";
 
 interface StatusLineControls {
     elem: HTMLElement;
@@ -37,7 +42,6 @@ const StatusLine = (parent: HTMLElement) => {
 }
 
 export class RiteEditor {
-
     currentFile: RiteFile | null = null;
     editor: Editor;
     commands: RiteCommands;
@@ -47,6 +51,7 @@ export class RiteEditor {
     dirty: boolean = true;
     configPath: string;
     keyDownListener: EventListener | null;
+    currentPos: Position;
 
     constructor(editorRoot: HTMLElement, commands: RiteCommands) {
         this.commands = commands;
@@ -63,6 +68,40 @@ export class RiteEditor {
         this.editor.on('change', () => {
             this.setDirty(true);
         })
+    }
+
+    insertAround(start: string, end: string = start) {
+        var doc = this.editor.getDoc();
+        var cursor = doc.getCursor();
+
+        if (doc.somethingSelected()) {
+            var selection = doc.getSelection();
+            doc.replaceSelection(start + selection + end);
+        } else {
+            doc.replaceRange(start + end, {line: cursor.line, ch: cursor.ch});
+            doc.setCursor({line: cursor.line, ch: cursor.ch + start.length});
+        }
+    }
+
+    insertBefore (insertion: string, cursorOffset = insertion.length) {
+        var doc = this.editor.getDoc();
+        var cursor = doc.getCursor();
+
+        if (doc.somethingSelected()) {
+            var selections = doc.listSelections();
+            selections.forEach((selection) => {
+                var pos = [selection.head.line, selection.anchor.line].sort();
+
+                for (var i = pos[0]; i <= pos[1]; i++) {
+                    doc.replaceRange(insertion, {line: i, ch: 0});
+                }
+
+                doc.setCursor({line: pos[0], ch: cursorOffset || 0});
+            });
+        } else {
+            doc.replaceRange(insertion, {line: cursor.line, ch: 0});
+            doc.setCursor({line: cursor.line, ch: cursorOffset || 0});
+        }
     }
 
     setDirty(dirty: boolean) {
@@ -88,18 +127,28 @@ export class RiteEditor {
 
     async loadConfig(contents: string) {
         const config = JSON.parse(contents) as RiteSettings;
+
+        if (Object.keys(config.keybinds).length !== Object.keys(DEFAULT_KEYBINDS).length) {
+            const newKeyBinds = {...DEFAULT_KEYBINDS};
+            Object.assign(newKeyBinds, config.keybinds);
+            config.keybinds = newKeyBinds;
+        }
+
         await this.setConfig(config);
+    }
+
+    async dumpConfig() {
+        return await writeFile({
+            path: this.getConfigPath(),
+            contents: dumpJSON(this.config)
+        });
     }
 
     async updateConfig(key: string, value: any) {
         const currentConfig = this.getConfig();
         currentConfig[key] = value;
         this.setConfig(currentConfig);
-    
-        return await writeFile({
-            path: this.getConfigPath(),
-            contents: dumpJSON(currentConfig)
-        });
+        await this.dumpConfig;
     }
 
     async setConfig(config: RiteSettings) {
@@ -131,6 +180,9 @@ export class RiteEditor {
         const { cmd, args } = parseCommand(raw);
         if (COMMANDS[cmd]) {
             COMMANDS[cmd].action(this, args);
+        }
+        else if (cmd === '') {
+            return;
         }
         else {
             await editorAlert('Unknown command');
@@ -199,6 +251,12 @@ export class RiteEditor {
     }
 
     async close() {
+        try {
+            await this.dumpConfig();
+        }
+        catch (e) {
+            await editorAlert(`Error saving config: ${e}`);
+        }
         if (this.dirty) {
             if (await editorConfirm('Are you sure you want to exit? Changes you made have not been saved.')) {
                 await exit(1);

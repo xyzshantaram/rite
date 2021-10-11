@@ -50,7 +50,7 @@ export const parseCommand = (command: string) => {
 const openPalette = async (editor: RiteEditor) => {
     const choices: PromptChoice[] = [];
     for (const cmd in COMMANDS) {
-        if (!COMMANDS[cmd].nonPalette) {
+        if (COMMANDS[cmd].palette) {
             choices.push({
                 title: cmd,
                 description: COMMANDS[cmd].description
@@ -68,15 +68,52 @@ export const saveFile = async (editor: RiteEditor) => {
 export const COMMANDS: RiteCommands = {
     "openFile": {
         action: openFileCommand,
-        description: "Open a file."
+        description: "Open a file.",
+        palette: true
     },
     "openPalette": {
-        nonPalette: true,
         action: openPalette,
         description: "Show the palette."
     },
     "saveCurrentFile": {
         action: saveFile,
-        description: "Save current file."
+        description: "Save current file.",
+        palette: true
+    },
+    "markRangeItalic": {
+        action: (state) => state.insertAround('*'),
+        description: "Mark the current editor selection as italic."
+    },
+    "markRangeBold": {
+        action: (state) => state.insertAround('**'),
+        description: "Mark the current editor selection as bold."
+    },
+    "markRangeDeleted": {
+        action: (state) => state.insertAround('~~'),
+        description: "Mark the current editor selection as being struck through."
+    },
+    "markRangeH1": {
+        action: (state) => state.insertBefore('# ', 2),
+        description: "Mark the current editor selection as an <h1>."
+    },
+    "markRangeH2": {
+        action: (state) => state.insertBefore('## ', 3),
+        description: "Mark the current editor selection as an <h2>."
+    },
+    "markRangeH3": {
+        action: (state) => state.insertBefore('### ', 4),
+        description: "Mark the current editor selection as an <h3>."
+    },
+    "markRangeH4": {
+        action: (state) => state.insertBefore('#### ', 5),
+        description: "Mark the current editor selection as an <h4>."
+    },
+    "markRangeH5": {
+        action: (state) => state.insertBefore('##### ', 6),
+        description: "Mark the current editor selection as an <h5>."
+    },
+    "markRangeH6": {
+        action: (state) => state.insertBefore('###### ', 7),
+        description: "Mark the current editor selection as an <h6>."
     }
 }

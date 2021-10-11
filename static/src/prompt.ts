@@ -34,7 +34,7 @@ const initialisePrompt = () => {
     let appendChoice = (choice: PromptChoice) => {
         options.append(cf.nu('.prompt-option', {
             c: `<span class='prompt-option-name'>${choice.title}</span>
-            ${choice.description ? `<span class='prompt-option-desc'>${choice.description}</span>` : ''}`,
+            ${choice.description ? `<span class='prompt-option-desc'>${cf.escape(choice.description)}</span>` : ''}`,
             a: { 'data-choice': choice.title },
             on: {
                 click: function(e) {
@@ -54,6 +54,9 @@ const initialisePrompt = () => {
         allowNonOptions = true;
         allowEmpty = false;
         mask.style.display = 'none';
+        currIndex = 1;
+
+        window.dispatchEvent(new Event('rite-prompt-hide'));
     }
 
     field.oninput = (e) => {
@@ -82,6 +85,7 @@ const initialisePrompt = () => {
     const setSelectedOption = (choice: HTMLElement) => {
         options.querySelector(`.prompt-option.selected`)?.classList.remove('selected');
         choice.classList.add('selected');
+        choice.scrollIntoView(false);
         field.value = choice.getAttribute('data-choice')!;
     }
 
@@ -138,6 +142,7 @@ const initialisePrompt = () => {
         allowNonOptions = options.allowNonOptions || true;
         mask.style.display = 'flex';
         field.focus();
+        window.dispatchEvent(new Event('rite-prompt-show'));
     }
 
     return [show, hide];

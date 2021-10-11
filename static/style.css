@@ -66,6 +66,10 @@ body {
     font-size: 1rem;
 }
 
+.CodeMirror-dialog .CodeMirror-search-field {
+    font: var(--font);
+}
+
 .CodeMirror-gutters {
     border-right-color: var(--color-auxiliary);
 }

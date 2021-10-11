@@ -31,7 +31,7 @@ export interface PromptChoice {
 export interface RiteCommand {
     description: string,
     action: CommandHandler,
-    nonPalette?: boolean
+    palette?: boolean
 }
 
 export interface RiteCommands {
