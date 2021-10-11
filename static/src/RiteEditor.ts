@@ -203,9 +203,9 @@ export class RiteEditor {
         this.updateFileName();
     }
 
-    async execCommand(raw: string) {
+    async execCommand(raw: string, source: 'palette' | 'keybind') {
         const { cmd, args } = parseCommand(raw);
-        if (COMMANDS[cmd]) {
+        if (COMMANDS[cmd] && ((COMMANDS[cmd].palette && source === 'palette') || source === 'keybind')) {
             COMMANDS[cmd].action(this, args);
         }
         else if (cmd === '') {
@@ -221,7 +221,7 @@ export class RiteEditor {
 
         for (const keybind of this.keybinds) {
             if (keybind.checker(e)) {
-                await this.execCommand(keybind.action);
+                await this.execCommand(keybind.action, 'keybind');
                 return;
             }
         }
