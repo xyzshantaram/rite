@@ -10,10 +10,6 @@ import { writeFile } from "@tauri-apps/api/fs";
 import cf from 'campfire.js';
 import CodeMirror from "codemirror";
 import { exit } from "@tauri-apps/api/process";
-import 'codemirror/addon/dialog/dialog';
-import 'codemirror/addon/search/searchcursor';
-import 'codemirror/addon/search/search';
-import 'codemirror/addon/search/jump-to-line';
 
 interface StatusLineControls {
     elem: HTMLElement;

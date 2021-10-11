@@ -7,6 +7,11 @@ import { createConfig } from './config';
 import { RiteEditor as RiteEditor } from './RiteEditor';
 import { getConfigPath } from './utils';
 
+import 'codemirror/addon/dialog/dialog';
+import 'codemirror/addon/search/searchcursor';
+import 'codemirror/addon/search/search';
+import 'codemirror/addon/search/jump-to-line';
+
 window.addEventListener('DOMContentLoaded', async () => {
     const editorRoot = cf.insert(
         cf.nu('div#editor'),
