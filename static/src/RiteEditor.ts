@@ -63,6 +63,7 @@ export class RiteEditor {
 
         this.editor.on('change', () => {
             this.setDirty(true);
+            this.updateDocInfo();
         })
 
         window.addEventListener('rite-prompt-show', () => {
