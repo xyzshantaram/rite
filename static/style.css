@@ -96,7 +96,7 @@ body {
     color: var(--color-primary);
 }
 
-#editor .cm-link {
+#editor .cm-link, a, a:visited, a:link {
     color: var(--color-md-link);
 }
 

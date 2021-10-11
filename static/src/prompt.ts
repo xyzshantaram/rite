@@ -8,12 +8,13 @@ export const toChoices = (arr: string[]): PromptChoice[] => {
     });
 }
 
+// from https://stackoverflow.com/a/39905590/16595846
 const fuzzySearch = (str: string, query: string): number => {
-    var string = str.toLowerCase();
-    var compare = query.toLowerCase();
-    var matches = 0;
+    let string = str.toLowerCase();
+    let compare = query.toLowerCase();
+    let matches = 0;
     if (string.indexOf(compare) > -1) return 1; // covers basic partial matches
-    for (var i = 0; i < compare.length; i++) {
+    for (let i = 0; i < compare.length; i++) {
         string.indexOf(compare[i]) > -1 ? matches += 1 : matches -= 1;
     }
     return query === "" ? 1 : matches / str.length;

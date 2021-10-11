@@ -19,7 +19,7 @@
     max-width: 80ch;
     margin-top: 10%;
     background: var(--background-ui);
-    max-height: 30%;
+    height: 50%;
     border-radius: 0.3rem;
     display: flex;
     flex-direction: column;
@@ -31,6 +31,11 @@
     display: flex;
     border-bottom: 2px solid var(--color-auxiliary);
     flex-direction: column;
+}
+
+#prompt-message {
+    overflow-y: scroll;
+    height: calc(100% - 1.5rem);
 }
 
 #prompt-field {
