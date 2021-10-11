@@ -100,7 +100,6 @@ export const createConfig = async (configPath: string): Promise<string> => {
             const string = dumpJSON(tmp);
 
             await writeFile({ contents: string, path: configPath })
-            await editorAlert(`Saved choices to ${configPath}`);
 
             resolve(string);
         }
