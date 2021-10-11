@@ -67,6 +67,9 @@ const initialisePrompt = () => {
 
     field.oninput = (e) => {
         let value = field.value.trim();
+
+        if (!currentChoices.find(elem => { elem.title === value})) setSelectedIdx(currIndex = 0);
+        
         for (let choice of currentChoices) {
             const elt = document.querySelector(`div[data-choice=${choice.title}]`);
             if (fuzzySearch(choice.title, value) > 0.5) {
@@ -84,12 +87,13 @@ const initialisePrompt = () => {
     }
 
     const setSelectedIdx = (idx: number) => {
+        currIndex = clamp(currIndex, 0, currentChoices.length);
+        options.querySelector(`.prompt-option.selected`)?.classList.remove('selected');
         const selected: HTMLElement | null = options.querySelector(`.prompt-option:nth-child(${idx})`);
         if (selected) setSelectedOption(selected);
     }
 
     const setSelectedOption = (choice: HTMLElement) => {
-        options.querySelector(`.prompt-option.selected`)?.classList.remove('selected');
         choice.classList.add('selected');
         choice.scrollIntoView(false);
         field.value = choice.getAttribute('data-choice')!;
@@ -116,15 +120,13 @@ const initialisePrompt = () => {
             e.preventDefault();
         }
         if (e.key === 'ArrowDown') {
-            currIndex = clamp(currIndex, 1, currentChoices.length);
+            console.log(currIndex);
             setSelectedIdx(currIndex++);
             field.focus();
         }
         else if (e.key === 'ArrowUp') {
-            currIndex = clamp(currIndex, 1, currentChoices.length);
-            setSelectedIdx(currIndex--);
+            setSelectedIdx(--currIndex);
             field.focus();
-            
         }
         else if (e.key === 'Enter') {
             tryCompletingPromptFlow();

@@ -110,6 +110,11 @@ export const COMMANDS: RiteCommands = {
         description: "Open settings.",
         palette: true
     },
+    "closePalette": {
+        action: () => {},
+        description: "Close palette.",
+        palette: true
+    },
     "markRangeItalic": {
         action: (editor) => editor.insertAround('*'),
         description: "Mark the current editor selection as italic."
