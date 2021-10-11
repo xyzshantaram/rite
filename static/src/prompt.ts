@@ -1,3 +1,4 @@
+import { exit } from '@tauri-apps/api/process';
 import cf from 'campfire.js';
 import { clamp, PromptArgs, PromptChoice } from './utils';
 
@@ -163,7 +164,7 @@ const editorAlertFatal = (msg: string): Promise<void> => {
         show({
             message: msg,
             choices: [],
-            callback: (_: any) => void(0),
+            callback: (_: any) => exit(1),
             allowEmpty: false,
             allowNonOptions: false
         })
