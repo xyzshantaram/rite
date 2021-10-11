@@ -15,7 +15,8 @@ export interface Setting {
         re: RegExp,
         msg: string
     },
-    prettyName: string
+    prettyName: string,
+    default: string | boolean
 }
 
 
@@ -44,12 +45,14 @@ export const MODIFIABLE_SETTINGS: Record<string, Setting> = {
         type: 'choice',
         choices: toChoices(['monospace', 'sans-serif', 'serif']),
         message: 'Pick a font (type a font name, or pick one of the defaults below):',
-        allowNonOptions: true
+        allowNonOptions: true,
+        default: 'monospace'
     },
     lineNumbers: {
         prettyName: "Line numbers",
         type: 'confirm',
-        message: 'Enable line numbers?'
+        message: 'Enable line numbers?',
+        default: true
     },
     fontSize: {
         prettyName: "Font size",
@@ -58,17 +61,19 @@ export const MODIFIABLE_SETTINGS: Record<string, Setting> = {
         validate: {
             re: /^\d+$/,
             msg: 'You must enter only numbers!'
-        }
+        },
+        default: '16'
     },
     portraitMode: {
         prettyName: "Editor orientation",
         type: 'confirm',
         message: 'Editor orientation? ',
-        choices: toChoices(['portrait', 'landscape'])
+        choices: toChoices(['portrait', 'landscape']),
+        default: true
     }
 }
 
-const defaultConfig = (): Promise<Record<string, any>> => {
+const requestFullConfig = (): Promise<Record<string, any>> => {
     return new Promise(async (resolve, reject) => {
         const tmp: Record<string, any> = {
             keybinds: DEFAULT_KEYBINDS
@@ -86,13 +91,36 @@ const defaultConfig = (): Promise<Record<string, any>> => {
     })
 }
 
+const defaultConfig = (): Promise<Record<string, any>> => {
+    return new Promise(async (resolve, reject) => {
+        const tmp: Record<string, any> = {
+            keybinds: DEFAULT_KEYBINDS
+        };
+        try {
+            for (const entry of Object.entries(MODIFIABLE_SETTINGS)) {
+                const [key, val] = entry;
+                tmp[key] = val.default;
+            }
+            resolve(tmp);
+        }
+        catch (e) {
+            reject(e);
+        }
+    })
+}
+
 export const createConfig = async (configPath: string): Promise<string> => {
     return new Promise(async (resolve, reject) => {
         try {
-            const confirm = await editorConfirm('Config file not found. Would you like to create one?');
-            if (!confirm) await editorAlert('Exiting...', async () => await exit(1));
+            const choice = await editorChoose(
+                'Config file not found. Would you like to configure one now, or use the defaults?',
+                toChoices(['yes', 'cancel', 'defaults']),
+                false,
+                false
+            );
+            if (choice === 'cancel') await editorAlert('Exiting...', async () => await exit(1));
 
-            const tmp = await defaultConfig();
+            const tmp = choice === 'yes' ? await requestFullConfig() : await defaultConfig();
             const dir = await dirname(configPath);
 
             if (!(await exists(dir))) await createDir(dir, { recursive: true })

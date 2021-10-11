@@ -5,7 +5,7 @@ import 'codemirror/mode/gfm/gfm';
 import { COMMANDS } from './commands';
 import { createConfig } from './config';
 import { RiteEditor as RiteEditor } from './RiteEditor';
-import { getConfigPath } from './utils';
+import { getConfigPath, onboarding } from './utils';
 import 'codemirror/addon/dialog/dialog';
 import 'codemirror/addon/search/searchcursor';
 import 'codemirror/addon/search/search';
@@ -19,7 +19,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     ) as HTMLElement;
     
     const platform = await invoke<string>('get_platform');
-    console.log(platform);
     const editor = new RiteEditor(editorRoot, COMMANDS, platform);
 
     let configPath = await getConfigPath();
@@ -31,6 +30,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
     catch (e) {
         contents = await createConfig(configPath);
+        await onboarding();
     }
 
     await editor.loadConfig(contents);
