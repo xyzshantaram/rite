@@ -6,3 +6,4 @@
 - [] color scheme configurator
 - [] docs
 - [] syntax highlighting for Marked
+- [] command line interface
