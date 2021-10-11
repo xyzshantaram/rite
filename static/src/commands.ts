@@ -64,16 +64,23 @@ const openPalette = async (editor: RiteEditor) => {
 
 const openSettings = async(editor: RiteEditor) => {
     const settings: [string, Setting][] = Object.entries(MODIFIABLE_SETTINGS);
-    const stringChoices = ['Close settings'];
+    const choices: PromptChoice[] = [{title: 'Close settings.'}];
     for (const [key, value] of settings) {
-        stringChoices.push(value.prettyName);
+        let existing = editor.getConfigVar(key);
+        if (existing !== null && value.type === 'confirm') {
+            if (value.choices) existing = existing ? value.choices[0].title : value.choices[1].title;
+            else existing = existing ? 'yes' : 'no';
+        }
+        choices.push({
+            title: value.prettyName,
+            description: `Current value: ${existing}`
+        });
     }
 
-    const choices = toChoices(stringChoices);
     const newSettings: Record<string, any> = {};
 
     let userChoice: string;
-    while ((userChoice = await editorChoose('What do you want to change?', choices, false)) !== 'Close settings') {
+    while ((userChoice = await editorChoose('What do you want to change?', choices, false)) !== 'Close settings.') {
         settingLoop:
         for (const [key, value] of settings) {
             if (value.prettyName === userChoice) {

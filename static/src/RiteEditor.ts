@@ -160,6 +160,10 @@ export class RiteEditor {
         await this.dumpConfig();
     }
 
+    getConfigVar(key: string) {
+        return this.config[key] || null;
+    }
+
     async extendConfig(settings: Record<string, any>) {
         const currentConfig = this.getConfig();
         Object.assign(currentConfig, settings);
