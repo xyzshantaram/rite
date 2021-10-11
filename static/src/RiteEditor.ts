@@ -282,7 +282,7 @@ export class RiteEditor {
 
     async close() {
         if (this.dirty) {
-            if (await editorConfirm('Are you sure you want to exit? Changes you made have not been saved.')) {
+            if (await editorConfirm('Are you sure you want to exit? Changes you made may not have been saved.')) {
                 await exit(1);
             }
             else {
