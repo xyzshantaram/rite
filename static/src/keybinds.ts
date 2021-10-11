@@ -4,7 +4,7 @@ export const DEFAULT_KEYBINDS: Record<string, string> = {
     "CS+p": "openPalette",
     "C+i": "markRangeItalic",
     "C+b": "markRangeBold",
-    "C+d": "markRangeDeleted",
+    "CA+d": "markRangeDeleted",
     "CA+1": "markRangeH1",
     "CA+2": "markRangeH2",
     "CA+3": "markRangeH3",
@@ -18,12 +18,14 @@ export const parseKeybind = (keybind: string) => {
     let alpha = components[1][0];
 
     return (e: KeyboardEvent) => {
-        let toCheck = [];
+        let toCheckTrue: boolean[] = [];
+        let toCheckFalse: boolean[] = [];
+        (components[0].includes("C") ? toCheckTrue : toCheckFalse).push(e.ctrlKey);
+        (components[0].includes("S") ? toCheckTrue : toCheckFalse).push(e.shiftKey);
+        (components[0].includes("A") ? toCheckTrue : toCheckFalse).push(e.altKey);
 
-        if (components[0].includes("C")) toCheck.push(e.ctrlKey);
-        if (components[0].includes("S")) toCheck.push(e.shiftKey);
-        if (components[0].includes("A")) toCheck.push(e.altKey);
-
-        return (toCheck.every((bool: boolean) => bool) && e.key.toLocaleLowerCase() == alpha);
+        return (toCheckFalse.every((bool: boolean) => !bool)
+            && toCheckTrue.every((bool: boolean) => bool)
+            && e.key.toLocaleLowerCase() == alpha);
     }
 }

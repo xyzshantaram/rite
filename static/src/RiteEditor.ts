@@ -49,9 +49,9 @@ export class RiteEditor {
     config: RiteSettings;
     dirty: boolean = true;
     configPath: string;
-    keyDownListener: EventListener | null;
     currentPos: Position;
     keybinds: RiteKeybind[] = [];
+    acceptingKeybinds: boolean = true;
 
     constructor(editorRoot: HTMLElement, commands: RiteCommands) {
         this.commands = commands;
@@ -68,6 +68,15 @@ export class RiteEditor {
         this.editor.on('change', () => {
             this.setDirty(true);
         })
+
+        window.addEventListener('rite-prompt-show', () => {
+            this.acceptingKeybinds = false;
+        });
+        window.addEventListener('rite-prompt-hide', () => {
+            this.acceptingKeybinds = true;
+        });
+
+        this.registerKeybindListener();
     }
 
     insertAround(start: string, end: string = start) {
@@ -78,12 +87,12 @@ export class RiteEditor {
             var selection = doc.getSelection();
             doc.replaceSelection(start + selection + end);
         } else {
-            doc.replaceRange(start + end, {line: cursor.line, ch: cursor.ch});
-            doc.setCursor({line: cursor.line, ch: cursor.ch + start.length});
+            doc.replaceRange(start + end, { line: cursor.line, ch: cursor.ch });
+            doc.setCursor({ line: cursor.line, ch: cursor.ch + start.length });
         }
     }
 
-    insertBefore (insertion: string, cursorOffset = insertion.length) {
+    insertBefore(insertion: string, cursorOffset = insertion.length) {
         var doc = this.editor.getDoc();
         var cursor = doc.getCursor();
 
@@ -93,14 +102,14 @@ export class RiteEditor {
                 var pos = [selection.head.line, selection.anchor.line].sort();
 
                 for (var i = pos[0]; i <= pos[1]; i++) {
-                    doc.replaceRange(insertion, {line: i, ch: 0});
+                    doc.replaceRange(insertion, { line: i, ch: 0 });
                 }
 
-                doc.setCursor({line: pos[0], ch: cursorOffset || 0});
+                doc.setCursor({ line: pos[0], ch: cursorOffset || 0 });
             });
         } else {
-            doc.replaceRange(insertion, {line: cursor.line, ch: 0});
-            doc.setCursor({line: cursor.line, ch: cursorOffset || 0});
+            doc.replaceRange(insertion, { line: cursor.line, ch: 0 });
+            doc.setCursor({ line: cursor.line, ch: cursorOffset || 0 });
         }
     }
 
@@ -129,7 +138,7 @@ export class RiteEditor {
         const config = JSON.parse(contents) as RiteSettings;
 
         if (Object.keys(config.keybinds).length < Object.keys(DEFAULT_KEYBINDS).length) {
-            const newKeyBinds = {...DEFAULT_KEYBINDS};
+            const newKeyBinds = { ...DEFAULT_KEYBINDS };
             Object.assign(newKeyBinds, config.keybinds);
             config.keybinds = newKeyBinds;
         }
@@ -161,7 +170,7 @@ export class RiteEditor {
     async setConfig(config: RiteSettings) {
         this.config = config;
         setAppFont(config.font);
-        await this.registerKeybinds(config.keybinds);
+        this.registerKeybinds(config.keybinds);
         this.editor.setOption('lineNumbers', config.lineNumbers);
         const editorElem = this.editorRoot.querySelector('.CodeMirror') as HTMLElement;
         if (config.portraitMode) {
@@ -207,29 +216,31 @@ export class RiteEditor {
         }
     }
 
-    async registerKeybinds(rawKeybinds: Record<string, string>) {
-        const keybinds = Object.keys(rawKeybinds).map(elem => {
+    async processKeypress(e: KeyboardEvent) {
+        if (!this.acceptingKeybinds) return;
+
+        for (const keybind of this.keybinds) {
+            if (keybind.checker(e)) {
+                await this.execCommand(keybind.action);
+                return;
+            }
+        }
+    }
+
+    registerKeybinds(rawKeybinds: Record<string, string>) {
+        this.keybinds = [];
+        this.keybinds = Object.keys(rawKeybinds).map(elem => {
             return {
                 checker: parseKeybind(elem),
                 action: rawKeybinds[elem]
             };
         })
+    }
 
-        if (this.keyDownListener) {
-            window.removeEventListener('keydown', this.keyDownListener);
-            this.keyDownListener = null;
-        }
-
-        this.keyDownListener = async (e) => {
-            for (const keybind of keybinds) {
-                if (keybind.checker(<KeyboardEvent>e)) {
-                    await this.execCommand(keybind.action);
-                    return;
-                }
-            }
-        };
-
-        window.addEventListener('keyup', this.keyDownListener);
+    registerKeybindListener() {
+        window.addEventListener('keyup', async (e) => {
+            await this.processKeypress(<KeyboardEvent>e);
+        });
     }
 
     async save(isSaveAs: boolean = false) {
