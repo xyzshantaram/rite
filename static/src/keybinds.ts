@@ -13,14 +13,20 @@ export const DEFAULT_KEYBINDS: Record<string, string> = {
     "CA+6": "markRangeH6",
 }
 
-export const parseKeybind = (keybind: string) => {
+export const parseKeybind = (keybind: string, platform: string) => {
     let components = keybind.split("+");
     let alpha = components[1][0];
+
+    let isMac = platform === 'macos';
 
     return (e: KeyboardEvent) => {
         let toCheckTrue: boolean[] = [];
         let toCheckFalse: boolean[] = [];
-        (components[0].includes("C") ? toCheckTrue : toCheckFalse).push(e.ctrlKey);
+
+        // check for cmd instead of ctrl on macs
+        let cKey = isMac ? e.metaKey : e.ctrlKey;
+
+        (components[0].includes("C") ? toCheckTrue : toCheckFalse).push(cKey);
         (components[0].includes("S") ? toCheckTrue : toCheckFalse).push(e.shiftKey);
         (components[0].includes("A") ? toCheckTrue : toCheckFalse).push(e.altKey);
 

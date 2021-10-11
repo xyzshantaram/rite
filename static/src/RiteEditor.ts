@@ -48,8 +48,9 @@ export class RiteEditor {
     currentPos: Position;
     keybinds: RiteKeybind[] = [];
     acceptingKeybinds: boolean = true;
+    platform: string;
 
-    constructor(editorRoot: HTMLElement, commands: RiteCommands) {
+    constructor(editorRoot: HTMLElement, commands: RiteCommands, platform: string) {
         this.commands = commands;
         this.editorRoot = editorRoot;
         this.editor = CodeMirror(editorRoot, {
@@ -232,7 +233,7 @@ export class RiteEditor {
         this.keybinds = [];
         this.keybinds = Object.keys(rawKeybinds).map(elem => {
             return {
-                checker: parseKeybind(elem),
+                checker: parseKeybind(elem, this.platform),
                 action: rawKeybinds[elem]
             };
         })

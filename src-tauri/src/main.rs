@@ -31,8 +31,7 @@ fn get_config_dir() -> PathBuf {
 fn get_config_path() -> PathBuf {
     let mut dir = get_config_dir();
     dir.push("config.json");
-
-    return dir;
+    dir
 }
 
 #[tauri::command]
@@ -45,13 +44,19 @@ fn dir_exists(path: PathBuf) -> bool {
     Path::new(&path).is_dir()
 }
 
+#[tauri::command]
+fn get_platform() -> String {
+    std::env::consts::OS.into()
+}
+
 fn main() {
     let app = tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             get_config_dir,
             log,
             dir_exists,
-            get_config_path
+            get_config_path,
+            get_platform
         ])
         .build(tauri::generate_context!())
         .expect("Error building application.");

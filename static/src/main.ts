@@ -6,19 +6,21 @@ import { COMMANDS } from './commands';
 import { createConfig } from './config';
 import { RiteEditor as RiteEditor } from './RiteEditor';
 import { getConfigPath } from './utils';
-
 import 'codemirror/addon/dialog/dialog';
 import 'codemirror/addon/search/searchcursor';
 import 'codemirror/addon/search/search';
 import 'codemirror/addon/search/jump-to-line';
+import { invoke } from '@tauri-apps/api';
 
 window.addEventListener('DOMContentLoaded', async () => {
     const editorRoot = cf.insert(
         cf.nu('div#editor'),
         { atStartOf: document.querySelector('#app') as HTMLElement }
     ) as HTMLElement;
-
-    const editor = new RiteEditor(editorRoot, COMMANDS);
+    
+    const platform = await invoke<string>('get_platform');
+    console.log(platform);
+    const editor = new RiteEditor(editorRoot, COMMANDS, platform);
 
     let configPath = await getConfigPath();
     let contents = null;
