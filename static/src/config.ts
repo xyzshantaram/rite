@@ -2,10 +2,10 @@ import { createDir, writeFile } from "@tauri-apps/api/fs";
 import { dirname, resolve } from "@tauri-apps/api/path";
 import { exit } from "@tauri-apps/api/process";
 import { DEFAULT_KEYBINDS } from "./keybinds";
-import { editorConfirm, editorAlert, editorChoose, editorPrompt } from "./prompt";
+import { editorConfirm, editorAlert, editorChoose, editorPrompt, toChoices } from "./prompt";
 import { dumpJSON, exists, PromptChoice } from "./utils";
 
-interface PromptDescription {
+export interface Setting {
     type: 'choice' | 'prompt' | 'confirm';
     message: string,
     choices?: PromptChoice[]
@@ -14,16 +14,17 @@ interface PromptDescription {
     validate?: {
         re: RegExp,
         msg: string
-    }
+    },
+    prettyName: string
 }
 
 
-const promptFromDescription = async (desc: PromptDescription) => {
+export const requestSetting = async (desc: Setting) => {
     if (desc.type === 'choice') {
         return await editorChoose(desc.message, desc.choices || [], desc.allowNonOptions);
     }
     else if (desc.type === 'confirm') {
-        return await editorConfirm(desc.message, desc.choices || [{ title: 'yes' }, { title: 'no' }]);
+        return await editorConfirm(desc.message, desc.choices || toChoices(['yes', 'no']));
     }
     else {
         let answer = await editorPrompt(desc.message, desc.allowEmpty);
@@ -36,18 +37,21 @@ const promptFromDescription = async (desc: PromptDescription) => {
     }
 }
 
-export const MODIFIABLE_SETTINGS: Record<string, PromptDescription> = {
+export const MODIFIABLE_SETTINGS: Record<string, Setting> = {
     font: {
+        prettyName: "Font",
         type: 'choice',
-        choices: [{ title: 'monospace' }, { title: 'sans-serif' }, { title: 'serif' }],
+        choices: toChoices(['monospace', 'sans-serif', 'serif']),
         message: 'Pick a font (type a font name, or pick one of the defaults below):',
         allowNonOptions: true
     },
     lineNumbers: {
+        prettyName: "Line numbers",
         type: 'confirm',
         message: 'Enable line numbers?'
     },
     fontSize: {
+        prettyName: "Font size",
         type: 'prompt',
         message: 'Pick a font size (in pixels): ',
         validate: {
@@ -56,9 +60,10 @@ export const MODIFIABLE_SETTINGS: Record<string, PromptDescription> = {
         }
     },
     portraitMode: {
+        prettyName: "Editor orientation",
         type: 'confirm',
         message: 'Editor orientation? ',
-        choices: [{ title: 'portrait' }, { title: 'landscape' }]
+        choices: toChoices(['portrait', 'landscape'])
     }
 }
 
@@ -70,7 +75,7 @@ const defaultConfig = (): Promise<Record<string, any>> => {
         try {
             for (const entry of Object.entries(MODIFIABLE_SETTINGS)) {
                 const [key, val] = entry;
-                tmp[key] = await promptFromDescription(val);
+                tmp[key] = await requestSetting(val);
             }
             resolve(tmp);
         }

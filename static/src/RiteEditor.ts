@@ -1,20 +1,19 @@
 import { basename } from "@tauri-apps/api/path";
 import { Editor, Position } from "codemirror";
 import { COMMANDS } from "./commands";
-import { dumpJSON, RiteCommands, RiteFile, RiteSettings, setAppFont, setCSSVar } from "./utils";
+import { dumpJSON, RiteCommands, RiteFile, RiteSettings, setAppFont, RiteKeybind, setCSSVar } from "./utils";
 import { parseCommand } from "./commands";
 import { DEFAULT_KEYBINDS, parseKeybind } from "./keybinds";
 import { editorAlert, editorAlertFatal, editorConfirm } from "./prompt";
-import { dialog, path } from "@tauri-apps/api";
+import { dialog } from "@tauri-apps/api";
 import { writeFile } from "@tauri-apps/api/fs";
-import cf, { insert } from 'campfire.js';
+import cf from 'campfire.js';
 import CodeMirror from "codemirror";
 import { exit } from "@tauri-apps/api/process";
 import 'codemirror/addon/dialog/dialog';
 import 'codemirror/addon/search/searchcursor';
 import 'codemirror/addon/search/search';
 import 'codemirror/addon/search/jump-to-line';
-import { WindowManager } from "@tauri-apps/api/window";
 
 interface StatusLineControls {
     elem: HTMLElement;
@@ -52,6 +51,7 @@ export class RiteEditor {
     configPath: string;
     keyDownListener: EventListener | null;
     currentPos: Position;
+    keybinds: RiteKeybind[] = [];
 
     constructor(editorRoot: HTMLElement, commands: RiteCommands) {
         this.commands = commands;
@@ -144,11 +144,18 @@ export class RiteEditor {
         });
     }
 
-    async updateConfig(key: string, value: any) {
+    async setConfigVar(key: string, value: any) {
         const currentConfig = this.getConfig();
         currentConfig[key] = value;
         this.setConfig(currentConfig);
         await this.dumpConfig();
+    }
+
+    async extendConfig(settings: Record<string, any>) {
+        const currentConfig = this.getConfig();
+        Object.assign(currentConfig, settings);
+        this.setConfig(currentConfig);
+        return await this.dumpConfig();
     }
 
     async setConfig(config: RiteSettings) {
@@ -210,6 +217,7 @@ export class RiteEditor {
 
         if (this.keyDownListener) {
             window.removeEventListener('keydown', this.keyDownListener);
+            this.keyDownListener = null;
         }
 
         this.keyDownListener = async (e) => {

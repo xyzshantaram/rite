@@ -1,8 +1,9 @@
 import { dialog } from "@tauri-apps/api"
 import { readTextFile } from "@tauri-apps/api/fs"
 import { RiteEditor } from "./RiteEditor"
-import { editorAlert, editorChoose, editorPrompt } from "./prompt"
+import { editorAlert, editorChoose, editorPrompt, toChoices } from "./prompt"
 import { CommandHandler, PromptChoice, RiteCommands, RiteFile } from "./utils"
+import { MODIFIABLE_SETTINGS, requestSetting, Setting } from "./config"
 
 const openAndReadFile = async (): Promise<RiteFile> => {
     return new Promise(async (resolve, reject) => {
@@ -61,6 +62,30 @@ const openPalette = async (editor: RiteEditor) => {
     await editor.execCommand(await editorChoose('Command:', choices, true, true));
 }
 
+const openSettings = async(editor: RiteEditor) => {
+    const settings: [string, Setting][] = Object.entries(MODIFIABLE_SETTINGS);
+    const stringChoices = ['Close settings'];
+    for (const [key, value] of settings) {
+        stringChoices.push(value.prettyName);
+    }
+
+    const choices = toChoices(stringChoices);
+    const newSettings: Record<string, any> = {};
+
+    let userChoice: string;
+    while ((userChoice = await editorChoose('What do you want to change?', choices, false)) !== 'Close settings') {
+        settingLoop:
+        for (const [key, value] of settings) {
+            if (value.prettyName === userChoice) {
+                newSettings[key] = await requestSetting(value);
+                break settingLoop;
+            }
+        }
+    }
+
+    return await editor.extendConfig(newSettings);
+}
+
 export const saveFile = async (editor: RiteEditor) => {
     await editor.save();
 }
@@ -80,40 +105,45 @@ export const COMMANDS: RiteCommands = {
         description: "Save current file.",
         palette: true
     },
+    "openSettings": {
+        action: openSettings,
+        description: "Open settings.",
+        palette: true
+    },
     "markRangeItalic": {
-        action: (state) => state.insertAround('*'),
+        action: (editor) => editor.insertAround('*'),
         description: "Mark the current editor selection as italic."
     },
     "markRangeBold": {
-        action: (state) => state.insertAround('**'),
+        action: (editor) => editor.insertAround('**'),
         description: "Mark the current editor selection as bold."
     },
     "markRangeDeleted": {
-        action: (state) => state.insertAround('~~'),
+        action: (editor) => editor.insertAround('~~'),
         description: "Mark the current editor selection as being struck through."
     },
     "markRangeH1": {
-        action: (state) => state.insertBefore('# ', 2),
+        action: (editor) => editor.insertBefore('# ', 2),
         description: "Mark the current editor selection as an <h1>."
     },
     "markRangeH2": {
-        action: (state) => state.insertBefore('## ', 3),
+        action: (editor) => editor.insertBefore('## ', 3),
         description: "Mark the current editor selection as an <h2>."
     },
     "markRangeH3": {
-        action: (state) => state.insertBefore('### ', 4),
+        action: (editor) => editor.insertBefore('### ', 4),
         description: "Mark the current editor selection as an <h3>."
     },
     "markRangeH4": {
-        action: (state) => state.insertBefore('#### ', 5),
+        action: (editor) => editor.insertBefore('#### ', 5),
         description: "Mark the current editor selection as an <h4>."
     },
     "markRangeH5": {
-        action: (state) => state.insertBefore('##### ', 6),
+        action: (editor) => editor.insertBefore('##### ', 6),
         description: "Mark the current editor selection as an <h5>."
     },
     "markRangeH6": {
-        action: (state) => state.insertBefore('###### ', 7),
+        action: (editor) => editor.insertBefore('###### ', 7),
         description: "Mark the current editor selection as an <h6>."
     }
 }

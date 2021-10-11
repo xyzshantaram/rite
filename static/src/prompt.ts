@@ -1,6 +1,12 @@
 import cf from 'campfire.js';
 import { clamp, PromptArgs, PromptChoice } from './utils';
 
+export const toChoices = (arr: string[]): PromptChoice[] => {
+    return arr.map((str) => {
+        return { title: str }
+    });
+}
+
 const fuzzySearch = (str: string, query: string): number => {
     var string = str.toLowerCase();
     var compare = query.toLowerCase();
