@@ -70,6 +70,22 @@ export const MODIFIABLE_SETTINGS: Record<string, Setting> = {
         message: 'Editor orientation? ',
         choices: toChoices(['portrait', 'landscape']),
         default: true
+    },
+    useSpaces: {
+        prettyName: "Use spaces, not tabs.",
+        type: 'confirm',
+        message: "Use spaces instead of tabs?",
+        default: false
+    },
+    indentSize: {
+        prettyName: "Tab size",
+        type: 'prompt',
+        message: 'Pick a tab size: ',
+        validate: {
+            re: /^\d+$/,
+            msg: 'You must enter only numbers!'
+        },
+        default: '4'
     }
 }
 

@@ -10,6 +10,7 @@ import { writeFile } from "@tauri-apps/api/fs";
 import cf from 'campfire.js';
 import CodeMirror from "codemirror";
 import { exit } from "@tauri-apps/api/process";
+import { MODIFIABLE_SETTINGS } from "./config";
 
 interface StatusLineControls {
     elem: HTMLElement;
@@ -75,6 +76,7 @@ export class RiteEditor {
         });
 
         this.registerKeybindListener();
+        this.setEditorCustomKeys();
     }
 
     insertAround(start: string, end: string = start) {
@@ -159,7 +161,12 @@ export class RiteEditor {
     }
 
     getConfigVar(key: string) {
-        return this.config[key] || null;
+        let stored = this.config[key];
+        if (stored) return stored;
+        if (!stored && Object.keys(MODIFIABLE_SETTINGS).includes(key)) {
+            return MODIFIABLE_SETTINGS[key].default;
+        }
+        return null;
     }
 
     async extendConfig(settings: Record<string, any>) {
@@ -181,10 +188,43 @@ export class RiteEditor {
         else {
             editorElem.style.maxWidth = '100%';
         }
-
         if (config.fontSize) {
             setCSSVar('font-size', config.fontSize + 'px');
         }
+        if (config.indentSize) {
+            this.editor.setOption('tabSize', parseInt(config.indentSize));
+        }
+    }
+
+    setEditorCustomKeys() {
+        this.editor.setOption("extraKeys", {
+            Tab: (cm) => {
+                if (cm.somethingSelected()) {
+                    cm.indentSelection("add");
+                } else {
+                    cm.replaceSelection(
+                        this.getConfigVar('useSpaces')
+                            ? " ".repeat(this.getConfigVar('indentSize'))
+                            : "\t",
+                        "end"
+                    );
+                }
+            },
+            Backspace: (cm) => {
+                if (cm.somethingSelected()) {
+                    cm.replaceSelection('');
+                    return;
+                }
+                const line = cm.getLine(cm.getCursor().line);
+                if (/^\s*$/.test(line) && this.getConfigVar('useSpaces')) {
+                    let size = this.getConfigVar('indentSize');
+                    while(size--) cm.execCommand('delCharBefore');
+                }
+                else {
+                    cm.execCommand('delCharBefore');
+                }
+            }
+        })
     }
 
     getConfig() {
