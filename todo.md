@@ -9,33 +9,13 @@
 - [] default config instead of prompt-driven
 - [] make config save message appear in statusline
 - [] clicking out of palette should close it
-- [] tab size config, spaces, smart indent
 - [] rulers
 - [] editorconfig support
-- [] specialCharPlaceholder
-- [] spaces that behave like tabs
 - [] add help menu that displays keybinds and maybe even markdown help
-
-```js
-// from https://github.com/codemirror/CodeMirror/issues/988
-function betterTab(cm) {
-  if (cm.somethingSelected()) {
-    cm.indentSelection("add");
-  } else {
-    cm.replaceSelection(
-      cm.getOption("indentWithTabs")
-        ? "\t"
-        : Array(cm.getOption("indentUnit") + 1).join(" "),
-      "end",
-      "+input",
-    );
-  }
-}
-
-CodeMirror.fromTextArea(document.getElementById("the-editor"), {
-  extraKeys: { Tab: betterTab },
-});
-```
+- [] backspace and tab should take us to the next / prev indent level instead of
+  blindly deleting
+- [] need to rework setConfig
+- [] need to rework prompt.ts
 
 ```js
 // from simpleMDE
