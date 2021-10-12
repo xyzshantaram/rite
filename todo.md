@@ -1,5 +1,6 @@
 - [] pdf export
 - [] other kinds of export? (html, gist, rentry?)
+- [] custom css in exports
 - [] color scheme configurator
 - [] docs
 - [] syntax highlighting for Marked
@@ -13,3 +14,5 @@
   blindly deleting
 - [] need to rework setConfig
 - [] need to rework prompt.ts
+- [] button to open command palette
+- [] 
