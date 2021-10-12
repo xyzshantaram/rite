@@ -182,23 +182,28 @@ export class RiteEditor {
         this.registerKeybinds(config.keybinds);
         this.editor.setOption('lineNumbers', config.line_numbers);
         const editorElem = this.editorRoot.querySelector('.CodeMirror') as HTMLElement;
+        
         if (config.portrait_mode) {
             editorElem.style.maxWidth = '100ch';
         }
         else {
             editorElem.style.maxWidth = '100%';
         }
+        
         if (config.font_size) {
             setCSSVar('font-size', config.font_size + 'px');
         }
+        
         if (config.indent_size) {
             this.editor.setOption('tabSize', parseInt(config.indent_size));
             this.editor.setOption("indentUnit", parseInt(config.indent_size));
         }
+
+        this.editor.setOption('indentWithTabs', !config.use_spaces);
     }
 
     setEditorCustomKeys() {
-        this.editor.setOption("extraKeys", {
+        this.editor.addKeyMap({
             Tab: (cm) => {
                 if (cm.somethingSelected()) {
                     cm.indentSelection("add");
@@ -230,9 +235,14 @@ export class RiteEditor {
                 if (cm.somethingSelected()) {
                     cm.indentSelection("subtract");
                 }
-                else if (/^\s*$/.test(line) && this.getConfigVar('use_spaces')) {
-                    let size = this.getConfigVar('indent_size');
-                    while(size--) cm.execCommand('delCharBefore');
+                else if (/^\s*$/.test(line)) {
+                    if (this.getConfigVar('use_spaces')) {
+                        let size = this.getConfigVar('indent_size');
+                        while(size--) cm.execCommand('delCharBefore');
+                    }
+                    else {
+                        cm.execCommand("delCharBefore");
+                    }
                 }
                 else {
                     cm.indentLine(cm.getCursor().line, "subtract");

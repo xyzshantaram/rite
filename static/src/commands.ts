@@ -96,7 +96,6 @@ const openSettings = async(editor: RiteEditor) => {
                 newSettings[key] = await requestSetting(value);
                 let changed = choices.find((choice) => choice.title === value.prettyName);
                 if (changed) changed.description =  `Current value: ${stringify(value, newSettings[key])}`;
-                console.log(choices);
                 break settingLoop;
             }
         }
