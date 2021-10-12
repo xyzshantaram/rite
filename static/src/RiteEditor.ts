@@ -11,6 +11,7 @@ import cf from 'campfire.js';
 import CodeMirror from "codemirror";
 import { exit } from "@tauri-apps/api/process";
 import { MODIFIABLE_SETTINGS } from "./config";
+import { appWindow } from "@tauri-apps/api/window";
 
 interface StatusLineControls {
     elem: HTMLElement;
@@ -135,11 +136,14 @@ export class RiteEditor {
     updateFileName() {
         if (this.currentFile === null) {
             this.statusLine.setFileName('<new file>');
+            appWindow.setTitle("New file - Rite");
         }
         else {
             basename(this.currentFile.path)
-                .then(name => this.statusLine.setFileName(name))
-                .catch(err => this.statusLine.setFileName("Error: couldn't get file name."));
+                .then(name => {
+                    this.statusLine.setFileName(name)
+                }).then(name => appWindow.setTitle(`${this.currentFile?.path} - Rite`))
+                .catch(err => this.statusLine.setFileName("ERROR: unable to get file name"));
         }
     }
 
