@@ -1,12 +1,12 @@
 {
     "package": {
         "productName": "rite",
-        "version": "0.1.0"
+        "version": "0.2.9"
     },
     "build": {
         "distDir": "../static",
-        "devPath": "../static",
-        "beforeDevCommand": "node esbuild.config.js",
+        "devPath": "http://127.0.0.1:5500/static/",
+        "beforeDevCommand": "node esbuild.watcher.js",
         "beforeBuildCommand": "node esbuild.config.js"
     },
     "tauri": {
