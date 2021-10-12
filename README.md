@@ -27,9 +27,9 @@ installed.
 ### Building from source
 
 - Make sure you've carried out the initial setup for your operating system of
-  choice (Linux[https://tauri.studio/en/docs/getting-started/setup-linux],
-  macOS[https://tauri.studio/en/docs/getting-started/setup-macos],
-  Windows[https://tauri.studio/en/docs/getting-started/setup-windows]).
+  choice ([Linux](https://tauri.studio/en/docs/getting-started/setup-linux),
+  [macOS](https://tauri.studio/en/docs/getting-started/setup-macos),
+  [Windows](https://tauri.studio/en/docs/getting-started/setup-windows)).
 - Clone the repo.
 - `cd rite`
 - Install dependencies by running `yarn`.
