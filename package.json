@@ -5,7 +5,7 @@
   },
   "devDependencies": {
     "@tauri-apps/api": "^1.0.0-beta.8",
-    "@tauri-apps/cli": "1.0.0-beta.4",
+    "@tauri-apps/cli": "^1.0.0-beta.10",
     "@types/codemirror": "^5.60.4",
     "campfire.js": "^2.3.0",
     "codemirror": "^5.63.1",
