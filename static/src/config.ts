@@ -89,54 +89,24 @@ export const MODIFIABLE_SETTINGS: Record<string, Setting> = {
     }
 }
 
-const requestFullConfig = (): Promise<Record<string, any>> => {
-    return new Promise(async (resolve, reject) => {
-        const tmp: Record<string, any> = {
-            keybinds: DEFAULT_KEYBINDS
-        };
-        try {
-            for (const entry of Object.entries(MODIFIABLE_SETTINGS)) {
-                const [key, val] = entry;
-                tmp[key] = await requestSetting(val);
-            }
-            resolve(tmp);
-        }
-        catch (e) {
-            reject(e);
-        }
-    })
-}
+const defaultConfig = (): Record<string, any> => {
+    let tmp: Record<string, any> = {};
+    for (const entry of Object.entries(MODIFIABLE_SETTINGS)) {
+        const [key, val] = entry;
+        tmp[key] = val.default;
+    }
 
-const defaultConfig = (): Promise<Record<string, any>> => {
-    return new Promise(async (resolve, reject) => {
-        const tmp: Record<string, any> = {
-            keybinds: DEFAULT_KEYBINDS
-        };
-        try {
-            for (const entry of Object.entries(MODIFIABLE_SETTINGS)) {
-                const [key, val] = entry;
-                tmp[key] = val.default;
-            }
-            resolve(tmp);
-        }
-        catch (e) {
-            reject(e);
-        }
-    })
+    return tmp;
 }
 
 export const createConfig = async (configPath: string): Promise<string> => {
     return new Promise(async (resolve, reject) => {
         try {
-            const choice = await editorChoose(
-                'Config file not found. Would you like to configure one now, or use the defaults?',
-                toChoices(['yes', 'cancel', 'defaults']),
-                false,
-                false
+            await editorAlert(
+                `Config file not found. It will be created as ${configPath}.`,
             );
-            if (choice === 'cancel') await editorAlert('Exiting...', async () => await exit(1));
 
-            const tmp = choice === 'yes' ? await requestFullConfig() : await defaultConfig();
+            const tmp = defaultConfig();
             const dir = await dirname(configPath);
 
             if (!(await exists(dir))) await createDir(dir, { recursive: true })

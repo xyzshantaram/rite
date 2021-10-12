@@ -137,7 +137,7 @@ export class RiteEditor {
     async loadConfig(contents: string) {
         const config = JSON.parse(contents) as RiteSettings;
 
-        if (Object.keys(config.keybinds).length < Object.keys(DEFAULT_KEYBINDS).length) {
+        if (!config.keybinds || (Object.keys(config.keybinds).length < Object.keys(DEFAULT_KEYBINDS).length)) {
             const newKeyBinds = { ...DEFAULT_KEYBINDS };
             Object.assign(newKeyBinds, config.keybinds);
             config.keybinds = newKeyBinds;
