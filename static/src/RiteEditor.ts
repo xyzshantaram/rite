@@ -180,19 +180,20 @@ export class RiteEditor {
         this.config = config;
         setAppFont(config.font);
         this.registerKeybinds(config.keybinds);
-        this.editor.setOption('lineNumbers', config.lineNumbers);
+        this.editor.setOption('lineNumbers', config.line_numbers);
         const editorElem = this.editorRoot.querySelector('.CodeMirror') as HTMLElement;
-        if (config.portraitMode) {
+        if (config.portrait_mode) {
             editorElem.style.maxWidth = '100ch';
         }
         else {
             editorElem.style.maxWidth = '100%';
         }
-        if (config.fontSize) {
-            setCSSVar('font-size', config.fontSize + 'px');
+        if (config.font_size) {
+            setCSSVar('font-size', config.font_size + 'px');
         }
-        if (config.indentSize) {
-            this.editor.setOption('tabSize', parseInt(config.indentSize));
+        if (config.indent_size) {
+            this.editor.setOption('tabSize', parseInt(config.indent_size));
+            this.editor.setOption("indentUnit", parseInt(config.indent_size));
         }
     }
 
@@ -203,8 +204,8 @@ export class RiteEditor {
                     cm.indentSelection("add");
                 } else {
                     cm.replaceSelection(
-                        this.getConfigVar('useSpaces')
-                            ? " ".repeat(this.getConfigVar('indentSize'))
+                        this.getConfigVar('use_spaces')
+                            ? " ".repeat(this.getConfigVar('indent_size'))
                             : "\t",
                         "end"
                     );
@@ -216,12 +217,25 @@ export class RiteEditor {
                     return;
                 }
                 const line = cm.getLine(cm.getCursor().line);
-                if (/^\s*$/.test(line) && this.getConfigVar('useSpaces')) {
-                    let size = this.getConfigVar('indentSize');
+                if (/^\s*$/.test(line) && this.getConfigVar('use_spaces')) {
+                    let size = this.getConfigVar('indent_size');
                     while(size--) cm.execCommand('delCharBefore');
                 }
                 else {
                     cm.execCommand('delCharBefore');
+                }
+            },
+            'Shift-Tab': (cm) => {
+                const line = cm.getLine(cm.getCursor().line);
+                if (cm.somethingSelected()) {
+                    cm.indentSelection("subtract");
+                }
+                else if (/^\s*$/.test(line) && this.getConfigVar('use_spaces')) {
+                    let size = this.getConfigVar('indent_size');
+                    while(size--) cm.execCommand('delCharBefore');
+                }
+                else {
+                    cm.indentLine(cm.getCursor().line, "subtract");
                 }
             }
         })

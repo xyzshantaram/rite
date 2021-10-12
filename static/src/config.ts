@@ -48,13 +48,13 @@ export const MODIFIABLE_SETTINGS: Record<string, Setting> = {
         allowNonOptions: true,
         default: 'monospace'
     },
-    lineNumbers: {
+    line_numbers: {
         prettyName: "Line numbers",
         type: 'confirm',
         message: 'Enable line numbers?',
         default: true
     },
-    fontSize: {
+    font_size: {
         prettyName: "Font size",
         type: 'prompt',
         message: 'Pick a font size (in pixels): ',
@@ -64,20 +64,20 @@ export const MODIFIABLE_SETTINGS: Record<string, Setting> = {
         },
         default: '16'
     },
-    portraitMode: {
+    portrait_mode: {
         prettyName: "Editor orientation",
         type: 'confirm',
         message: 'Editor orientation? ',
         choices: toChoices(['portrait', 'landscape']),
         default: true
     },
-    useSpaces: {
+    use_spaces: {
         prettyName: "Use spaces, not tabs.",
         type: 'confirm',
         message: "Use spaces instead of tabs?",
         default: false
     },
-    indentSize: {
+    indent_size: {
         prettyName: "Tab size",
         type: 'prompt',
         message: 'Pick a tab size: ',
@@ -102,9 +102,7 @@ const defaultConfig = (): Record<string, any> => {
 export const createConfig = async (configPath: string): Promise<string> => {
     return new Promise(async (resolve, reject) => {
         try {
-            await editorAlert(
-                `Config file not found. It will be created as ${configPath}.`,
-            );
+            await editorAlert(`Config file not found. It will be created as ${configPath}.`);
 
             const tmp = defaultConfig();
             const dir = await dirname(configPath);
@@ -112,9 +110,8 @@ export const createConfig = async (configPath: string): Promise<string> => {
             if (!(await exists(dir))) await createDir(dir, { recursive: true })
 
             const string = dumpJSON(tmp);
-
             await writeFile({ contents: string, path: configPath })
-
+            
             resolve(string);
         }
 
