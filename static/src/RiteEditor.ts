@@ -50,6 +50,7 @@ export class RiteEditor {
     keybinds: RiteKeybind[] = [];
     acceptingKeybinds: boolean = true;
     platform: string;
+    isComputingWordCount: boolean = false;
 
     constructor(editorRoot: HTMLElement, commands: RiteCommands, platform: string) {
         this.commands = commands;
@@ -59,7 +60,7 @@ export class RiteEditor {
         });
 
         this.statusLine = StatusLine(this.editorRoot);
-        this.setDirty(true);
+        this.setDirty(false);
         this.updateFileName();
         this.updateDocInfo();
 
@@ -119,8 +120,16 @@ export class RiteEditor {
     }
 
     updateDocInfo() {
+        if (!this.isComputingWordCount) {
+            this.wordCount().then((val: number | string) => {
+                this.setDocInfoString(val)
+            });
+        }
+    }
+
+    async setDocInfoString(count: string | number) {
         let pos: Position = this.editor.getCursor();
-        this.statusLine.setRightMost(`Ln ${pos.line + 1}, Col ${pos.ch + 1}`);
+        this.statusLine.setRightMost(`${count} words ● Ln ${pos.line + 1}, Col ${pos.ch + 1}`);
     }
 
     updateFileName() {
@@ -182,18 +191,18 @@ export class RiteEditor {
         this.registerKeybinds(config.keybinds);
         this.editor.setOption('lineNumbers', config.line_numbers);
         const editorElem = this.editorRoot.querySelector('.CodeMirror') as HTMLElement;
-        
+
         if (config.portrait_mode) {
             editorElem.style.maxWidth = '100ch';
         }
         else {
             editorElem.style.maxWidth = '100%';
         }
-        
+
         if (config.font_size) {
             setCSSVar('font-size', config.font_size + 'px');
         }
-        
+
         if (config.indent_size) {
             this.editor.setOption('tabSize', parseInt(config.indent_size));
             this.editor.setOption("indentUnit", parseInt(config.indent_size));
@@ -224,7 +233,7 @@ export class RiteEditor {
                 const line = cm.getLine(cm.getCursor().line);
                 if (/^\s*$/.test(line) && this.getConfigVar('use_spaces')) {
                     let size = this.getConfigVar('indent_size');
-                    while(size--) cm.execCommand('delCharBefore');
+                    while (size--) cm.execCommand('delCharBefore');
                 }
                 else {
                     cm.execCommand('delCharBefore');
@@ -238,7 +247,7 @@ export class RiteEditor {
                 else if (/^\s*$/.test(line)) {
                     if (this.getConfigVar('use_spaces')) {
                         let size = this.getConfigVar('indent_size');
-                        while(size--) cm.execCommand('delCharBefore');
+                        while (size--) cm.execCommand('delCharBefore');
                     }
                     else {
                         cm.execCommand("delCharBefore");
@@ -266,7 +275,9 @@ export class RiteEditor {
     loadFile(file: RiteFile) {
         this.currentFile = file;
         this.editor.setValue(file.contents);
+        this.editor.clearHistory();
         this.updateFileName();
+        this.setDirty(false);
     }
 
     async execCommand(raw: string, source: 'palette' | 'keybind') {
@@ -344,6 +355,38 @@ export class RiteEditor {
 
     async saveFile() {
         if (this.currentFile) return writeFile(this.currentFile);
+    }
+
+    wordCount() {
+        this.isComputingWordCount = true;
+        return new Promise((actuallyResolve, reject) => {
+            const resolve = (val: string | number) => {
+                this.isComputingWordCount = false;
+                actuallyResolve(val);
+            }
+            try {
+                const data = this.editor.getValue();
+                if (data.length > 5000000) {
+                    resolve('file too long.');
+                    return;
+                }
+                let pattern =
+                    /[a-zA-Z0-9_\u0392-\u03c9\u0410-\u04F9]+|[\u4E00-\u9FFF\u3400-\u4dbf\uf900-\ufaff\u3040-\u309f\uac00-\ud7af]+/g;
+                let matches = data.match(pattern);
+                let count = 0;
+                if (matches === null) {
+                    resolve(count);
+                    return;
+                }
+                for (let i = 0; i < matches.length; i++) {
+                    count += matches[i].charCodeAt(0) >= 0x4E00 ? matches[i].length : 1;
+                }
+                resolve(count);
+            }
+            catch (e) {
+                reject(e);
+            }
+        })
     }
 
     async close() {
