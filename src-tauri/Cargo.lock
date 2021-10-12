@@ -962,9 +962,9 @@ dependencies = [
 
 [[package]]
 name = "gdk"
-version = "0.14.2"
+version = "0.14.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a453eae5ec10345b3a96ca1b547328bfc94edd40aa95b08f14bb4c35863db140"
+checksum = "b9d749dcfc00d8de0d7c3a289e04a04293eb5ba3d8a4e64d64911d481fa9933b"
 dependencies = [
  "bitflags",
  "cairo-rs",
@@ -1065,9 +1065,9 @@ dependencies = [
 
 [[package]]
 name = "gio"
-version = "0.14.6"
+version = "0.14.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f3a29d8062af72045518271a2cd98b4e1617ce43f5b4223ad0fb9a0eff8f718c"
+checksum = "711c3632b3ebd095578a9c091418d10fed492da9443f58ebc8f45efbeb215cb0"
 dependencies = [
  "bitflags",
  "futures-channel",
@@ -1108,9 +1108,9 @@ dependencies = [
 
 [[package]]
 name = "glib"
-version = "0.14.5"
+version = "0.14.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d4a930b7208e6e0ab839eea5f65ac2b82109f729621430d47fe905e2e09d33f4"
+checksum = "7c515f1e62bf151ef6635f528d05b02c11506de986e43b34a5c920ef0b3796a4"
 dependencies = [
  "bitflags",
  "futures-channel",
@@ -1197,9 +1197,9 @@ dependencies = [
 
 [[package]]
 name = "gtk"
-version = "0.14.1"
+version = "0.14.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6603bb79ded6ac6f3bac203794383afa8b1d6a8656d34a93a88f0b22826cd46c"
+checksum = "2eb51122dd3317e9327ec1e4faa151d1fa0d95664cd8fb8dcfacf4d4d29ac70c"
 dependencies = [
  "atk",
  "bitflags",
@@ -1822,9 +1822,9 @@ dependencies = [
 
 [[package]]
 name = "pango"
-version = "0.14.3"
+version = "0.14.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e1fc88307d9797976ea62722ff2ec5de3fae279c6e20100ed3f49ca1a4bf3f96"
+checksum = "546fd59801e5ca735af82839007edd226fe7d3bb06433ec48072be4439c28581"
 dependencies = [
  "bitflags",
  "glib",
@@ -2350,7 +2350,7 @@ dependencies = [
 
 [[package]]
 name = "rite"
-version = "0.1.0"
+version = "0.2.9"
 dependencies = [
  "dirs 4.0.0",
  "serde",
