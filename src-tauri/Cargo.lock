@@ -2350,7 +2350,7 @@ dependencies = [
 
 [[package]]
 name = "rite"
-version = "0.2.9"
+version = "0.2.10"
 dependencies = [
  "dirs 4.0.0",
  "serde",
