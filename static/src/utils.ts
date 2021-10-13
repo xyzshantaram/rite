@@ -72,11 +72,19 @@ export const clamp = (value: number, min: number, max: number) => {
     return value;
 }
 
+export const getPlatform = async () => {
+    return invoke<string>('get_platform');
+}
+
+export const getPaletteKeybind = async () => {
+    return (await getPlatform() === 'darwin') ? '⌘+Option+P' : "Ctrl+Alt+P";
+}
+
 export const onboarding = async () => {
+    const keybind = await getPaletteKeybind();
     await editorAlert(`<div>Thanks for using rite!</div>
         <div>Write markdown in the editor window.</div>
         <div>Bring up the command palette at any time by pressing
-        <kbd>Ctrl+Alt+P</kbd> (<kbd>Cmd+Option+P</kbd> on Macs) 
-        to get a list of actions and further help.
+        <kbd>${keybind}</kbd> to get a list of actions and further help.
     </div>`);
 }

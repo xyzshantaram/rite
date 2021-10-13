@@ -1,7 +1,5 @@
 import { createDir, writeFile } from "@tauri-apps/api/fs";
 import { dirname, resolve } from "@tauri-apps/api/path";
-import { exit } from "@tauri-apps/api/process";
-import { DEFAULT_KEYBINDS } from "./keybinds";
 import { editorConfirm, editorAlert, editorChoose, editorPrompt, toChoices } from "./prompt";
 import { dumpJSON, exists, PromptChoice } from "./utils";
 
@@ -85,7 +83,7 @@ export const MODIFIABLE_SETTINGS: Record<string, Setting> = {
             re: /^\d+$/,
             msg: 'You must enter only numbers!'
         },
-        default: '4'
+        default: '2'
     }
 }
 

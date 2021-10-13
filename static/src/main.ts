@@ -5,13 +5,13 @@ import 'codemirror/mode/gfm/gfm';
 import { COMMANDS } from './commands';
 import { createConfig } from './config';
 import { RiteEditor as RiteEditor } from './RiteEditor';
-import { getConfigPath, onboarding } from './utils';
+import { getConfigPath, onboarding, getPlatform } from './utils';
 import 'codemirror/addon/dialog/dialog';
 import 'codemirror/addon/search/searchcursor';
 import 'codemirror/addon/search/search';
 import 'codemirror/addon/search/jump-to-line';
 import 'codemirror/addon/display/rulers';
-import { invoke } from '@tauri-apps/api';
+import 'codemirror/addon/display/placeholder';
 
 window.addEventListener('DOMContentLoaded', async () => {
     const editorRoot = cf.insert(
@@ -19,7 +19,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         { atStartOf: document.querySelector('#app') as HTMLElement }
     ) as HTMLElement;
     
-    const platform = await invoke<string>('get_platform');
+    const platform = await getPlatform();
     const editor = new RiteEditor(editorRoot, COMMANDS, platform);
 
     let configPath = await getConfigPath();

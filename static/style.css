@@ -21,6 +21,7 @@ html {
     --color-md-link: #94cfff;
     --color-md-url: #d568b6;
     --color-md-string: #85c77c;
+    --color-md-bullet: #b9f0b2;
     --color-md-quote: #b1b1b1;
     --color-cm-html: #ff9a00;
     --font: monospace;
@@ -81,6 +82,10 @@ body {
 .CodeMirror-gutters, #editor>.CodeMirror {
     background-color: var(--background-main);
     color: var(--color-secondary);
+}
+
+.CodeMirror pre.CodeMirror-placeholder {
+    color: var(--color-auxiliary);
 }
 
 .CodeMirror-cursors .CodeMirror-cursor {
@@ -154,6 +159,10 @@ body {
 
 .cm-s-default .CodeMirror-selected {
     background: var(--color-selection);
+}
+
+.cm-s-default .cm-variable-3 {
+    color: var(--color-md-bullet);
 }
 
 #statusline {

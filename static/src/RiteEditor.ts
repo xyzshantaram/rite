@@ -1,7 +1,7 @@
 import { basename } from "@tauri-apps/api/path";
 import { Editor, Position } from "codemirror";
 import { COMMANDS } from "./commands";
-import { dumpJSON, RiteCommands, RiteFile, RiteSettings, setAppFont, RiteKeybind, setCSSVar } from "./utils";
+import { dumpJSON, RiteCommands, RiteFile, RiteSettings, setAppFont, RiteKeybind, setCSSVar, getPaletteKeybind } from "./utils";
 import { parseCommand } from "./commands";
 import { DEFAULT_KEYBINDS, parseKeybind } from "./keybinds";
 import { editorAlert, editorAlertFatal, editorConfirm } from "./prompt";
@@ -57,8 +57,14 @@ export class RiteEditor {
         this.commands = commands;
         this.editorRoot = editorRoot;
         this.editor = CodeMirror(editorRoot, {
-            mode: 'gfm', lineNumbers: true, lineWrapping: true
+            mode: 'gfm', lineNumbers: true, lineWrapping: true,
         });
+
+        getPaletteKeybind().then(keybind => {
+            this.editor.setOption('placeholder', `Press ${keybind} at any time to bring up the command palette.`)
+        }).catch(err => {
+            this.editor.setOption('placeholder', `Press Ctrl+Alt+P at any time to bring up the command palette.`)
+        })
 
         this.statusLine = StatusLine(this.editorRoot);
         this.setDirty(false);
