@@ -5,7 +5,7 @@ import { dumpJSON, RiteCommands, RiteFile, RiteSettings, setAppFont, RiteKeybind
 import { parseCommand } from "./commands";
 import { DEFAULT_KEYBINDS, parseKeybind } from "./keybinds";
 import { editorAlert, editorAlertFatal, editorConfirm } from "./prompt";
-import { dialog } from "@tauri-apps/api";
+import { dialog, path } from "@tauri-apps/api";
 import cf from 'campfire.js';
 import CodeMirror from "codemirror";
 import { exit } from "@tauri-apps/api/process";
@@ -331,7 +331,10 @@ export class RiteEditor {
 
         let file: RiteFile;
         if (this.currentFile === null || isSaveAs) {
-            const savePath = await dialog.save();
+            const options = {
+                defaultPath: this.currentFile ? await path.dirname(this.currentFile.path) : undefined
+            };
+            const savePath = await dialog.save(options);
             if (!savePath) {
                 this.statusLine.setDirty('save cancelled.');
                 setTimeout(() => this.setDirty(this.dirty), 5000);
