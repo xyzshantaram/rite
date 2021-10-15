@@ -2361,7 +2361,7 @@ dependencies = [
 
 [[package]]
 name = "rite"
-version = "0.2.11"
+version = "0.2.12"
 dependencies = [
  "dirs 4.0.0",
  "serde",
@@ -2809,6 +2809,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "79a0579dcc6fb883fe90dd3c66d76b8b8f4a1786e1e915e314b2017a500ede09"
 dependencies = [
  "attohttpc",
+ "base64",
  "bincode",
  "cfg_aliases",
  "dirs-next",

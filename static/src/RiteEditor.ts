@@ -1,12 +1,11 @@
 import { basename } from "@tauri-apps/api/path";
 import { Editor, Position } from "codemirror";
 import { COMMANDS } from "./commands";
-import { dumpJSON, RiteCommands, RiteFile, RiteSettings, setAppFont, RiteKeybind, setCSSVar, getPaletteKeybind } from "./utils";
+import { dumpJSON, RiteCommands, RiteFile, RiteSettings, setAppFont, RiteKeybind, setCSSVar, getPaletteKeybind, writeFileAtomic } from "./utils";
 import { parseCommand } from "./commands";
 import { DEFAULT_KEYBINDS, parseKeybind } from "./keybinds";
 import { editorAlert, editorAlertFatal, editorConfirm } from "./prompt";
 import { dialog } from "@tauri-apps/api";
-import { writeFile } from "@tauri-apps/api/fs";
 import cf from 'campfire.js';
 import CodeMirror from "codemirror";
 import { exit } from "@tauri-apps/api/process";
@@ -166,10 +165,7 @@ export class RiteEditor {
     }
 
     async dumpConfig() {
-        return await writeFile({
-            path: this.getConfigPath(),
-            contents: dumpJSON(this.config)
-        });
+        return await writeFileAtomic(this.getConfigPath(), dumpJSON(this.config));
     }
 
     async setConfigVar(key: string, value: any) {
@@ -364,7 +360,7 @@ export class RiteEditor {
     }
 
     async saveFile() {
-        if (this.currentFile) return writeFile(this.currentFile);
+        if (this.currentFile) return await writeFileAtomic(this.currentFile.path, this.currentFile.contents);
     }
 
     wordCount() {

@@ -1,6 +1,6 @@
 [package]
 name = "rite"
-version = "0.2.11"
+version = "0.2.12"
 description = "Your new distraction-free writing app."
 authors = ["shantaram"]
 license = "MIT"
@@ -17,7 +17,7 @@ tauri-build = { version = "1.0.0-beta.4" }
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.0.0-beta.8", features = ["dialog-all", "fs-create-dir", "fs-read-text-file", "fs-write-file", "notification-all", "os-all", "path-all"] }
+tauri = { version = "1.0.0-beta.8", features = ["dialog-all", "fs-all", "fs-create-dir", "fs-read-text-file", "fs-write-file", "notification-all", "os-all", "path-all"] }
 dirs = "4.0.0"
 
 [features]

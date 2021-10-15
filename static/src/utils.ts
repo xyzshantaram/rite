@@ -1,4 +1,5 @@
-import { invoke } from '@tauri-apps/api';
+import { invoke, os } from '@tauri-apps/api';
+import { renameFile, writeFile } from '@tauri-apps/api/fs';
 import { editorAlert } from './prompt';
 import { RiteEditor } from './RiteEditor';
 
@@ -87,4 +88,18 @@ export const onboarding = async () => {
         <div>Bring up the command palette at any time by pressing
         <kbd>${keybind}</kbd> to get a list of actions and further help.
     </div>`);
+}
+
+export const writeFileAtomic = async(path: string, contents: string) => {
+    const tmpPath = `${path}.tmp`;
+    try {
+        await writeFile({
+            path: tmpPath,
+            contents: contents
+        });
+        return await renameFile(tmpPath, path);
+    }
+    catch (e) {
+        return await editorAlert(`Error writing file ${path}: ${e}. Changes have not been saved.`);
+    }
 }

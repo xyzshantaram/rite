@@ -10,12 +10,7 @@ const openAndReadFile = async (): Promise<RiteFile> => {
         try {
             const path = <string>await dialog.open({
                 multiple: false,
-                directory: false,
-                filters: [{
-                    extensions: [
-                        'md', 'txt', ''
-                    ], name: ''
-                }]
+                directory: false
             })
 
             if (path === null) resolve({
