@@ -42,6 +42,9 @@ jobs:
                     
                         Note that Windows users will need to have 
                         [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
-                        installed."
+                        installed.
+
+
+                        Also, the AppImage build is currently nonfunctional for users of distributions other than Ubuntu."
                     releaseDraft: true
                     prerelease: false
