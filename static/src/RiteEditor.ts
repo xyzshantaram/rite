@@ -20,7 +20,7 @@ interface StatusLineControls {
 
 const StatusLine = (parent: HTMLElement) => {
     const elem = cf.insert(cf.nu('div#statusline'), { atEndOf: parent }) as HTMLElement;
-    const filenameElem = cf.insert(cf.nu('div'), { atEndOf: elem }) as HTMLElement;
+    const filenameElem = cf.insert(cf.nu('div#filename'), { atEndOf: elem }) as HTMLElement;
     const dirtyStateElem = cf.insert(
         cf.nu('div#statusline-dirty-state'), { atEndOf: elem }
     ) as HTMLElement;

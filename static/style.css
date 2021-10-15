@@ -182,6 +182,9 @@ body {
 #statusline-dirty-state {
     margin-left: 0.5rem;
     color: var(--color-auxiliary);
+    max-width: 40ch;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 #statusline-rightmost {

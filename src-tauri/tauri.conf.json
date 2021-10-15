@@ -12,7 +12,7 @@
     "tauri": {
         "bundle": {
             "active": true,
-            "targets": ["msi", "appimage", "dmg", "app"],
+            "targets": ["msi", "appimage", "dmg"],
             "identifier": "xyz.shantaram.rite",
             "icon": [
                 "icons/32x32.png",
