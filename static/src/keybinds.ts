@@ -1,5 +1,5 @@
 export const DEFAULT_KEYBINDS: Record<string, string> = {
-    "C+s": "save_current_file",
+    "C+s": "save",
     "C+o": "open_file",
     "CA+p": "open_palette",
     "C+i": "mark_range_italic",

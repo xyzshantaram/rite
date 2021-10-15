@@ -141,7 +141,7 @@ export const COMMANDS: RiteCommands = {
         action: openPalette,
         description: "Show the palette."
     },
-    "save_current_file": {
+    "save": {
         action: saveFile,
         description: "Save current file.",
         palette: true
