@@ -182,7 +182,7 @@ export class RiteEditor {
 
     getConfigVar(key: string) {
         let stored = this.config[key];
-        if (stored) return stored;
+        if (typeof stored !== 'undefined') return stored;
         if (!stored && Object.keys(MODIFIABLE_SETTINGS).includes(key)) {
             return MODIFIABLE_SETTINGS[key].default;
         }
