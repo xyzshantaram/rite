@@ -103,6 +103,10 @@ const saveFile = async (editor: RiteEditor) => {
     await editor.save();
 }
 
+const saveAs = async (editor: RiteEditor) => {
+    await editor.save(true);
+}
+
 const showAboutPrompt = async () => {
     await editorAlert(`<div>
                 rite is free, open-source software under the MIT license. 
@@ -140,6 +144,11 @@ export const COMMANDS: RiteCommands = {
     "save_current_file": {
         action: saveFile,
         description: "Save current file.",
+        palette: true
+    },
+    "save_as": {
+        action: saveAs,
+        description: "Save current file to a new location.",
         palette: true
     },
     "open_settings": {

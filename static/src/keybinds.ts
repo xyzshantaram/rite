@@ -10,7 +10,8 @@ export const DEFAULT_KEYBINDS: Record<string, string> = {
     "CA+3": "mark_range_h3",
     "CA+4": "mark_range_h4",
     "CA+5": "mark_range_h5",
-    "CA+6": "mark_range_h6"
+    "CA+6": "mark_range_h6",
+    "CS+s": "save_as"
 }
 
 export const parseKeybind = (keybind: string, platform: string) => {
