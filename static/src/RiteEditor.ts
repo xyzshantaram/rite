@@ -2,7 +2,6 @@ import { basename } from "@tauri-apps/api/path";
 import { Editor, Position } from "codemirror";
 import { COMMANDS } from "./commands";
 import { dumpJSON, RiteCommands, RiteFile, RiteSettings, setAppFont, RiteKeybind, setCSSVar, getPaletteKeybind, writeFileAtomic } from "./utils";
-import { parseCommand } from "./commands";
 import { DEFAULT_KEYBINDS, parseKeybind } from "./keybinds";
 import { editorAlert, editorAlertFatal, editorConfirm } from "./prompt";
 import { dialog, path } from "@tauri-apps/api";
@@ -118,6 +117,12 @@ export class RiteEditor {
             doc.replaceRange(insertion, { line: cursor.line, ch: 0 });
             doc.setCursor({ line: cursor.line, ch: cursorOffset || 0 });
         }
+    }
+
+    refreshDirtyAfter(ms: number) {
+        setTimeout(() => {
+            this.setDirty(this.dirty);
+        }, ms);
     }
 
     setDirty(dirty: boolean) {
@@ -278,18 +283,18 @@ export class RiteEditor {
         return this.configPath;
     }
 
-    loadFile(file: RiteFile) {
+    loadFile(file: RiteFile | null) {
         this.currentFile = file;
-        this.editor.setValue(file.contents);
+        this.editor.setValue(file?.contents || "");
         this.editor.clearHistory();
         this.updateFileName();
         this.setDirty(false);
     }
 
-    async execCommand(raw: string, source: 'palette' | 'keybind') {
-        const { cmd, args } = parseCommand(raw);
+    async execCommand(cmd: string, source: 'palette' | 'keybind') {
+        cmd = cmd.trim();
         if (COMMANDS[cmd] && ((COMMANDS[cmd].palette && source === 'palette') || source === 'keybind')) {
-            COMMANDS[cmd].action(this, args);
+            COMMANDS[cmd].action(this);
         }
         else if (cmd === '') {
             return;
@@ -337,7 +342,7 @@ export class RiteEditor {
             const savePath = await dialog.save(options);
             if (!savePath) {
                 this.statusLine.setDirty('save cancelled.');
-                setTimeout(() => this.setDirty(this.dirty), 5000);
+                this.refreshDirtyAfter(5000);
                 return;
             };
 
@@ -351,7 +356,7 @@ export class RiteEditor {
         this.currentFile = { path: file.path, contents: this.editor.getValue() };
         this.dirty = false;
 
-        setTimeout(() => this.setDirty(this.dirty), 5000);
+        this.refreshDirtyAfter(5000);
 
         try {
             await this.saveFile();
@@ -364,6 +369,15 @@ export class RiteEditor {
 
     async saveFile() {
         if (this.currentFile) return await writeFileAtomic(this.currentFile.path, this.currentFile.contents);
+    }
+
+    async newFile() {
+        if (this.dirty && await editorConfirm("Save current file?")) {
+            await this.save();
+        }
+        else {
+            this.loadFile(null);
+        }
     }
 
     wordCount() {

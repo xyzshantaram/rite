@@ -3,7 +3,7 @@ import { renameFile, writeFile } from '@tauri-apps/api/fs';
 import { editorAlert } from './prompt';
 import { RiteEditor } from './RiteEditor';
 
-export type CommandHandler = (editor: RiteEditor, args: string) => void;
+export type CommandHandler = (editor: RiteEditor) => void;
 
 export type RiteSettings = Record<string, any>;
 

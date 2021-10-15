@@ -14,5 +14,4 @@
   blindly deleting
 - [] need to rework setConfig
 - [] need to rework prompt.ts
-- [] button to open command palette
-- [] new file option (save current and open new)
+- [] make keybind change detection more robust

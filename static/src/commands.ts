@@ -29,18 +29,10 @@ const openAndReadFile = async (): Promise<RiteFile> => {
     })
 }
 
-const openFileCommand: CommandHandler = async (editor: RiteEditor, args: string) => {
+const loadFile: CommandHandler = async (editor: RiteEditor) => {
     const file = await openAndReadFile();
     if (file.path === '') return;
-    editor.loadFile(file);
-}
-
-export const parseCommand = (command: string) => {
-    const split = command.split(' ');
-    return {
-        cmd: split[0],
-        args: split.slice(1).join(' ')
-    };
+    return editor.loadFile(file);
 }
 
 const openPalette = async (editor: RiteEditor) => {
@@ -131,9 +123,18 @@ const showAboutPrompt = async () => {
     `);
 }
 
+const newFile = async (editor: RiteEditor) => {
+    await editor.newFile();
+}
+
 export const COMMANDS: RiteCommands = {
+    "new_file": {
+        action: newFile,
+        description: "Create a new file.",
+        palette: true
+    },
     "open_file": {
-        action: openFileCommand,
+        action: loadFile,
         description: "Open a file.",
         palette: true
     },
