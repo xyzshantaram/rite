@@ -91,15 +91,14 @@ export const onboarding = async () => {
 }
 
 export const writeFileAtomic = async(path: string, contents: string) => {
-    const tmpPath = `${path}.tmp`;
     try {
-        await writeFile({
-            path: tmpPath,
+        await invoke<void>("atomic_write", {
+            target: path,
             contents: contents
-        });
-        return await renameFile(tmpPath, path);
+        })
+        return;
     }
     catch (e) {
-        return await editorAlert(`Error writing file ${path}: ${e}. Changes have not been saved.`);
+        return await editorAlert(`Error while writing ${path}: ${e}`);
     }
 }
