@@ -237,15 +237,19 @@ export class RiteEditor {
                 }
             },
             Backspace: (cm) => {
-                console.log('test')
                 if (cm.somethingSelected()) {
                     cm.replaceSelection('');
                     return;
                 }
                 const line = cm.getLine(cm.getCursor().line);
-                if (/^[ ]{4,}$/.test(line) && this.getConfigVar('use_spaces')) {
-                    let size = this.getConfigVar('indent_size');
-                    while (size--) cm.execCommand('delCharBefore');
+                if (/^([ ]{4,})|(\t+)$/.test(line) && this.getConfigVar('use_spaces')) {
+                    if (line.endsWith('\t')) {
+                        cm.execCommand('delCharBefore');
+                    }
+                    else {
+                        let size = this.getConfigVar('indent_size');
+                        while (size--) cm.execCommand('delCharBefore');
+                    }
                 }
                 else {
                     cm.execCommand('delCharBefore');
@@ -256,10 +260,15 @@ export class RiteEditor {
                 if (cm.somethingSelected()) {
                     cm.indentSelection("subtract");
                 }
-                else if (/^\s*$/.test(line)) {
+                else if (/^([ ]{4,})|(\t+)$/.test(line)) {
                     if (this.getConfigVar('use_spaces')) {
-                        let size = this.getConfigVar('indent_size');
-                        while (size--) cm.execCommand('delCharBefore');
+                        if (line.endsWith('\t')) {
+                            cm.execCommand('delCharBefore');
+                        }
+                        else {
+                            let size = this.getConfigVar('indent_size');
+                            while (size--) cm.execCommand('delCharBefore');
+                        }
                     }
                     else {
                         cm.execCommand("delCharBefore");
