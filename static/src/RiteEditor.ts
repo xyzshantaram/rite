@@ -237,12 +237,13 @@ export class RiteEditor {
                 }
             },
             Backspace: (cm) => {
+                console.log('test')
                 if (cm.somethingSelected()) {
                     cm.replaceSelection('');
                     return;
                 }
                 const line = cm.getLine(cm.getCursor().line);
-                if (/^\s*$/.test(line) && this.getConfigVar('use_spaces')) {
+                if (/^[ ]{4,}$/.test(line) && this.getConfigVar('use_spaces')) {
                     let size = this.getConfigVar('indent_size');
                     while (size--) cm.execCommand('delCharBefore');
                 }
