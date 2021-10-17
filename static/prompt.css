@@ -69,6 +69,14 @@
     text-overflow: ellipsis;
     margin: 0.2rem;
     cursor: pointer;
+    max-width: 100%;
+    overflow:hidden;
+    text-overflow: ellipsis;
+    color: var(--color-auxiliary);
+}
+
+.prompt-option-name {
+    color: var(--color-secondary);
 }
 
 .prompt-option.selected {
