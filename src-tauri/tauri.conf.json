@@ -1,7 +1,7 @@
 {
     "package": {
         "productName": "rite",
-        "version": "0.2.15"
+        "version": "0.3.0"
     },
     "build": {
         "distDir": "../static",
@@ -12,7 +12,7 @@
     "tauri": {
         "bundle": {
             "active": true,
-            "targets": ["msi", "appimage", "dmg"],
+            "targets": ["msi", "deb", "dmg"],
             "identifier": "xyz.shantaram.rite",
             "icon": [
                 "icons/32x32.png",
