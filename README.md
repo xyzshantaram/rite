@@ -19,8 +19,8 @@ installed.
 
 - Download the latest release from the
   [Releases](https://github.com/xyzshantaram/rite/releases) page.
-- Install it the way you usually would for your operating system (the AppImage
-  does not need to be installed, however.)
+- Install it the way you usually would for your operating system. Users of
+  non-Debian Linux distros will have to build from scratch (see )
 - When you run `rite`, you will be prompted for the first-time configuration.
 - Once this is done, you can start using `rite`!
 

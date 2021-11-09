@@ -181,7 +181,7 @@ export class RiteEditor {
     }
 
     getConfigVar(key: string) {
-        let stored = this.config[key];
+        let stored = this.config && this.config[key];
         if (typeof stored !== 'undefined') return stored;
         if (!stored && Object.keys(MODIFIABLE_SETTINGS).includes(key)) {
             return MODIFIABLE_SETTINGS[key].default;
@@ -223,6 +223,9 @@ export class RiteEditor {
     }
 
     setEditorCustomKeys() {
+        let indentSize = () => this.getConfigVar('indent_size') || 2;
+        let wsRe = new RegExp(`^(([ ]{${indentSize()},})|(\t+))+$`);
+        let startsWsRe = new RegExp(`^(([ ]{${indentSize()},})|(\t+))+.*`);
         this.editor.addKeyMap({
             Tab: (cm) => {
                 if (cm.somethingSelected()) {
@@ -237,19 +240,28 @@ export class RiteEditor {
                 }
             },
             Backspace: (cm) => {
+                let cursor = cm.getCursor();
+
                 if (cm.somethingSelected()) {
                     cm.replaceSelection('');
                     return;
                 }
-                const line = cm.getLine(cm.getCursor().line);
-                if (/^([ ]{4,})|(\t+)$/.test(line) && this.getConfigVar('use_spaces')) {
+                const line = cm.getLine(cursor.line);
+
+                let reduceIndent = () => {
                     if (line.endsWith('\t')) {
                         cm.execCommand('delCharBefore');
                     }
                     else {
-                        let size = this.getConfigVar('indent_size');
+                        let size = indentSize();
                         while (size--) cm.execCommand('delCharBefore');
                     }
+                }
+                if (wsRe.test(line) && this.getConfigVar('use_spaces')) {
+                    reduceIndent();
+                }
+                else if (startsWsRe.test(line) && wsRe.test(line.substring(0, cursor.ch))) {
+                    reduceIndent();
                 }
                 else {
                     cm.execCommand('delCharBefore');
@@ -260,7 +272,7 @@ export class RiteEditor {
                 if (cm.somethingSelected()) {
                     cm.indentSelection("subtract");
                 }
-                else if (/^([ ]{4,})|(\t+)$/.test(line)) {
+                else if (wsRe.test(line)) {
                     if (this.getConfigVar('use_spaces')) {
                         if (line.endsWith('\t')) {
                             cm.execCommand('delCharBefore');
