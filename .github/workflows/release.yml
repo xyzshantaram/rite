@@ -1,50 +1,53 @@
 name: "Publish release"
 on:
-    push:
-        branches:
-            - release
+  push:
+    branches:
+      - release
 
 jobs:
-    publish-tauri:
-        strategy:
-            fail-fast: false
-            matrix:
-                platform: [macos-10.15, ubuntu-latest, windows-latest]
+  publish-tauri:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [macos-10.15, ubuntu-latest, windows-latest]
 
-        runs-on: ${{ matrix.platform }}
-        steps:
-            - uses: actions/checkout@v2
-            - name: setup node
-              uses: actions/setup-node@v1
-              with:
-                  node-version: 12
-            - name: install Rust stable
-              uses: actions-rs/toolchain@v1
-              with:
-                  toolchain: stable
-            - name: install tauri bundler
-              run: cargo install tauri-bundler --force
-            - name: install webkit2gtk on Ubuntu runners
-              if: matrix.platform == 'ubuntu-latest'
-              run: |
-                  sudo apt-get update
-                  sudo apt-get install -y webkit2gtk-4.0
-            - name: install dependencies and build app
-              run: yarn && yarn tauri build
-            - uses: tauri-apps/tauri-action@v0
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                    tagName: rite-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
-                    releaseName: "rite v__VERSION__"
-                    releaseBody: "# rite v__VERSION__:\nSee the assets to download and install this version. 
-
-                    
-                        Note that Windows users will need to have 
-                        [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
-                        installed.
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - name: install Rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: install tauri bundler
+        run: cargo install tauri-bundler --force
+      - name: install webkit2gtk on Ubuntu runners
+        if: matrix.platform == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y webkit2gtk-4.0
+      - name: install dependencies and build app
+        run: yarn && yarn tauri build
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: rite-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
+          releaseName: "rite v__VERSION__"
+          releaseBody:
+            "# rite v__VERSION__:\nSee the assets to download and install this version.
 
 
-                        Also, the AppImage build is currently nonfunctional for users of distributions other than Ubuntu."
-                    releaseDraft: true
-                    prerelease: false
+            Note that Windows users will need to have
+            [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
+            installed.
+
+
+            For Linux, only a .deb build is currently available -- the [Tauri AppImage is
+            currently broken](https://github.com/tauri-apps/tauri/issues/2805),
+            so you'll have to build from source if you're not on a Debian-based distro."
+          releaseDraft: false
+          prerelease: false
