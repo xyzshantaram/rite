@@ -1,9 +1,22 @@
 import { dialog } from "@tauri-apps/api"
 import { readTextFile } from "@tauri-apps/api/fs"
 import { RiteEditor } from "./RiteEditor"
-import { editorAlert, editorChoose, editorPrompt, toChoices } from "./prompt"
-import { CommandHandler, PromptChoice, RiteCommands, RiteFile } from "./utils"
+import { editorAlert, editorChoose, editorConfirm, editorPrompt, hidePrompt, toChoices } from "./prompt"
+import { CommandHandler, groupByProp, PromptChoice, RiteCommands, RiteFile } from "./utils"
 import { MODIFIABLE_SETTINGS, requestSetting, Setting } from "./config"
+import cf from 'campfire.js'
+
+class UploadFormResult {
+    name: string;
+    revision: string | null;
+    contents: string | null;
+}
+
+class OpenFormResult {
+    uuid: string | null;
+}
+
+type JSobj = Record<string, unknown>;
 
 const openAndReadFile = async (): Promise<RiteFile> => {
     return new Promise(async (resolve, reject) => {
@@ -49,10 +62,10 @@ const openPalette = async (editor: RiteEditor) => {
     await editor.execCommand(await editorChoose('Command:', choices, true, true), "palette");
 }
 
-const openSettings = async(editor: RiteEditor) => {
+const openSettings = async (editor: RiteEditor) => {
     const EXIT_STRING = "Save settings and exit."
     const settings: [string, Setting][] = Object.entries(MODIFIABLE_SETTINGS);
-    const choices: PromptChoice[] = [{title: EXIT_STRING}];
+    const choices: PromptChoice[] = [{ title: EXIT_STRING }];
 
     const stringify = (value: Setting, existing: any): string => {
         if (existing === null) return 'not set';
@@ -82,7 +95,7 @@ const openSettings = async(editor: RiteEditor) => {
             if (value.prettyName === userChoice) {
                 newSettings[key] = await requestSetting(value);
                 let changed = choices.find((choice) => choice.title === value.prettyName);
-                if (changed) changed.description =  `Current value: ${stringify(value, newSettings[key])}`;
+                if (changed) changed.description = `Current value: ${stringify(value, newSettings[key])}`;
                 break settingLoop;
             }
         }
@@ -97,6 +110,177 @@ const saveFile = async (editor: RiteEditor) => {
 
 const saveAs = async (editor: RiteEditor) => {
     await editor.save(true);
+}
+
+const showCloudMenu = (editor: RiteEditor, token: string, url: string, user: string, open: boolean): Promise<UploadFormResult | OpenFormResult> => {
+    document.querySelector("#upload-menu")?.remove();
+
+    return new Promise((resolve, reject) => {
+        fetch(url + "/api/docs/list", {
+            method: 'POST',
+            body: JSON.stringify({
+                token, user
+            })
+        }).then(res => res.json()).then((list: Array<Record<string, unknown>>) => {
+            let existingDocs = new Set<Record<string, unknown>>();
+            list.forEach(elem => {
+                existingDocs.add(elem);
+            })
+
+            const root = cf.insert(cf.nu('#upload-menu'), { atEndOf: document.body }) as HTMLElement;
+
+            const form = cf.nu('form', {
+                raw: true,
+                c: `
+                <div class='form-group'>
+                    <label for='document-name'>
+                        Document
+                        ${open ? '' : '<a id="upload-create-new" href="javascript:void(0)">Create new</a>'}
+                    </label>
+                    <select id='document-name' required>
+                        <option value="" disabled selected>Select...</option>
+                    </select>
+                </div>
+
+                <div class='form-group'>
+                <label for='document-revision'>Revision</label>
+                ${open ?
+                        `<select id='document-revision' placeholder='Pick a revision' required>
+                        <option value="" disabled selected>Select...</option>
+                    </select>`
+                        : `<input type='text' id='document-revision' required>`
+                    }
+                </div>
+
+                <div id='outcome-group' class='form-group'>
+                    <button type='button' id='upload-cancel'>Cancel</button>
+                    <button id='upload-confirm'>Confirm</button>
+                </div>
+            `,
+            }) as HTMLFormElement;
+
+            root.appendChild(form);
+
+            const cancelBtn = form.querySelector("#upload-cancel")! as HTMLButtonElement;
+            const nameField = form.querySelector("#document-name")! as HTMLInputElement;
+
+            cancelBtn.onclick = () => {
+                reject("Cancelled.");
+            }
+
+            const documentSelect = form.querySelector("#document-name")! as HTMLSelectElement;
+
+            let grouped = groupByProp(existingDocs, 'name');
+            console.log(grouped);
+
+            let uniqueDocs = Object.keys(grouped);
+            for (const x of uniqueDocs) {
+                for (const y of grouped[x]) {
+                    cf.insert(cf.nu('option', {
+                        c: y.name.trim()
+                    }), { atEndOf: documentSelect });
+                }
+            }
+
+            if (open) {
+                documentSelect.onchange = () => {
+                    grouped[documentSelect.value].forEach(elem => {
+                        let revisionSelect = form.querySelector('#document-revision')! as HTMLSelectElement;
+                        revisionSelect.innerHTML = '<option value="" disabled selected>Select...</option>';
+                        revisionSelect.appendChild(cf.nu('option', {
+                            c: elem.revision,
+                            a: { value: elem.uuid }
+                        }));
+                    })
+                }
+            }
+            else {
+                const createLink = form.querySelector("#upload-create-new")! as HTMLAnchorElement;
+                createLink.onclick = async () => {
+                    let newName = (await editorPrompt("Enter a name for the new document.", false));
+                    if (!uniqueDocs.includes(newName.trim())) {
+                        cf.insert(cf.nu("option", { c: newName.trim() }), { atEndOf: documentSelect });
+                    }
+                    documentSelect.value = newName.trim();
+                }
+            }
+
+            form.onsubmit = (e) => {
+                e.preventDefault();
+                if (open) {
+                    let revisionSelect = form.querySelector('#document-revision')! as HTMLSelectElement;
+                    resolve({
+                        uuid: revisionSelect.value
+                    });
+                }
+                else {
+                    let revisionField = form.querySelector('#document-revision')! as HTMLInputElement;
+                    resolve({
+                        name: nameField.value,
+                        revision: revisionField.value,
+                        contents: editor.getContents()
+                    });
+                }
+            }
+        })
+    })
+}
+
+const saveToCloud = async (editor: RiteEditor) => {
+    const info = await cloudAction(editor, "save");
+}
+
+const openFromCloud = async (editor: RiteEditor) => {
+    const res = await cloudAction(editor, "open");
+    if (!res || res instanceof UploadFormResult) {
+        return;
+    }
+
+    let url: string = editor.getConfigVar("cloud_url");
+    let doc = await fetch(url + "/api/docs/contents", {
+        body: JSON.stringify({
+            uuid: res.uuid,
+            user: editor.getConfigVar("cloud_username"),
+            token: editor.getConfigVar("cloud_token"),
+        }),
+        method: "POST"
+    }).then(res => res.json());
+
+    if (doc.contents) {
+        editor.setContents(doc.contents);
+    }
+    else {
+        await editorAlert(doc.message);
+    }
+}
+
+const cloudAction = async (editor: RiteEditor, action: "open" | "save") => {
+    document.querySelector("#upload-menu")?.remove();
+    if (action === 'save' && editor.dirty) {
+        if (await editorConfirm("Current document must be saved. Continue?")) {
+            await editor.save();
+        }
+        else return;
+    }
+
+    if (action === 'save' && editor.dirty) {
+        await editorAlert("File not saved -- cancelling.");
+        return;
+    }
+
+    let { token, url, username } = {
+        token: editor.getConfigVar("cloud_token"),
+        url: editor.getConfigVar("cloud_url"),
+        username: editor.getConfigVar("cloud_username")
+    }
+    if (!token || !url || !username) {
+        await editorAlert("Cloud configuration settings not found. Ensure the cloud_url, cloud_token, and cloud_username settings options are set.")
+        return;
+    }
+    let res = await showCloudMenu(editor, token, url, username, action === 'open');
+    document.querySelector("#upload-menu")?.remove();
+
+    return res;
 }
 
 const showAboutPrompt = async () => {
@@ -152,13 +336,23 @@ export const COMMANDS: RiteCommands = {
         description: "Save current file to a new location.",
         palette: true
     },
+    "cloud_save": {
+        action: saveToCloud,
+        description: "Upload current file to Rite Cloud.",
+        palette: true
+    },
+    "cloud_open": {
+        action: openFromCloud,
+        description: "Open a file from Rite Cloud.",
+        palette: true
+    },
     "open_settings": {
         action: openSettings,
         description: "Open settings.",
         palette: true
     },
     "close_palette": {
-        action: () => {},
+        action: () => { },
         description: "Close palette.",
         palette: true
     },

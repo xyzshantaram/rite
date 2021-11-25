@@ -20,7 +20,7 @@ const fuzzySearch = (str: string, query: string): number => {
     return query === "" ? 1 : matches / str.length;
 };
 
-const initialisePrompt = () => {
+const initialisePrompt = (): [(args: PromptArgs) => any, () => any] => {
     const mask = cf.insert(cf.nu('div#mask'), { atEndOf: document.body }) as HTMLElement;
     const prompt = cf.insert(cf.nu('div#prompt'), { atEndOf: mask }) as HTMLElement;
     const promptWrapper = cf.insert(cf.nu('div#prompt-msg-wrapper'), { atEndOf: prompt }) as HTMLElement;
@@ -45,7 +45,7 @@ const initialisePrompt = () => {
             ${choice.description ? `<span class='prompt-option-desc'>${cf.escape(choice.description)}</span>` : ''}`,
             a: { 'data-choice': choice.title },
             on: {
-                click: function(e) {
+                click: function (e) {
                     field.value = choice.title;
                     setSelectedOption(this);
                     field.focus();
@@ -55,7 +55,7 @@ const initialisePrompt = () => {
         }))
     }
 
-    const hide = () => {
+    const hidePrompt = () => {
         msg.innerHTML = '';
         field.value = '';
         options.innerHTML = '';
@@ -70,8 +70,8 @@ const initialisePrompt = () => {
     field.oninput = (e) => {
         let value = field.value.trim();
 
-        if (!currentChoices.find(elem => { elem.title === value})) setSelectedIdx(currIndex = 0);
-        
+        if (!currentChoices.find(elem => { elem.title === value })) setSelectedIdx(currIndex = 0);
+
         for (let choice of currentChoices) {
             const elt = document.querySelector(`div[data-choice=${choice.title}]`);
             if (fuzzySearch(choice.title, value) > 0.5) {
@@ -84,7 +84,7 @@ const initialisePrompt = () => {
     }
 
     const completePromptFlow = (value: string) => {
-        hide();
+        hidePrompt();
         currentCb(value);
     }
 
@@ -142,8 +142,8 @@ const initialisePrompt = () => {
         choices.forEach(appendChoice);
     }
 
-    const show = (options: PromptArgs) => {
-        hide();
+    const showPrompt = (options: PromptArgs) => {
+        hidePrompt();
         msg.innerHTML = <string>options.message || "";
         setChoices(options.choices || []);
         currentCb = <Function>options.callback || currentCb;
@@ -154,14 +154,14 @@ const initialisePrompt = () => {
         window.dispatchEvent(new Event('rite-prompt-show'));
     }
 
-    return [show, hide];
+    return [showPrompt, hidePrompt];
 }
 
-const [show, hide] = initialisePrompt();
+const [showPrompt, hidePrompt] = initialisePrompt();
 
 const editorAlertFatal = (msg: string): Promise<void> => {
     return new Promise((resolve, reject) => {
-        show({
+        showPrompt({
             message: msg,
             choices: [],
             callback: (_: any) => exit(1),
@@ -173,10 +173,10 @@ const editorAlertFatal = (msg: string): Promise<void> => {
     })
 }
 
-const editorAlert = (msg: string, callback: Function = () => {}): Promise<void> => {
+const editorAlert = (msg: string, callback: Function = () => { }): Promise<void> => {
     return new Promise((resolve, reject) => {
         try {
-            show({
+            showPrompt({
                 message: msg,
                 choices: toChoices(['okay']),
                 callback: (_: any) => {
@@ -197,7 +197,7 @@ const editorAlert = (msg: string, callback: Function = () => {}): Promise<void> 
 const editorPrompt = (msg: string, allowEmpty = false): Promise<string> => {
     return new Promise((resolve, reject) => {
         try {
-            show({
+            showPrompt({
                 message: msg,
                 choices: [],
                 callback: (val: string) => resolve(val),
@@ -214,7 +214,7 @@ const editorPrompt = (msg: string, allowEmpty = false): Promise<string> => {
 const editorChoose = (msg: string, choices: PromptChoice[], nonOptions = false, allowEmpty = false): Promise<string> => {
     return new Promise((resolve, reject) => {
         try {
-            show({
+            showPrompt({
                 message: msg,
                 choices: choices,
                 callback: (val: string) => resolve(val),
@@ -229,7 +229,7 @@ const editorChoose = (msg: string, choices: PromptChoice[], nonOptions = false, 
     })
 }
 
-const editorConfirm = (msg: string, choices: PromptChoice[] = [{title: 'yes'}, {title: 'no'}]): Promise<boolean> => {
+const editorConfirm = (msg: string, choices: PromptChoice[] = [{ title: 'yes' }, { title: 'no' }]): Promise<boolean> => {
     return new Promise(async (resolve, reject) => {
         try {
             let result = await editorChoose(msg, choices);
@@ -242,5 +242,5 @@ const editorConfirm = (msg: string, choices: PromptChoice[] = [{title: 'yes'}, {
 };
 
 export {
-    show, hide, editorChoose, editorPrompt, editorAlert, editorAlertFatal, editorConfirm, fuzzySearch
+    showPrompt, hidePrompt, editorChoose, editorPrompt, editorAlert, editorAlertFatal, editorConfirm, fuzzySearch
 }

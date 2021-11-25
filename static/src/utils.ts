@@ -3,7 +3,7 @@ import { renameFile, writeFile } from '@tauri-apps/api/fs';
 import { editorAlert } from './prompt';
 import { RiteEditor } from './RiteEditor';
 
-export type CommandHandler = (editor: RiteEditor) => void;
+export type CommandHandler = (editor: RiteEditor) => void | Promise<void>;
 
 export type RiteSettings = Record<string, any>;
 
@@ -90,7 +90,7 @@ export const onboarding = async () => {
     </div>`);
 }
 
-export const writeFileAtomic = async(path: string, contents: string) => {
+export const writeFileAtomic = async (path: string, contents: string) => {
     try {
         await invoke<void>("atomic_write", {
             target: path,
@@ -101,4 +101,18 @@ export const writeFileAtomic = async(path: string, contents: string) => {
     catch (e) {
         return await editorAlert(`Error while writing ${path}: ${e}`);
     }
+}
+
+export const groupByProp = (arr: Iterable<Record<string, any>>, prop: string) => {
+    let grouped: Record<string, Array<any>> = {};
+    for (let x of arr) {
+        if (x[prop] in grouped) {
+            grouped[x[prop]].push(x);
+        }
+        else {
+            grouped[x[prop]] = [x];
+        }
+    }
+
+    return grouped;
 }

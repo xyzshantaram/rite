@@ -14,7 +14,7 @@ export interface Setting {
         msg: string
     },
     prettyName: string,
-    default: string | boolean
+    default: string | boolean | null
 }
 
 
@@ -84,7 +84,29 @@ export const MODIFIABLE_SETTINGS: Record<string, Setting> = {
             msg: 'You must enter only numbers!'
         },
         default: '2'
-    }
+    },
+    cloud_url: {
+        prettyName: "URL of your Rite Cloud instance",
+        type: "prompt",
+        message: 'Enter your URL, including the port number.',
+        validate: {
+            re: /https?:\/\/.+$/,
+            msg: 'You must enter a valid URL!'
+        },
+        default: null
+    },
+    cloud_username: {
+        prettyName: "Your Rite Cloud username",
+        type: "prompt",
+        message: 'Enter the username for your Rite Cloud account.',
+        default: null
+    },
+    cloud_token: {
+        prettyName: "Your Rite Cloud token",
+        type: "prompt",
+        message: 'Enter the token for your Rite Cloud account.',
+        default: null
+    },
 }
 
 const defaultConfig = (): Record<string, any> => {
@@ -109,7 +131,7 @@ export const createConfig = async (configPath: string): Promise<string> => {
 
             const string = dumpJSON(tmp);
             await writeFileAtomic(configPath, string);
-            
+
             resolve(string);
         }
 

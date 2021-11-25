@@ -315,8 +315,8 @@ export class RiteEditor {
 
     async execCommand(cmd: string, source: 'palette' | 'keybind') {
         cmd = cmd.trim();
-        if (COMMANDS[cmd] && ((COMMANDS[cmd].palette && source === 'palette') || source === 'keybind')) {
-            COMMANDS[cmd].action(this);
+        if (this.commands[cmd] && ((this.commands[cmd].palette && source === 'palette') || source === 'keybind')) {
+            await this.commands[cmd].action(this);
         }
         else if (cmd === '') {
             return;
@@ -400,6 +400,14 @@ export class RiteEditor {
         else {
             this.loadFile(null);
         }
+    }
+
+    getContents() {
+        return this.editor.getValue();
+    }
+
+    setContents(c: string) {
+        this.editor.setValue(c);
     }
 
     wordCount() {
