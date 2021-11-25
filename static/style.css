@@ -249,7 +249,13 @@ kbd {
 
 .form-group>select, .form-group>input[type='text'] {
     margin-left: auto;
-    min-width: 20ch;
+    width: 22ch !important;
+}
+
+.form-group>input[type='checkbox'] {
+    margin-left: auto;
+    height: 1rem;
+    width: 1rem;
 }
 
 #outcome-group {

@@ -89,7 +89,6 @@ const initialisePrompt = (): [(args: PromptArgs) => any, () => any] => {
     }
 
     const setSelectedIdx = (idx: number) => {
-        console.log(currentChoices.length, idx);
         currIndex = clamp(currIndex, 0, currentChoices.length);
         const selected: HTMLElement | null = options.querySelector(`.prompt-option:nth-child(${idx})`);
         if (selected) setSelectedOption(selected);
