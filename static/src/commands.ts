@@ -171,7 +171,6 @@ const showCloudMenu = (editor: RiteEditor, token: string, url: string, user: str
             const documentSelect = form.querySelector("#document-name")! as HTMLSelectElement;
 
             let grouped = groupByProp(existingDocs, 'name');
-            console.log(grouped);
 
             let uniqueDocs = Object.keys(grouped);
             for (const x of uniqueDocs) {
@@ -248,6 +247,8 @@ const openFromCloud = async (editor: RiteEditor) => {
 
     if (doc.contents) {
         editor.setContents(doc.contents);
+        editor.currentFile = null;
+        editor.updateFileName();
     }
     else {
         await editorAlert(doc.message);
@@ -256,14 +257,14 @@ const openFromCloud = async (editor: RiteEditor) => {
 
 const cloudAction = async (editor: RiteEditor, action: "open" | "save") => {
     document.querySelector("#upload-menu")?.remove();
-    if (action === 'save' && editor.dirty) {
+    if (action === 'open' && editor.dirty) {
         if (await editorConfirm("Current document must be saved. Continue?")) {
             await editor.save();
         }
         else return;
     }
 
-    if (action === 'save' && editor.dirty) {
+    if (action === 'open' && editor.dirty) {
         await editorAlert("File not saved -- cancelling.");
         return;
     }
@@ -277,10 +278,15 @@ const cloudAction = async (editor: RiteEditor, action: "open" | "save") => {
         await editorAlert("Cloud configuration settings not found. Ensure the cloud_url, cloud_token, and cloud_username settings options are set.")
         return;
     }
-    let res = await showCloudMenu(editor, token, url, username, action === 'open');
-    document.querySelector("#upload-menu")?.remove();
-
-    return res;
+    try {
+        const res = await showCloudMenu(editor, token, url, username, action === 'open');
+        document.querySelector("#upload-menu")?.remove();
+        return res;
+    }
+    catch (e) {
+        await editorAlert(e);
+        document.querySelector("#upload-menu")?.remove();
+    }
 }
 
 const showAboutPrompt = async () => {
