@@ -39,7 +39,7 @@ const initialisePrompt = (): [(args: PromptArgs) => any, () => any] => {
     let allowNonOptions = true;
     let allowEmpty = false;
 
-    let appendChoice = (choice: PromptChoice) => {
+    let appendChoice = (choice: PromptChoice, idx: number) => {
         options.append(cf.nu('.prompt-option', {
             c: `<span class='prompt-option-name'>${choice.title}</span>
             ${choice.description ? `<span class='prompt-option-desc'>${cf.escape(choice.description)}</span>` : ''}`,
@@ -47,7 +47,7 @@ const initialisePrompt = (): [(args: PromptArgs) => any, () => any] => {
             on: {
                 click: function (e) {
                     field.value = choice.title;
-                    setSelectedOption(this);
+                    setSelectedIdx(idx + 1);
                     field.focus();
                 }
             },
@@ -75,7 +75,7 @@ const initialisePrompt = (): [(args: PromptArgs) => any, () => any] => {
         for (let choice of currentChoices) {
             const elt = document.querySelector(`div[data-choice=${choice.title}]`);
             if (fuzzySearch(choice.title, value) > 0.5) {
-                if (elt === null) appendChoice(choice);
+                if (elt === null) appendChoice(choice, currentChoices.length);
             }
             else {
                 if (elt) elt.remove();
@@ -89,13 +89,14 @@ const initialisePrompt = (): [(args: PromptArgs) => any, () => any] => {
     }
 
     const setSelectedIdx = (idx: number) => {
+        console.log(currentChoices.length, idx);
         currIndex = clamp(currIndex, 0, currentChoices.length);
-        options.querySelector(`.prompt-option.selected`)?.classList.remove('selected');
         const selected: HTMLElement | null = options.querySelector(`.prompt-option:nth-child(${idx})`);
         if (selected) setSelectedOption(selected);
     }
 
     const setSelectedOption = (choice: HTMLElement) => {
+        options.querySelector('.prompt-option.selected')?.classList.remove('selected');
         choice.classList.add('selected');
         choice.scrollIntoView(false);
         field.value = choice.getAttribute('data-choice')!;

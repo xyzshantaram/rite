@@ -70,7 +70,6 @@
     margin: 0.2rem;
     cursor: pointer;
     max-width: 100%;
-    overflow:hidden;
     text-overflow: ellipsis;
     color: var(--color-auxiliary);
 }
