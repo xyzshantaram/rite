@@ -33,12 +33,7 @@ installed.
 
 ### Using rite
 
-When you open rite, you'll be greeted with a blank file. Press Ctrl-Alt-P to
-open the palette and open a file, or open one from Rite Cloud. You can customize
-Rite to your liking in the settings.
-
-Note that before using Rite Cloud, you'll have to add your token, username, and
-the URL of your Rite Cloud instance in the editor settings.
+To learn about using rite, check out the [guide](https://riteapp.co.in/help/).
 
 ### Development setup
 
