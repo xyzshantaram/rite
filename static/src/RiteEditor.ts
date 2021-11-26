@@ -261,6 +261,15 @@ export class RiteEditor {
                     }
                     else {
                         let size = indentSize();
+                        if (!this.config.use_spaces) size = 1;
+
+                        let spaced = line.substring(0,
+                            cm.getCursor().ch)
+                            .match(/^\t*([ ]+).*/);
+                        console.log(spaced);
+                        if (spaced) {
+                            size = (spaced[1].length % indentSize()) || indentSize();
+                        }
                         while (size--) cm.execCommand('delCharBefore');
                     }
                 }
