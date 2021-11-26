@@ -5,6 +5,7 @@ import { editorAlert, editorChoose, editorConfirm, editorPrompt, hidePrompt, toC
 import { CommandHandler, groupByProp, PromptChoice, RiteCommands, RiteFile } from "./utils"
 import { MODIFIABLE_SETTINGS, requestSetting, Setting } from "./config"
 import cf from 'campfire.js'
+import { getVersion } from "@tauri-apps/api/app"
 
 class UploadFormResult {
     name: string;
@@ -326,7 +327,9 @@ const cloudAction = async (editor: RiteEditor, action: "open" | "save") => {
 }
 
 const showAboutPrompt = async () => {
-    await editorAlert(`<div>
+    let version = await getVersion();
+    await editorAlert(`<div><strong><em>rite</em></strong> v${version}</div>
+            <div>
                 rite is free, open-source software under the MIT license. 
                 Copyright © 2021 Siddharth Singh.
             </div>
