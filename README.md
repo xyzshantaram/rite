@@ -31,7 +31,14 @@ installed.
 - For convenience, you can symlink rite into a directory that's on your path, or
   create an alias in your shell.
 
-To update
+### Using rite
+
+When you open rite, you'll be greeted with a blank file. Press Ctrl-Alt-P to
+open the palette and open a file, or open one from Rite Cloud. You can customize
+Rite to your liking in the settings.
+
+Note that before using Rite Cloud, you'll have to add your token, username, and
+the URL of your Rite Cloud instance in the editor settings.
 
 ### Development setup
 
@@ -63,3 +70,8 @@ If you would like to contribute code, fork this repo and make a pull request.
 
 However, you can also contribute by testing `rite` and giving your feedback!
 Feel free to open an issue on the [issues](issues) page.
+
+If you would like to contribute financially, you can donate using one of the
+means listed [here](https://shantaram.xyz/contact/donate.html).
+
+Thank you for using Rite!
