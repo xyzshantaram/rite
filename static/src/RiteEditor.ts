@@ -219,6 +219,13 @@ export class RiteEditor {
             this.editor.setOption("indentUnit", parseInt(config.indent_size));
         }
 
+        if (config.light_theme) {
+            document.documentElement.classList.add('light');
+        }
+        else {
+            document.documentElement.classList.remove('light');
+        }
+
         this.editor.setOption('indentWithTabs', !config.use_spaces);
     }
 

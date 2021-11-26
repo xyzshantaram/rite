@@ -46,6 +46,12 @@ export const MODIFIABLE_SETTINGS: Record<string, Setting> = {
         allowNonOptions: true,
         default: 'monospace'
     },
+    light_theme: {
+        prettyName: 'Light theme?',
+        type: 'confirm',
+        message: "Use light theme?",
+        default: false
+    },
     line_numbers: {
         prettyName: "Line numbers",
         type: 'confirm',

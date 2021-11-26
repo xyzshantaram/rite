@@ -30,6 +30,18 @@ html {
     --ui-elem-fg: var(--color-secondary);
 }
 
+html.light {
+    --background-ui: #fdf7df;
+    --background-root: #ffe2cb;
+    --background-main: #fffae8;
+    --color-primary: #303030;
+    --color-secondary: #202020;
+    --ui-elem-bg: #eeeeee;
+    --color-md-link: #1b98ff;
+    --color-selection: rgba(0, 0, 0, 0.2);
+    --color-md-string: #72ac6a;
+}
+
 * {
     font-family: var(--font);
 }
