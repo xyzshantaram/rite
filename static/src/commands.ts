@@ -136,22 +136,19 @@ const showCloudMenu = (editor: RiteEditor, token: string, url: string, user: str
                 <div class='form-group'>
                     <label for='document-name'>
                         Document
-                        ${open ? '' : '<a id="upload-create-new" href="javascript:void(0)">Create new</a>'}
+                        ${open ? '' : '<a id="upload-create-new" href="javascript:void(0)">(Create&nbsp;new)</a>'}
                     </label>
                     <select id='document-name' required></select>
                 </div>
 
-                ${!open ? `<div class='form-group'>
-                        <label for='upload-is-public'>Public?</label>
-                        <input type='checkbox' id='upload-is-public'>
-                    </div>` : ''}
+                ${!open ? `<div class='form-group'><label for='upload-is-public'>Visibility</label><input type='checkbox' id='upload-is-public'></div>` : ''}
 
                 <div class='form-group'>
                 <label for='document-revision'>Revision</label>
                 ${open ?
                         `<select id='document-revision' placeholder='Pick a revision' required>
-                        <option value="" disabled selected>Select...</option>
-                    </select>`
+                            <option value="" disabled selected>Select...</option>
+                        </select>`
                         : `<input type='text' id='document-revision' required>`
                     }
                 </div>
