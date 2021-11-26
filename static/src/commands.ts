@@ -122,9 +122,17 @@ const showCloudMenu = (editor: RiteEditor, token: string, url: string, user: str
             body: JSON.stringify({
                 token, user
             })
-        }).then(res => res.json()).then((list: Array<Record<string, unknown>>) => {
+        }).then(async (res) => {
+
+            let json = await res.json();
+
+            if (!res.ok) {
+                await editorAlert(`Error ${res.status}: ${json.message}`);
+                return;
+            }
+
             let existingDocs = new Set<Record<string, unknown>>();
-            list.forEach(elem => {
+            json.forEach((elem: Record<string, any>) => {
                 existingDocs.add(elem);
             })
 
