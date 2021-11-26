@@ -2,13 +2,6 @@
 
 A minimalist markdown text editor.
 
-### Contributing
-
-If you would like to contribute code, fork this repo and make a pull request.
-
-However, you can also contribute by testing `rite` and giving your feedback!
-Feel free to open an issue on the [issues](issues) page.
-
 ### Usage
 
 #### Preliminary
@@ -20,9 +13,9 @@ installed.
 - Download the latest release from the
   [Releases](https://github.com/xyzshantaram/rite/releases) page.
 - Install it the way you usually would for your operating system. Users of
-  non-Debian Linux distros will have to build from scratch (see )
-- When you run `rite`, you will be prompted for the first-time configuration.
-- Once this is done, you can start using `rite`!
+  non-Debian-based Linux distros will have to build from scratch (see
+  [Building from source](#building-from-source)).
+- Run it
 
 ### Building from source
 
@@ -33,7 +26,12 @@ installed.
 - Clone the repo.
 - `cd rite`
 - Install dependencies by running `yarn`.
-- Build the release target with `yarn tauri build`.
+- Build the release target with `cargo tauri build`.
+- Run it by typing `src-tauri/target/release/rite`.
+- For convenience, you can symlink rite into a directory that's on your path, or
+  create an alias in your shell.
+
+To update
 
 ### Development setup
 
@@ -58,3 +56,10 @@ installed.
   of the MIT license.
 - fuzzySearch in prompt.ts is based on
   `https://stackoverflow.com/a/39905590/16595846`.
+
+### Contributing
+
+If you would like to contribute code, fork this repo and make a pull request.
+
+However, you can also contribute by testing `rite` and giving your feedback!
+Feel free to open an issue on the [issues](issues) page.
