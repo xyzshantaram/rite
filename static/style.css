@@ -9,7 +9,7 @@ html {
     font-size: var(--font-size, 1rem);
 }
 
-:root {
+html {
     --background-ui: #202020;
     --background-root: #252525;
     --background-main: #303030;
@@ -26,6 +26,8 @@ html {
     --color-cm-html: #ff9a00;
     --font: monospace;
     --scrollbar-width: 0.5rem;
+    --ui-elem-bg: #444444;
+    --ui-elem-fg: var(--color-secondary);
 }
 
 * {

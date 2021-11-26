@@ -48,8 +48,8 @@
 
 #upload-is-public::after {
     content: "Private";
-    color: white;
-    background: #444444;
+    color: var(--ui-elem-fg);
+    background: var(--ui-elem-bg);
 }
 
 #upload-is-public:checked::after {
@@ -58,8 +58,8 @@
 
 .form-group>button, .form-group>input[type='text'], .form-group>input[type='checkbox'] {
     border: none;
-    background-color: #444444;
-    color: var(--color-primary);
+    background-color: var(--ui-elem-bg);
+    color: var(--ui-elem-fg);
 }
 
 .form-group>button {
