@@ -335,16 +335,16 @@ const showAboutPrompt = async (editor: RiteEditor) => {
             <div>rite depends on the following software:</div>
             <ul>
                 <li>
-                    <a href='https://marked.js.org'>Marked</a> used under the terms of the MIT License,
-                    Copyright © 2018+, <a href='https://github.com/markedjs/'>MarkedJS</a> Copyright (c)
-                    2011-2018, <a href='https://github.com/chjj/'>Christopher Jeffrey</a>.
+                    <a target="_blank" href='https://marked.js.org'>Marked</a> used under the terms of the MIT License,
+                    Copyright © 2018+, <a target="_blank" href='https://github.com/markedjs/'>MarkedJS</a> Copyright (c)
+                    2011-2018, <a target="_blank" href='https://github.com/chjj/'>Christopher Jeffrey</a>.
                 </li>
                 <li>
-                    <a href='https://codemirror.net'>CodeMirror</a> used under the terms of the MIT License,
-                    Copyright © 2017 by <a href='Marijn Haverbeke'>marijnh@gmail.com</a> and others
+                    <a target="_blank" href='https://codemirror.net'>CodeMirror</a> used under the terms of the MIT License,
+                    Copyright © 2017 by <a target="_blank" href='mailto:marijnh@gmail.com'>Marijnh Haverbeke</a> and others
                 </li>
                 <li>
-                    <a href='https://tauri.studio'>Tauri</a> is the underlying runtime on which rite is built.
+                    <a target="_blank" href='https://tauri.studio'>Tauri</a> is the underlying runtime on which rite is built.
                     Code from Tauri is used under the MIT license. Copyright © 2017 - Present Tauri Apps Contributors
                 </li>
             </ul>
@@ -367,7 +367,7 @@ export const checkForUpdates = async (editor: RiteEditor, manual = true) => {
         if (isOlder(currentVersion, latestVersion)) {
             await editorAlert(`A new version of rite is available! 
             Head to the 
-            <a href='${GH_REPO_URL}/releases/'>releases</a> 
+            <a target="_blank" href='${GH_REPO_URL}/releases/'>releases</a> 
             page to download it.`);
         }
         else {
