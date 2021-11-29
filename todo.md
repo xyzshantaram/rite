@@ -1,17 +1,16 @@
-- [] pdf export
-- [] other kinds of export? (html, gist, rentry?)
-- [] custom css in exports
+- [x] docs
+- [x] backspace and tab should take us to the next / prev indent level instead
+  of blindly deleting
+- [] in-client preview
 - [] color scheme configurator
-- [] docs
-- [] syntax highlighting for Marked
-- [] command line interface
+- [] \[Partial\] command line interface
 - [] make config save message appear in statusline
-- [] clicking out of palette should close it
+- [] clicking out of palette should close it, pressing esc in palette should
+  close it
 - [] rulers
 - [] editorconfig support
 - [] add help menu that displays keybinds and maybe even markdown help
-- [] backspace and tab should take us to the next / prev indent level instead of
-  blindly deleting
+- [] pressing F1 should bring up rite guide
 - [] need to rework setConfig
 - [] need to rework prompt.ts
 - [] make keybind change detection more robust

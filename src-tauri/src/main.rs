@@ -3,13 +3,19 @@
     windows_subsystem = "windows"
 )]
 
+use clap::{crate_authors, crate_description};
 use rand::Rng;
-use std::fs::OpenOptions;
-use std::io::Write;
-use std::path::Path;
-use std::path::PathBuf;
+use std::{
+    fs::OpenOptions,
+    io::Write,
+    path::{Path, PathBuf},
+    process::exit,
+};
 
-use tauri::{Event, Manager};
+use tauri::{
+    api::{clap::crate_version, cli::get_matches},
+    Event, Manager,
+};
 
 #[tauri::command]
 fn get_config_dir() -> PathBuf {
@@ -43,6 +49,11 @@ fn log(line: String) {
 #[tauri::command]
 fn dir_exists(path: PathBuf) -> bool {
     Path::new(&path).is_dir()
+}
+
+#[tauri::command]
+fn exists(path: PathBuf) -> bool {
+    Path::new(&path).exists()
 }
 
 #[tauri::command]
@@ -97,6 +108,49 @@ fn atomic_write(target: String, contents: String) -> Result<(), String> {
 }
 
 fn main() {
+    let context = tauri::generate_context!();
+    let cli_config = context.config().tauri.cli.clone().unwrap();
+
+    if let Ok(matches) = get_matches(&cli_config) {
+        if matches.args.get("help").is_some() {
+            let about = cli_config
+                .description()
+                .unwrap_or(&crate_description!().to_string())
+                .to_string();
+
+            // Workaround for tauri issue #2982
+            clap::App::new("rite")
+                .version(crate_version!())
+                .author(crate_authors!())
+                .about(&*about)
+                .setting(clap::AppSettings::AllowMissingPositional)
+                .arg(
+                    clap::Arg::with_name("version")
+                        .short("V")
+                        .long("version")
+                        .takes_value(false)
+                        .help("Display app version and license information."),
+                )
+                .arg(
+                    clap::Arg::with_name("help")
+                        .short("h")
+                        .long("help")
+                        .takes_value(false)
+                        .help("Display this help."),
+                )
+                .arg(clap::Arg::with_name("filename").help("The name of a file to open."))
+                .print_help()
+                .unwrap_or(());
+            println!("\n");
+            exit(0);
+        }
+        if matches.args.get("version").is_some() {
+            println!("rite text editor -- v{}", crate_version!());
+            println!("Copyright © 2021 Siddharth Singh under the terms of the MIT License");
+            exit(0);
+        }
+    };
+
     let app = tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             get_config_dir,
@@ -104,9 +158,10 @@ fn main() {
             dir_exists,
             get_config_path,
             get_platform,
-            atomic_write
+            atomic_write,
+            exists
         ])
-        .build(tauri::generate_context!())
+        .build(context)
         .expect("Error building application.");
 
     app.run(|handle, e| {

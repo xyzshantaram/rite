@@ -1,5 +1,4 @@
 import { invoke, os } from '@tauri-apps/api';
-import { renameFile, writeFile } from '@tauri-apps/api/fs';
 import { editorAlert } from './prompt';
 import { RiteEditor } from './RiteEditor';
 
@@ -50,6 +49,12 @@ export const rustLog = (line: string) => {
 }
 
 export const exists = (path: string) => {
+    return invoke<boolean>('exists', {
+        path: path
+    });
+}
+
+export const existsDir = (path: string) => {
     return invoke<boolean>('dir_exists', {
         path: path
     });

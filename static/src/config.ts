@@ -1,7 +1,7 @@
 import { createDir } from "@tauri-apps/api/fs";
 import { dirname, resolve } from "@tauri-apps/api/path";
 import { editorConfirm, editorAlert, editorChoose, editorPrompt, toChoices } from "./prompt";
-import { dumpJSON, exists, PromptChoice, writeFileAtomic } from "./utils";
+import { dumpJSON, existsDir, PromptChoice, writeFileAtomic } from "./utils";
 
 export interface Setting {
     type: 'choice' | 'prompt' | 'confirm';
@@ -133,7 +133,7 @@ export const createConfig = async (configPath: string): Promise<string> => {
             const tmp = defaultConfig();
             const dir = await dirname(configPath);
 
-            if (!(await exists(dir))) await createDir(dir, { recursive: true })
+            if (!(await existsDir(dir))) await createDir(dir, { recursive: true })
 
             const string = dumpJSON(tmp);
             await writeFileAtomic(configPath, string);

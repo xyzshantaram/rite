@@ -18,10 +18,10 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12
-      - name: install Rust stable
+      - name: install Rust nightly
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: nightly
       - name: install tauri bundler
         run: cargo install tauri-bundler --force
       - name: install webkit2gtk on Ubuntu runners
@@ -35,7 +35,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: rite-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
+          tagName: v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
           releaseName: "rite v__VERSION__"
           releaseBody:
             "# rite v__VERSION__:\nSee the assets to download and install this version.
@@ -44,7 +44,6 @@ jobs:
             Note that Windows users will need to have
             [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
             installed.
-
 
             For Linux, only a .deb build is currently available -- the [Tauri AppImage is
             currently broken](https://github.com/tauri-apps/tauri/issues/2805),
