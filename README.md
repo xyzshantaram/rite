@@ -15,7 +15,7 @@ installed.
 - Install it the way you usually would for your operating system. Users of
   non-Debian-based Linux distros will have to build from scratch (see
   [Building from source](#building-from-source)).
-- Run it
+- Run it from your application launcher / start menu / terminal.
 
 ### Building from source
 
