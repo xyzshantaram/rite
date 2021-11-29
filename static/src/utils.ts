@@ -39,6 +39,32 @@ export interface RiteCommands {
     [key: string]: RiteCommand;
 }
 
+export const GH_REPO_URL = 'https://github.com/xyzshantaram/rite';
+export const GH_REPO = 'xyzshantaram/rite';
+
+export const semverCompare = (a: string, b: string) => {
+    const pa = a.split('.').map(Number);
+    const pb = b.split('.').map(Number);
+
+    for (var i = 0; i < 3; i++) {
+        if (pa[i] > pb[i]) return 1;
+        if (pb[i] > pa[i]) return -1;
+        if (!isNaN(pa[i]) && isNaN(pb[i])) return 1;
+        if (isNaN(pa[i]) && !isNaN(pb[i])) return -1;
+    }
+    return 0;
+}
+
+/**
+ * 
+ * @param a the first version string
+ * @param b the second version string
+ * @returns true if a is older than b, false otherwise
+ */
+export const isOlder = (a: string, b: string) => {
+    return semverCompare(a, b) < 0;
+}
+
 export const getConfigDir = () => invoke<string>('get_config_dir')
 export const getConfigPath = () => invoke<string>('get_config_path')
 

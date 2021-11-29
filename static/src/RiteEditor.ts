@@ -49,6 +49,7 @@ export class RiteEditor {
     keybinds: RiteKeybind[] = [];
     acceptingKeybinds: boolean = true;
     platform: string;
+    version: string;
     isComputingWordCount: boolean = false;
 
     constructor(editorRoot: HTMLElement, commands: RiteCommands, platform: string) {
@@ -96,6 +97,14 @@ export class RiteEditor {
             doc.replaceRange(start + end, { line: cursor.line, ch: cursor.ch });
             doc.setCursor({ line: cursor.line, ch: cursor.ch + start.length });
         }
+    }
+
+    setVersion(version: string) {
+        this.version = version;
+    }
+
+    getVersion() {
+        return this.version;
     }
 
     insertBefore(insertion: string, cursorOffset = insertion.length) {

@@ -113,6 +113,12 @@ export const MODIFIABLE_SETTINGS: Record<string, Setting> = {
         message: 'Enter the token for your Rite Cloud account.',
         default: null
     },
+    check_updates: {
+        prettyName: "Check for updates on startup",
+        type: 'confirm',
+        message: 'Check for updates on startup?',
+        default: true
+    },
 }
 
 const defaultConfig = (): Record<string, any> => {

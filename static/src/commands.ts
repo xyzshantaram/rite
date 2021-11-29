@@ -2,10 +2,9 @@ import { dialog } from "@tauri-apps/api"
 import { readTextFile } from "@tauri-apps/api/fs"
 import { RiteEditor } from "./RiteEditor"
 import { editorAlert, editorChoose, editorConfirm, editorPrompt, hidePrompt, toChoices } from "./prompt"
-import { CommandHandler, groupByProp, PromptChoice, RiteCommands, RiteFile } from "./utils"
+import { CommandHandler, GH_REPO, GH_REPO_URL, groupByProp, isOlder, PromptChoice, RiteCommands, RiteFile } from "./utils"
 import { MODIFIABLE_SETTINGS, requestSetting, Setting } from "./config"
 import cf from 'campfire.js'
-import { getVersion } from "@tauri-apps/api/app"
 
 class UploadFormResult {
     name: string;
@@ -326,9 +325,9 @@ const cloudAction = async (editor: RiteEditor, action: "open" | "save") => {
     }
 }
 
-const showAboutPrompt = async () => {
-    let version = await getVersion();
-    await editorAlert(`<div><strong><em>rite</em></strong> v${version}</div>
+const showAboutPrompt = async (editor: RiteEditor) => {
+    let version = editor.getVersion();
+    await editorAlert(`<div><strong>rite v${version}</strong></div>
             <div>
                 rite is free, open-source software under the MIT license. 
                 Copyright © 2021 Siddharth Singh.
@@ -354,6 +353,33 @@ const showAboutPrompt = async () => {
 
 const newFile = async (editor: RiteEditor) => {
     await editor.newFile();
+}
+
+export const checkForUpdates = async (editor: RiteEditor, manual = true) => {
+    const currentVersion = editor.getVersion();
+    if (!manual && !(await editor.getConfigVar("check_updates"))) {
+        console.info("Update check skipped.");
+        return;
+    }
+    try {
+        let latestRelease = await (await fetch(`https://api.github.com/repos/${GH_REPO}/releases/latest`)).json();
+        let latestVersion = latestRelease.tag_name.replace('v', '');
+        if (isOlder(currentVersion, latestVersion)) {
+            await editorAlert(`A new version of rite is available! 
+            Head to the 
+            <a href='${GH_REPO_URL}/releases/'>releases</a> 
+            page to download it.`);
+        }
+        else {
+            let msg = "You are on the latest version of rite!";
+            console.info(msg);
+            if (manual) await editorAlert(msg);
+        }
+    }
+    catch (e) {
+        console.error(`error ${e} while trying to check for updates. Proceeding silently.`);
+        if (manual) await editorAlert(`Caught error ${e} while trying to check for updates!`);
+    }
 }
 
 export const COMMANDS: RiteCommands = {
@@ -399,6 +425,11 @@ export const COMMANDS: RiteCommands = {
     "close_palette": {
         action: () => { },
         description: "Close palette.",
+        palette: true
+    },
+    "check_updates": {
+        action: checkForUpdates,
+        description: "Check for updates.",
         palette: true
     },
     "mark_range_italic": {
