@@ -1,0 +1,141 @@
+html {
+    --background-ui: #202020;
+    --background-root: #252525;
+    --background-main: #303030;
+    --color-auxiliary: #777777;
+    --color-primary: #d8d8d8;
+    --color-secondary: #f5f4f0;
+    --color-selection: rgba(255, 255, 255, 0.2);
+    --color-md-heading: var(--color-primary);
+    --color-md-link: #94cfff;
+    --color-md-url: #d568b6;
+    --color-md-string: #85c77c;
+    --color-md-bullet: #b9f0b2;
+    --color-md-quote: #b1b1b1;
+    --color-cm-html: #ff9a00;
+    --font: monospace;
+    --scrollbar-width: 0.5rem;
+    --ui-elem-bg: #444444;
+    --ui-elem-fg: var(--color-secondary);
+    --color-cm-keyword: #ff00ff;
+    --color-cm-meta: #ff00ff;
+    --color-cm-bracket: #ff00ff;
+    --color-cm-builtin: #FF9D00;
+    --color-cm-type: white;
+    --color-cm-atom: #F4C20B;
+    --color-cm-error: #AF2018;
+}
+
+html.light {
+    --background-ui: #fdf7df;
+    --background-root: #ffe2cb;
+    --background-main: #fffae8;
+    --color-primary: #303030;
+    --color-secondary: #202020;
+    --ui-elem-bg: #eeeeee;
+    --color-md-link: #1b98ff;
+    --color-selection: rgba(0, 0, 0, 0.2);
+    --color-md-string: #72ac6a;
+    --color-cm-keyword: #ad67ad;
+    --color-cm-meta: #ad67ad;
+    --color-cm-bracket: #ad67ad;
+    --color-cm-builtin: #c97c02;
+    --color-cm-type: rgb(0, 0, 0);
+    --color-cm-atom: #b9940c;
+    --color-cm-error: #AF2018;
+}
+
+.CodeMirror-gutters {
+    border-right-color: var(--color-auxiliary);
+}
+
+.CodeMirror-gutters, #editor>.CodeMirror {
+    background-color: var(--background-main);
+    color: var(--color-secondary);
+}
+
+.CodeMirror pre.CodeMirror-placeholder {
+    color: var(--color-auxiliary);
+}
+
+.CodeMirror-cursors .CodeMirror-cursor {
+    background-color: transparent;
+    border-left: 2px solid var(--color-secondary);
+}
+
+
+#editor .cm-header {
+    color: var(--color-primary);
+}
+
+#editor .cm-link, a, a:visited, a:link {
+    color: var(--color-md-link);
+}
+
+#editor .cm-url {
+    color: var(--color-md-url);
+}
+
+#editor .cm-string {
+    color: var(--color-md-string);
+}
+
+#editor .cm-comment {
+    color: var(--color-md-string);
+}
+
+#editor .cm-quote {
+    color: var(--color-md-quote);
+}
+
+#editor .cm-tag {
+    color: var(--color-cm-html);
+}
+
+#editor .cm-attribute {
+    color: var(--color-cm-html);
+}
+
+#editor .cm-variable-2 {
+    color: var(--color-primary);
+}
+
+#editor .CodeMirror-selected {
+    background: var(--color-selection);
+}
+
+#editor .cm-variable-3 {
+    color: var(--color-md-bullet);
+}
+
+#editor span.cm-number, #editor span.cm-attribute {
+    color: var(--color-cm-html);
+}
+
+#editor span.cm-atom {
+    color: var(--color-cm-atom);
+}
+
+#editor span.cm-keyword {
+    color: var(--color-cm-keyword);
+}
+
+#editor span.cm-meta {
+    color: var(--color-cm-meta);
+}
+
+#editor span.cm-def, #editor span.cm-type {
+    color: var(--color-cm-type);
+}
+
+#editor span.cm-bracket {
+    color: var(--color-cm-bracket);
+}
+
+#editor span.cm-builtin, #editor span.cm-special {
+    color: var(--color-cm-builtin);
+}
+
+#editor span.cm-error {
+    color: var(--color-cm-error);
+}
