@@ -243,6 +243,12 @@ export class RiteEditor {
         let wsRe = new RegExp(`^(([ ]{${indentSize()},})|(\t+))+$`);
         let startsWsRe = new RegExp(`^(([ ]{${indentSize()},})|(\t+))+.*`);
         this.editor.addKeyMap({
+            'Ctrl-F': 'findPersistent',
+            'Cmd-F': 'findPersistent',
+            'Ctrl-H': 'replace',
+            'Shift-Ctrl-H': 'replaceAll',
+            'Cmd-H': 'replace',
+            'Shift-Cmd-H': 'replaceAll',
             Tab: (cm) => {
                 if (cm.somethingSelected()) {
                     cm.indentSelection("add");
