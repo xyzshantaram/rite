@@ -1,6 +1,6 @@
 [package]
 name = "rite"
-version = "0.8.0"
+version = "0.8.1"
 description = "Your new distraction-free writing app."
 authors = ["shantaram <me@shantaram.xyz>"]
 license = "MIT"
@@ -21,6 +21,11 @@ tauri = { git = "https://github.com/tauri-apps/tauri", features = ["cli", "dialo
 dirs = "4.0.0"
 rand = "0.8"
 clap = "2.33"
+
+# Uncomment this to get the WebKit debugger in the release build
+# [profile.release.package.wry]
+# debug = true
+# debug-assertions = true
 
 [features]
 default = [ "custom-protocol" ]

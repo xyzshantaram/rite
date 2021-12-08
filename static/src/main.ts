@@ -112,7 +112,6 @@ import 'codemirror/mode/ebnf/ebnf';
 import 'codemirror/mode/ecl/ecl';
 import 'codemirror/mode/eiffel/eiffel';
 import 'codemirror/mode/elm/elm';
-import 'codemirror/mode/erlang/erlang';
 import 'codemirror/mode/factor/factor';
 import 'codemirror/mode/fcl/fcl';
 import 'codemirror/mode/forth/forth';

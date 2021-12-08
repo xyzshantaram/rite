@@ -15,3 +15,4 @@
 - [ ] need to rework setConfig
 - [ ] need to rework prompt.ts
 - [ ] make keybind change detection more robust
+- [ ] investigate the erlang thing more thoroughly
