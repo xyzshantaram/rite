@@ -166,6 +166,10 @@ export class RiteEditor {
         }
     }
 
+    /**
+     * Parses and loads the config file into the editor.
+     * @param contents The JSON string from which to load the config.
+     */
     async loadConfig(contents: string) {
         const config = JSON.parse(contents) as RiteSettings;
 
@@ -174,10 +178,14 @@ export class RiteEditor {
             Object.assign(newKeyBinds, config.keybinds);
             config.keybinds = newKeyBinds;
         }
+
         await this.setConfig(config);
         await this.dumpConfig();
     }
-
+    /**
+     * Attempts to write the current state of the config to disk.
+     * @returns Void promise - the result of writing the config file.
+     */
     async dumpConfig() {
         return await writeFileAtomic(this.getConfigPath(), dumpJSON(this.config));
     }
@@ -198,6 +206,11 @@ export class RiteEditor {
         return null;
     }
 
+    /**
+     * Update the config values of the editors to new ones.
+     * @param settings The new values of settings to set in the config.
+     * @returns the promise returned by dumpConfig.
+     */
     async extendConfig(settings: Record<string, any>) {
         const currentConfig = this.getConfig();
         Object.assign(currentConfig, settings);
@@ -205,6 +218,10 @@ export class RiteEditor {
         return await this.dumpConfig();
     }
 
+    /**
+     * Actually does the config-loading work -- takes a config object and updates the editor state.
+     * @param config The configuration to set.
+     */
     async setConfig(config: RiteSettings) {
         this.config = config;
         setAppFont(config.font);
@@ -233,6 +250,13 @@ export class RiteEditor {
         }
         else {
             document.documentElement.classList.remove('light');
+        }
+
+        if (config.custom_styles) {
+            const styles: Record<string, string> = config.custom_styles;
+            Object.entries(styles).forEach(([key, val]: [string, string]) => {
+                setCSSVar(key, val);
+            })
         }
 
         this.editor.setOption('indentWithTabs', !config.use_spaces);
