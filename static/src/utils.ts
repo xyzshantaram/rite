@@ -90,8 +90,16 @@ export const setAppFont = (name: string) => {
     setCSSVar('font', name);
 }
 
-export const setCSSVar = (key: string, value: string) => {
-    document.documentElement.style.setProperty(`--${key}`, value);
+/**
+ * Set a CSS custom property.
+ * @param key The property name to set, without the two preceding hyphens.
+ * @param value The value of the property.
+ * @param selector The selector for which the style should be applied.
+ */
+export const setCSSVar = (key: string, value: string, selector = 'html') => {
+    let elem = document.querySelector(selector) as HTMLElement;
+    if (!elem) return;
+    elem.style.setProperty(`--${key}`, value);
 }
 
 export const dumpJSON = (obj: any, indent = 4) => {
