@@ -242,7 +242,7 @@ const saveToCloud = async (editor: RiteEditor) => {
     }
 
     let url: string = editor.getConfigVar("cloud_url");
-    let doc = await fetch(url + "/api/docs/upload", {
+    let doc = await fetch(`${url}/api/docs/upload`, {
         body: JSON.stringify({
             name: uploadDetails.name,
             revision: uploadDetails.revision,
@@ -253,13 +253,22 @@ const saveToCloud = async (editor: RiteEditor) => {
         }),
         method: "POST"
     });
-    if (!doc.ok) {
-        const code = doc.status;
-        const msg = (await doc.json()).message;
-        await editorAlert(`Error ${code}: ${msg}`);
+    let ok = doc.ok;
+    const code = doc.status;
+    try {
+        let contents = await doc.json();
+        if (!ok) {
+            const msg = contents.message;
+            await editorAlert(`Error ${code}: ${msg}`);
+        }
+        else {
+            await editorAlert(`Uploaded successfully. You can view your document by clicking
+                <a href="${url}/docs/view/${contents.uuid}" target="_blank">here</a>.`
+            );
+        }
     }
-    else {
-        await editorAlert("Uploaded successfully.");
+    catch (e) {
+        await editorAlert(`Error parsing response from server: ${e}`);
     }
 }
 
