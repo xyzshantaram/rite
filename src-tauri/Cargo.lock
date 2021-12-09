@@ -2459,7 +2459,7 @@ dependencies = [
 
 [[package]]
 name = "rite"
-version = "0.11.0"
+version = "0.11.1"
 dependencies = [
  "clap 2.33.3",
  "dirs 4.0.0",

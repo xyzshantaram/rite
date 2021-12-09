@@ -171,7 +171,14 @@ export class RiteEditor {
      * @param contents The JSON string from which to load the config.
      */
     async loadConfig(contents: string) {
-        const config = JSON.parse(contents) as RiteSettings;
+        let config: RiteSettings = {};
+        try {
+            config = JSON.parse(contents) as RiteSettings;
+        }
+        catch (e) {
+            await editorAlert(`Error parsing config file: ${e}`);
+            await exit(1);
+        }
 
         if (!config.keybinds || (Object.keys(config.keybinds).length < Object.keys(DEFAULT_KEYBINDS).length)) {
             const newKeyBinds = { ...DEFAULT_KEYBINDS };
@@ -264,8 +271,8 @@ export class RiteEditor {
 
     setEditorCustomKeys() {
         let indentSize = () => this.getConfigVar('indent_size') || 2;
-        let wsRe = new RegExp(`^(([ ]{${indentSize()},})|(\t+))+$`);
-        let startsWsRe = new RegExp(`^(([ ]{${indentSize()},})|(\t+))+.*`);
+        let wsRe = new RegExp(`^ (([]{${indentSize()}, })| (\t +)) +$`);
+        let startsWsRe = new RegExp(`^ (([]{${indentSize()}, })| (\t +)) +.* `);
         this.editor.addKeyMap({
             'Ctrl-F': 'findPersistent',
             'Cmd-F': 'findPersistent',
@@ -440,7 +447,7 @@ export class RiteEditor {
             this.statusLine.setDirty('saved.');
         }
         catch (e) {
-            await editorAlertFatal(`Error saving: ${e}`);
+            await editorAlertFatal(`Error saving: ${e} `);
         }
     }
 
