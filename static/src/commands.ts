@@ -5,7 +5,7 @@ import { editorAlert, editorChoose, editorConfirm, editorPrompt, hidePrompt, toC
 import { CommandHandler, getConfigPath, GH_REPO, GH_REPO_URL, groupByProp, isOlder, PromptChoice, RiteCommands, RiteFile } from "./utils"
 import { MODIFIABLE_SETTINGS, requestSetting, Setting } from "./config"
 import cf from 'campfire.js'
-
+import { open } from '@tauri-apps/api/shell'
 class UploadFormResult {
     name: string;
     revision: string;
@@ -383,6 +383,10 @@ export const checkForUpdates = async (editor: RiteEditor, manual = true) => {
     }
 }
 
+const openHelp = async (_: RiteEditor) => {
+    await open('https://riteapp.co.in/help');
+}
+
 export const COMMANDS: RiteCommands = {
     "new_file": {
         action: newFile,
@@ -472,6 +476,11 @@ export const COMMANDS: RiteCommands = {
     "about": {
         action: showAboutPrompt,
         description: "Copyright and licensing information.",
+        palette: true
+    },
+    "help": {
+        action: openHelp,
+        description: "Show the Rite guide (requires network)",
         palette: true
     }
 }
