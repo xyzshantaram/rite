@@ -2,7 +2,7 @@ import { dialog } from "@tauri-apps/api"
 import { readTextFile } from "@tauri-apps/api/fs"
 import { RiteEditor } from "./RiteEditor"
 import { editorAlert, editorChoose, editorConfirm, editorPrompt, hidePrompt, toChoices } from "./prompt"
-import { CommandHandler, GH_REPO, GH_REPO_URL, groupByProp, isOlder, PromptChoice, RiteCommands, RiteFile } from "./utils"
+import { CommandHandler, getConfigPath, GH_REPO, GH_REPO_URL, groupByProp, isOlder, PromptChoice, RiteCommands, RiteFile } from "./utils"
 import { MODIFIABLE_SETTINGS, requestSetting, Setting } from "./config"
 import cf from 'campfire.js'
 
@@ -328,6 +328,7 @@ const cloudAction = async (editor: RiteEditor, action: "open" | "save") => {
 const showAboutPrompt = async (editor: RiteEditor) => {
     let version = editor.getVersion();
     await editorAlert(`<div><strong>rite v${version}</strong></div>
+            <div><strong>config file:</strong> <code>${await getConfigPath()}</code></div>
             <div>
                 rite is free, open-source software under the MIT license. 
                 Copyright © 2021 Siddharth Singh.
