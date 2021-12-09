@@ -13,8 +13,6 @@ html {
     --color-md-bullet: #b9f0b2;
     --color-md-quote: #b1b1b1;
     --color-cm-html: #ff9a00;
-    --font: monospace;
-    --scrollbar-width: 0.5rem;
     --ui-elem-bg: #444444;
     --ui-elem-fg: var(--color-secondary);
     --color-cm-keyword: #ff00ff;
@@ -40,7 +38,7 @@ html.light {
     --color-cm-meta: #ad67ad;
     --color-cm-bracket: #ad67ad;
     --color-cm-builtin: #c97c02;
-    --color-cm-type: rgb(0, 0, 0);
+    --color-cm-type: #000000;
     --color-cm-atom: #b9940c;
     --color-cm-error: #AF2018;
 }
@@ -59,8 +57,7 @@ html.light {
 }
 
 .CodeMirror-cursors .CodeMirror-cursor {
-    background-color: transparent;
-    border-left: 2px solid var(--color-secondary);
+    border-left-color: var(--color-secondary);
 }
 
 

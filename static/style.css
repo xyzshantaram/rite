@@ -7,6 +7,13 @@ body, html {
 
 html {
     font-size: var(--font-size, 1rem);
+    --font: monospace;
+    --scrollbar-width: 0.5rem;
+}
+
+.CodeMirror-cursors .CodeMirror-cursor {
+    border-left-width: 2px;
+    border-left-style: solid;
 }
 
 * {
