@@ -30,7 +30,8 @@
             "targets": [
                 "msi",
                 "deb",
-                "dmg"
+                "dmg",
+                "appimage"
             ],
             "identifier": "xyz.shantaram.rite",
             "icon": [
