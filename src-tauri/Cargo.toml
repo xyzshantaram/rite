@@ -1,6 +1,6 @@
 [package]
 name = "rite"
-version = "0.11.3"
+version = "0.11.4"
 description = "Your new distraction-free writing app."
 authors = ["shantaram <me@shantaram.xyz>"]
 license = "MIT"
@@ -23,9 +23,9 @@ rand = "0.8"
 clap = "2.33"
 
 # Uncomment this to get the WebKit debugger in the release build
-# [profile.release.package.wry]
-# debug = true
-# debug-assertions = true
+[profile.release.package.wry]
+debug = true
+debug-assertions = true
 
 [features]
 default = [ "custom-protocol" ]
