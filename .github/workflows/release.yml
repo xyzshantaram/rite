@@ -52,4 +52,4 @@ jobs:
             so you'll have to build from source if you're not on a Debian-based distro."
           releaseDraft: true
           prerelease: false
-          tauriScript: "cargo tauri build"
+          tauriScript: "cargo tauri"
