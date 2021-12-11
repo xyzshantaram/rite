@@ -59,8 +59,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                         file.contents = await readTextFile(path);
                     }
                     else {
-                        // await writeFileAtomic(path, "");
-                        console.log(`file ${path} blank`);
+                        await writeFileAtomic(path, "");
                     }
 
                     editor.loadFile(file);

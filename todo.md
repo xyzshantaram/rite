@@ -11,8 +11,8 @@
 - [ ] rulers
 - [ ] editorconfig support
 - [ ] add help menu that displays keybinds and maybe even markdown help
-- [ ] pressing F1 should bring up rite guide
 - [ ] need to rework setConfig
 - [ ] need to rework prompt.ts
 - [ ] make keybind change detection more robust
 - [ ] investigate the erlang thing more thoroughly
+- [ ] downtime messages

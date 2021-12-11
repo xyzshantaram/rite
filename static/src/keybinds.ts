@@ -1,3 +1,5 @@
+import { COMMANDS } from './commands'
+
 export const DEFAULT_KEYBINDS: Record<string, string> = {
     "C+s": "save",
     "C+o": "open_file",
@@ -12,12 +14,13 @@ export const DEFAULT_KEYBINDS: Record<string, string> = {
     "CA+5": "mark_range_h5",
     "CA+6": "mark_range_h6",
     "CS+s": "save_as",
-    "C+n": "new_file"
+    "C+n": "new_file",
+    "+F1": "help"
 }
 
 export const parseKeybind = (keybind: string, platform: string) => {
     let components = keybind.split("+");
-    let alpha = components[1];
+    let alpha = components[1].toLocaleLowerCase();
 
     let isMac = platform === 'macos';
 
@@ -32,8 +35,9 @@ export const parseKeybind = (keybind: string, platform: string) => {
         (components[0].includes("S") ? toCheckTrue : toCheckFalse).push(e.shiftKey);
         (components[0].includes("A") ? toCheckTrue : toCheckFalse).push(e.altKey);
 
-        return (toCheckFalse.every((bool: boolean) => !bool)
-            && toCheckTrue.every((bool: boolean) => bool)
+        let check = (a: boolean[]) => a.every((b: boolean) => b);
+
+        return (!check(toCheckFalse) && check(toCheckTrue)
             && e.key.toLocaleLowerCase() == alpha);
     }
 }

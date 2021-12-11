@@ -1,6 +1,5 @@
 import { basename } from "@tauri-apps/api/path";
 import { Editor, Position } from "codemirror";
-import { COMMANDS } from "./commands";
 import { dumpJSON, RiteCommands, RiteFile, RiteSettings, setAppFont, RiteKeybind, setCSSVar, getPaletteKeybind, writeFileAtomic } from "./utils";
 import { DEFAULT_KEYBINDS, parseKeybind } from "./keybinds";
 import { editorAlert, editorAlertFatal, editorConfirm } from "./prompt";
@@ -312,7 +311,6 @@ export class RiteEditor {
                         let spaced = line.substring(0,
                             cm.getCursor().ch)
                             .match(/^\t*([ ]+).*/);
-                        console.log(spaced);
                         if (spaced) {
                             size = (spaced[1].length % indentSize()) || indentSize();
                         }

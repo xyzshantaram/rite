@@ -3,7 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use clap::{crate_authors, crate_description};
+use clap::{crate_authors, crate_description, crate_version};
 use rand::Rng;
 use std::{
     fs::OpenOptions,
@@ -12,10 +12,7 @@ use std::{
     process::exit,
 };
 
-use tauri::{
-    api::{clap::crate_version, cli::get_matches},
-    Event, Manager,
-};
+use tauri::{api::cli::get_matches, Event, Manager};
 
 #[tauri::command]
 fn get_config_dir() -> PathBuf {
@@ -110,8 +107,9 @@ fn atomic_write(target: String, contents: String) -> Result<(), String> {
 fn main() {
     let context = tauri::generate_context!();
     let cli_config = context.config().tauri.cli.clone().unwrap();
+    let info = context.package_info();
 
-    if let Ok(matches) = get_matches(&cli_config) {
+    if let Ok(matches) = get_matches(&cli_config, info) {
         if matches.args.get("help").is_some() {
             let about = cli_config
                 .description()
