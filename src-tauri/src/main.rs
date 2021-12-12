@@ -5,6 +5,8 @@
 
 use clap::{crate_authors, crate_description, crate_version};
 use rand::Rng;
+use reqwest::StatusCode;
+use serde::{Deserialize, Serialize};
 use std::{
     fs::OpenOptions,
     io::Write,
@@ -104,6 +106,58 @@ fn atomic_write(target: String, contents: String) -> Result<(), String> {
     Ok(())
 }
 
+#[derive(Serialize, Deserialize)]
+struct FetchResponse {
+    body: String,
+    status: u16,
+    ok: bool,
+}
+
+#[tauri::command]
+async fn rite_fetch(
+    url: String,
+    method: String,
+    body: Option<String>,
+) -> Result<FetchResponse, serde_json::Value> {
+    let client = reqwest::ClientBuilder::new()
+        .user_agent(format!("rite text editor v{}", crate_version!()))
+        .build()
+        .unwrap_or_default();
+    let mut builder = if method == "POST" {
+        client.post(url)
+    } else {
+        client.get(url)
+    };
+
+    if body.is_some() {
+        builder = builder.body(body.unwrap_or_default());
+    }
+
+    let res = builder.send().await;
+
+    match res {
+        Ok(val) => {
+            let status = val.status();
+
+            let body: String = val.text().await.unwrap_or_else(|_| {
+                serde_json::json!({
+                    "message": "rite_fetch: error getting response body"
+                })
+                .to_string()
+            });
+
+            Ok(FetchResponse {
+                status: status.as_u16(),
+                ok: status == StatusCode::OK,
+                body,
+            })
+        }
+        Err(err) => Err(serde_json::json!({
+            "message": format!("rite_fetch: error {}", err.to_string())
+        })),
+    }
+}
+
 fn main() {
     let context = tauri::generate_context!();
     let cli_config = context.config().tauri.cli.clone().unwrap();
@@ -157,7 +211,8 @@ fn main() {
             get_config_path,
             get_platform,
             atomic_write,
-            exists
+            exists,
+            rite_fetch
         ])
         .build(context)
         .expect("Error building application.");

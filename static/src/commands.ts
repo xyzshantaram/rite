@@ -2,7 +2,7 @@ import { dialog } from "@tauri-apps/api"
 import { readTextFile } from "@tauri-apps/api/fs"
 import { RiteEditor } from "./RiteEditor"
 import { editorAlert, editorChoose, editorConfirm, editorPrompt, hidePrompt, toChoices } from "./prompt"
-import { CommandHandler, getConfigPath, GH_REPO, GH_REPO_URL, groupByProp, isOlder, PromptChoice, RiteCommands, RiteFile } from "./utils"
+import { CommandHandler, getConfigPath, GH_REPO, GH_REPO_URL, groupByProp, isOlder, PromptChoice, RiteCommands, riteFetch, RiteFile } from "./utils"
 import { MODIFIABLE_SETTINGS, requestSetting, Setting } from "./config"
 import cf from 'campfire.js'
 import { open } from '@tauri-apps/api/shell'
@@ -120,30 +120,26 @@ const showCloudMenu = (editor: RiteEditor, token: string, url: string, user: str
     document.querySelector("#upload-menu")?.remove();
 
     return new Promise((resolve, reject) => {
-        http.fetch<any>(`${url}/api/docs/list`, {
-            method: "POST",
-            body: http.Body.json({
+        riteFetch(`${url}/api/docs/list`, "POST",
+            JSON.stringify({
                 token, user
-            })
-        }).then(async (res) => {
+            }))
+            .then(async (res) => {
+                let json = JSON.parse(res.body);
+                if (!res.ok) {
+                    await editorAlert(`Error ${res.status}: ${json.message}`);
+                    return;
+                }
+                let existingDocs = new Set<Record<string, unknown>>();
+                json.forEach((elem: Record<string, any>) => {
+                    existingDocs.add(elem);
+                })
 
-            let json = res.data;
+                const root = cf.insert(cf.nu('#upload-menu'), { atEndOf: document.body }) as HTMLElement;
 
-            if (!res.ok) {
-                await editorAlert(`Error ${res.status}: ${json.message}`);
-                return;
-            }
-
-            let existingDocs = new Set<Record<string, unknown>>();
-            json.forEach((elem: Record<string, any>) => {
-                existingDocs.add(elem);
-            })
-
-            const root = cf.insert(cf.nu('#upload-menu'), { atEndOf: document.body }) as HTMLElement;
-
-            const form = cf.nu('form', {
-                raw: true,
-                c: `
+                const form = cf.nu('form', {
+                    raw: true,
+                    c: `
                 <div class='form-group'>
                     <label for='document-name'>
                         Document
@@ -157,11 +153,11 @@ const showCloudMenu = (editor: RiteEditor, token: string, url: string, user: str
                 <div class='form-group'>
                 <label for='document-revision'>Revision</label>
                 ${open ?
-                        `<select id='document-revision' placeholder='Pick a revision' required>
+                            `<select id='document-revision' placeholder='Pick a revision' required>
                             <option value="" disabled selected>Select...</option>
                         </select>`
-                        : `<input type='text' id='document-revision' required>`
-                    }
+                            : `<input type='text' id='document-revision' required>`
+                        }
                 </div>
 
                 <div id='outcome-group' class='form-group'>
@@ -169,72 +165,72 @@ const showCloudMenu = (editor: RiteEditor, token: string, url: string, user: str
                     <button id='upload-confirm'>Confirm</button>
                 </div>
             `,
-            }) as HTMLFormElement;
+                }) as HTMLFormElement;
 
-            root.appendChild(form);
+                root.appendChild(form);
 
-            const cancelBtn = form.querySelector("#upload-cancel")! as HTMLButtonElement;
-            const nameField = form.querySelector("#document-name")! as HTMLInputElement;
+                const cancelBtn = form.querySelector("#upload-cancel")! as HTMLButtonElement;
+                const nameField = form.querySelector("#document-name")! as HTMLInputElement;
 
-            cancelBtn.onclick = () => {
-                reject("Cancelled.");
-            }
-
-            const documentSelect = form.querySelector("#document-name")! as HTMLSelectElement;
-            documentSelect.innerHTML = '<option value="" disabled selected>Select...</option>';
-
-            let grouped = groupByProp(existingDocs, 'name');
-
-            let uniqueDocs = Object.keys(grouped);
-            for (const x of uniqueDocs) {
-                cf.insert(cf.nu('option', {
-                    c: x.trim()
-                }), { atEndOf: documentSelect });
-            }
-
-            if (open) {
-                documentSelect.onchange = () => {
-                    let revisionSelect = form.querySelector('#document-revision')! as HTMLSelectElement;
-                    revisionSelect.innerHTML = '<option value="" disabled selected>Select...</option>';
-                    grouped[documentSelect.value].forEach(elem => {
-                        cf.insert(cf.nu('option', {
-                            c: elem.revision,
-                            a: { value: elem.uuid }
-                        }), { atEndOf: revisionSelect });
-                    })
+                cancelBtn.onclick = () => {
+                    reject("Cancelled.");
                 }
-            }
-            else {
-                const createLink = form.querySelector("#upload-create-new")! as HTMLAnchorElement;
-                createLink.onclick = async () => {
-                    let newName = (await editorPrompt("Enter a name for the new document.", false));
-                    if (!uniqueDocs.includes(newName.trim())) {
-                        cf.insert(cf.nu("option", { c: newName.trim() }), { atEndOf: documentSelect });
-                    }
-                    documentSelect.value = newName.trim();
-                }
-            }
 
-            form.onsubmit = (e) => {
-                e.preventDefault();
+                const documentSelect = form.querySelector("#document-name")! as HTMLSelectElement;
+                documentSelect.innerHTML = '<option value="" disabled selected>Select...</option>';
+
+                let grouped = groupByProp(existingDocs, 'name');
+
+                let uniqueDocs = Object.keys(grouped);
+                for (const x of uniqueDocs) {
+                    cf.insert(cf.nu('option', {
+                        c: x.trim()
+                    }), { atEndOf: documentSelect });
+                }
+
                 if (open) {
-                    const revisionSelect = form.querySelector('#document-revision')! as HTMLSelectElement;
-                    resolve({
-                        uuid: revisionSelect.value
-                    });
+                    documentSelect.onchange = () => {
+                        let revisionSelect = form.querySelector('#document-revision')! as HTMLSelectElement;
+                        revisionSelect.innerHTML = '<option value="" disabled selected>Select...</option>';
+                        grouped[documentSelect.value].forEach(elem => {
+                            cf.insert(cf.nu('option', {
+                                c: elem.revision,
+                                a: { value: elem.uuid }
+                            }), { atEndOf: revisionSelect });
+                        })
+                    }
                 }
                 else {
-                    const publicCheckbox = form.querySelector("#upload-is-public")! as HTMLInputElement;
-                    const revisionField = form.querySelector('#document-revision')! as HTMLInputElement;
-                    resolve({
-                        name: nameField.value,
-                        revision: revisionField.value,
-                        contents: editor.getContents(),
-                        public: publicCheckbox.checked
-                    });
+                    const createLink = form.querySelector("#upload-create-new")! as HTMLAnchorElement;
+                    createLink.onclick = async () => {
+                        let newName = (await editorPrompt("Enter a name for the new document.", false));
+                        if (!uniqueDocs.includes(newName.trim())) {
+                            cf.insert(cf.nu("option", { c: newName.trim() }), { atEndOf: documentSelect });
+                        }
+                        documentSelect.value = newName.trim();
+                    }
                 }
-            }
-        })
+
+                form.onsubmit = (e) => {
+                    e.preventDefault();
+                    if (open) {
+                        const revisionSelect = form.querySelector('#document-revision')! as HTMLSelectElement;
+                        resolve({
+                            uuid: revisionSelect.value
+                        });
+                    }
+                    else {
+                        const publicCheckbox = form.querySelector("#upload-is-public")! as HTMLInputElement;
+                        const revisionField = form.querySelector('#document-revision')! as HTMLInputElement;
+                        resolve({
+                            name: nameField.value,
+                            revision: revisionField.value,
+                            contents: editor.getContents(),
+                            public: publicCheckbox.checked
+                        });
+                    }
+                }
+            })
     })
 }
 
@@ -245,21 +241,20 @@ const saveToCloud = async (editor: RiteEditor) => {
     }
 
     let url: string = editor.getConfigVar("cloud_url");
-    let doc = await http.fetch<any>(`${url}/api/docs/upload`, {
-        body: http.Body.json({
+    let doc = await riteFetch(`${url}/api/docs/upload`, "POST",
+        JSON.stringify({
             name: uploadDetails.name,
             revision: uploadDetails.revision,
             contents: uploadDetails.contents,
             public: uploadDetails.public,
             user: editor.getConfigVar("cloud_username"),
             token: editor.getConfigVar("cloud_token"),
-        }),
-        method: "POST"
-    });
+        })
+    );
     let ok = doc.ok;
     const code = doc.status;
     try {
-        let contents = doc.data;
+        let contents = JSON.parse(doc.body);
         if (!ok) {
             const msg = contents.message;
             await editorAlert(`Error ${code}: ${msg}`);
@@ -282,16 +277,13 @@ const openFromCloud = async (editor: RiteEditor) => {
     }
 
     let url: string = editor.getConfigVar("cloud_url");
-    let doc = await http.fetch<any>(url + "/api/docs/contents", {
-        body: http.Body.json({
-            uuid: openDetails.uuid,
-            user: editor.getConfigVar("cloud_username"),
-            token: editor.getConfigVar("cloud_token"),
-        }),
-        method: "POST"
-    });
+    let doc = await riteFetch(`${url}/api/docs/contents`, "POST", JSON.stringify({
+        uuid: openDetails.uuid,
+        user: editor.getConfigVar("cloud_username"),
+        token: editor.getConfigVar("cloud_token"),
+    }));
 
-    let json = doc.data;
+    let json = JSON.parse(doc.body);
 
     if (doc.ok) {
         editor.setContents(json.contents);
@@ -390,8 +382,8 @@ export const checkForUpdates = async (editor: RiteEditor, manual = true) => {
         return;
     }
     try {
-        let res = await http.fetch<any>(`https://api.github.com/repos/${GH_REPO}/releases/latest`);
-        let latestRelease = res.data;
+        let res = await riteFetch(`https://api.github.com/repos/${GH_REPO}/releases/latest`);
+        let latestRelease = JSON.parse(res.body);
         let latestVersion = latestRelease.tag_name.replace('v', '');
         if (isOlder(currentVersion, latestVersion)) {
             await editorAlert(`A new version of rite is available! 

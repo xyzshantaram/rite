@@ -43,6 +43,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         (window as any).editor = editor;
 
         await checkForUpdates(editor, false);
+        (window as any).invoke = invoke;
 
         let args;
         try {
@@ -230,3 +231,4 @@ import 'codemirror/addon/search/search';
 import 'codemirror/addon/search/jump-to-line';
 import 'codemirror/addon/display/rulers';
 import 'codemirror/addon/display/placeholder';
+import { invoke } from '@tauri-apps/api/tauri';

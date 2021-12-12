@@ -90,6 +90,21 @@ export const setAppFont = (name: string) => {
     setCSSVar('font', name);
 }
 
+export interface FetchResponse {
+    ok: boolean,
+    status: number,
+    body: string
+}
+
+export const riteFetch = async (url: string, method = "GET", body?: string) => {
+    let args: Record<string, any> = {
+        method,
+        url,
+    };
+    if (body) args.body = body;
+    return await invoke<FetchResponse>('rite_fetch', args);
+}
+
 /**
  * Set a CSS custom property.
  * @param key The property name to set, without the two preceding hyphens.
