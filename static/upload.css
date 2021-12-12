@@ -60,22 +60,22 @@
     filter: brightness(1.2);
 }
 
-.form-group>button, .form-group>input[type='text'], .form-group>input[type='checkbox'] {
+button, .form-group>input[type='text'], .form-group>input[type='checkbox'] {
     border: none;
     background-color: var(--ui-elem-bg);
     color: var(--ui-elem-fg);
 }
 
-.form-group>button {
+button {
     padding: 0.3rem;
     cursor: pointer;
 }
 
-.form-group>button:hover {
+button:hover {
     filter: brightness(1.1);
 }
 
-.form-group>button:active {
+button:active {
     filter: brightness(1.2);
 }
 

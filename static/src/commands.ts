@@ -7,6 +7,7 @@ import { MODIFIABLE_SETTINGS, requestSetting, Setting } from "./config"
 import cf from 'campfire.js'
 import { open } from '@tauri-apps/api/shell'
 import { http } from '@tauri-apps/api'
+import { getPreviewHtml } from "./preview"
 
 class UploadFormResult {
     name: string;
@@ -370,6 +371,10 @@ const showAboutPrompt = async (editor: RiteEditor) => {
                     <a target="_blank" href='https://tauri.studio'>Tauri</a> is the underlying runtime on which rite is built.
                     Code from Tauri is used under the MIT license. Copyright © 2017 - Present Tauri Apps Contributors
                 </li>
+                <li>
+                    The fonts Inconsolata and Crimson Pro, distributed under the
+                    <a target="_blank" href='https://github.com/xyzshantaram/rite/tree/main/static/fonts/OFL.txt'>OFL</a>.
+                </li>
             </ul>
     `);
 }
@@ -410,6 +415,43 @@ const openHelp = async (_: RiteEditor) => {
     await open('https://riteapp.co.in/help');
 }
 
+const showPreview = (editor: RiteEditor) => {
+    editor.editor.setOption('readOnly', true);
+    editor.editorRoot.style.display = 'none';
+    editor.preview.style.display = 'flex';
+}
+
+const hidePreview = (editor: RiteEditor) => {
+    editor.editor.setOption('readOnly', false);
+    editor.editorRoot.style.display = 'flex';
+    editor.preview.style.display = 'none';
+}
+
+const openPreview = (editor: RiteEditor) => {
+    const dark = !editor.getConfigVar('preview_theme');
+    const html = getPreviewHtml(editor.getContents(), dark);
+    editor.preview.innerHTML = '';
+    showPreview(editor);
+    cf.insert(cf.nu('iframe#preview-frame', {
+        m: {
+            srcdoc: html
+        }
+    }), { atStartOf: editor.preview });
+
+    const buttonBar = cf.nu('div#preview-controls', {
+        contents: `
+        <button id='close-preview' type='button'>Go back</button>
+        `,
+        raw: true
+    }) as HTMLElement;
+
+    editor.preview.appendChild(buttonBar);
+    const close = buttonBar.querySelector('#close-preview') as HTMLElement;
+    close.onclick = () => {
+        hidePreview(editor);
+    }
+}
+
 export const COMMANDS: RiteCommands = {
     "new_file": {
         action: newFile,
@@ -433,6 +475,11 @@ export const COMMANDS: RiteCommands = {
     "save_as": {
         action: saveAs,
         description: "Save current file to a new location.",
+        palette: true
+    },
+    "preview": {
+        action: openPreview,
+        description: "Preview the current document.",
         palette: true
     },
     "cloud_save": {

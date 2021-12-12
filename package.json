@@ -10,10 +10,13 @@
     "campfire.js": "^2.3.0",
     "codemirror": "^5.63.1",
     "esbuild": "^0.13.4",
-    "marked": "^3.0.7"
+    "marked": "^4.0"
   },
   "dependencies": {
-    "macrolight": "^1.3.1"
+    "@types/dompurify": "^2.3.2",
+    "@types/marked": "^4.0.1",
+    "dompurify": "^2.3.4",
+    "macrolight": "^1.4.1"
   },
   "license": "MIT"
 }

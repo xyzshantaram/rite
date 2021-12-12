@@ -50,10 +50,12 @@ export class RiteEditor {
     platform: string;
     version: string;
     isComputingWordCount: boolean = false;
+    preview: HTMLElement;
 
     constructor(editorRoot: HTMLElement, commands: RiteCommands, platform: string) {
         this.commands = commands;
         this.editorRoot = editorRoot;
+        this.preview = document.querySelector('div#preview') as HTMLElement;
         this.editor = CodeMirror(editorRoot, {
             mode: 'gfm', lineNumbers: true, lineWrapping: true,
         });

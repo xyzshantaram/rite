@@ -11,10 +11,16 @@ import { exit } from '@tauri-apps/api/process';
 import { getVersion } from '@tauri-apps/api/app';
 
 window.addEventListener('DOMContentLoaded', async () => {
+    const app = document.querySelector('#app') as HTMLElement;
     try {
         const editorRoot = cf.insert(
             cf.nu('div#editor'),
-            { atStartOf: document.querySelector('#app') as HTMLElement }
+            { atStartOf: app }
+        ) as HTMLElement;
+
+        cf.insert(
+            cf.nu('div#preview'),
+            { atStartOf: app }
         ) as HTMLElement;
 
         const platform = await getPlatform();

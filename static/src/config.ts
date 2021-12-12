@@ -52,6 +52,13 @@ export const MODIFIABLE_SETTINGS: Record<string, Setting> = {
         message: "Use light theme?",
         default: false
     },
+    preview_theme: {
+        prettyName: 'Preview theme',
+        type: 'confirm',
+        message: "Select the preview theme",
+        choices: toChoices(['light', 'dark']),
+        default: true
+    },
     line_numbers: {
         prettyName: "Line numbers",
         type: 'confirm',
