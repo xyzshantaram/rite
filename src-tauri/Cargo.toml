@@ -1,6 +1,6 @@
 [package]
 name = "rite"
-version = "0.11.5"
+version = "0.12.0"
 description = "Your new distraction-free writing app."
 authors = ["shantaram <me@shantaram.xyz>"]
 license = "MIT"
@@ -15,12 +15,16 @@ build = "src/build.rs"
 tauri-build = { version = "1.0.0-beta.4" }
 
 [dependencies]
+serde_derive = "1.0"
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { git = "https://github.com/tauri-apps/tauri", features = ["cli", "dialog-all", "fs-all", "fs-create-dir", "fs-read-text-file", "fs-write-file", "http-all", "notification-all", "os-all", "path-all", "shell-open"] }
 dirs = "4.0.0"
 rand = "0.8"
 clap = "2.33"
+reqwest = { version = "0.11.0", features = ["json"] }
+tokio = { version = "1.0.2", features = ["full"] }
+
 
 # Uncomment this to get the WebKit debugger in the release build
 [profile.release.package.wry]
