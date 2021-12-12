@@ -1,7 +1,20 @@
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import { highlight, HL_KEYWORDS } from 'macrolight/dist/macrolight.esm';
-import { escape } from 'campfire.js';
+import { escape, mustache } from 'campfire.js';
+
+const TABLE_MARKUP = `\
+<div class='cyblog-table-wrapper'>
+<table>
+<thead>
+{{ header }}
+</thead>
+<tbody>
+{{ body }}
+</tbody>
+</table>
+</div>
+`;
 
 const addCheckBox = (str: string) => {
     if (/^\s*\[.?\].*$/.test(str)) {
@@ -46,6 +59,12 @@ function renderMd(md: string) {
                 escaped = true;
             }
             return `\n<pre><code>${(escaped ? code : escape(code))}</code></pre>\n`;
+        },
+        table: (header: string, body: string) => {
+            return mustache(TABLE_MARKUP, {
+                header: header,
+                body: body
+            });
         }
     }
     marked.use({ renderer: renderer });
