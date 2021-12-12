@@ -6,6 +6,8 @@ import { CommandHandler, getConfigPath, GH_REPO, GH_REPO_URL, groupByProp, isOld
 import { MODIFIABLE_SETTINGS, requestSetting, Setting } from "./config"
 import cf from 'campfire.js'
 import { open } from '@tauri-apps/api/shell'
+import { http } from '@tauri-apps/api'
+
 class UploadFormResult {
     name: string;
     revision: string;
@@ -117,14 +119,14 @@ const showCloudMenu = (editor: RiteEditor, token: string, url: string, user: str
     document.querySelector("#upload-menu")?.remove();
 
     return new Promise((resolve, reject) => {
-        fetch(url + "/api/docs/list", {
-            method: 'POST',
-            body: JSON.stringify({
+        http.fetch<any>(`${url}/api/docs/list`, {
+            method: "POST",
+            body: http.Body.json({
                 token, user
             })
         }).then(async (res) => {
 
-            let json = await res.json();
+            let json = res.data;
 
             if (!res.ok) {
                 await editorAlert(`Error ${res.status}: ${json.message}`);
@@ -242,8 +244,8 @@ const saveToCloud = async (editor: RiteEditor) => {
     }
 
     let url: string = editor.getConfigVar("cloud_url");
-    let doc = await fetch(`${url}/api/docs/upload`, {
-        body: JSON.stringify({
+    let doc = await http.fetch<any>(`${url}/api/docs/upload`, {
+        body: http.Body.json({
             name: uploadDetails.name,
             revision: uploadDetails.revision,
             contents: uploadDetails.contents,
@@ -256,7 +258,7 @@ const saveToCloud = async (editor: RiteEditor) => {
     let ok = doc.ok;
     const code = doc.status;
     try {
-        let contents = await doc.json();
+        let contents = doc.data;
         if (!ok) {
             const msg = contents.message;
             await editorAlert(`Error ${code}: ${msg}`);
@@ -279,8 +281,8 @@ const openFromCloud = async (editor: RiteEditor) => {
     }
 
     let url: string = editor.getConfigVar("cloud_url");
-    let doc = await fetch(url + "/api/docs/contents", {
-        body: JSON.stringify({
+    let doc = await http.fetch<any>(url + "/api/docs/contents", {
+        body: http.Body.json({
             uuid: openDetails.uuid,
             user: editor.getConfigVar("cloud_username"),
             token: editor.getConfigVar("cloud_token"),
@@ -288,7 +290,7 @@ const openFromCloud = async (editor: RiteEditor) => {
         method: "POST"
     });
 
-    let json = await doc.json();
+    let json = doc.data;
 
     if (doc.ok) {
         editor.setContents(json.contents);
@@ -303,15 +305,26 @@ const openFromCloud = async (editor: RiteEditor) => {
 const cloudAction = async (editor: RiteEditor, action: "open" | "save") => {
     document.querySelector("#upload-menu")?.remove();
     if (action === 'open' && editor.dirty) {
-        if (await editorConfirm("Current document must be saved. Continue?")) {
-            await editor.save();
+        let choice = await editorChoose(
+            'Current document is unsaved. Save before continuing?',
+            toChoices(['Save', 'Continue without saving', 'Cancel']),
+            false, false);
+        switch (choice) {
+            case 'Save': {
+                await editor.save();
+                break;
+            }
+            case 'Continue without saving': {
+                break;
+            }
+            default:
+                return;
         }
-        else return;
-    }
 
-    if (action === 'open' && editor.dirty) {
-        await editorAlert("File not saved -- cancelling.");
-        return;
+        if (editor.dirty && choice === 'Save') {
+            await editorAlert("File not saved -- cancelling.");
+            return;
+        }
     }
 
     let { token, url, username } = {
@@ -372,7 +385,8 @@ export const checkForUpdates = async (editor: RiteEditor, manual = true) => {
         return;
     }
     try {
-        let latestRelease = await (await fetch(`https://api.github.com/repos/${GH_REPO}/releases/latest`)).json();
+        let res = await http.fetch<any>(`https://api.github.com/repos/${GH_REPO}/releases/latest`);
+        let latestRelease = res.data;
         let latestVersion = latestRelease.tag_name.replace('v', '');
         if (isOlder(currentVersion, latestVersion)) {
             await editorAlert(`A new version of rite is available! 
