@@ -43,13 +43,14 @@ jobs:
             "# rite v__VERSION__:\nSee the assets to download and install this version.
 
 
+            Changes in this version:
+            * Linux AppImage finally seems to be working, if you encounter any bugs, report them in the issues!
+            * Preview feature added, allows offline viewing and export of documents
+
+
             Note that Windows users will need to have
             [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
-            installed.
-
-            For Linux, only a .deb build is currently available -- the [Tauri AppImage is
-            currently broken](https://github.com/tauri-apps/tauri/issues/2805),
-            so you'll have to build from source if you're not on a Debian-based distro."
-          releaseDraft: true
+            installed."
+          releaseDraft: false
           prerelease: false
           tauriScript: "cargo tauri"
