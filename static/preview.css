@@ -106,6 +106,7 @@ pre {
     border-radius: 0.25em;
     overflow-x: auto;
     font-size: 1rem;
+    font-family: 'Inconsolata', monospace;
 }
 
 a {
@@ -146,6 +147,7 @@ kbd {
     border-radius: 0.4rem;
     padding: 0.15rem;
     margin: 0.15rem;
+    font-family: 'Inconsolata', monospace;
 }
 
 .img-wrapper {
