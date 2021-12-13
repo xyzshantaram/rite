@@ -44,8 +44,9 @@ jobs:
 
 
             Changes in this version:
-            * Linux AppImage finally seems to be working, if you encounter any bugs, report them in the issues!
-            * Preview feature added, allows offline viewing and export of documents
+            * Fixed a couple of preview bugs.
+            * Preview finally has some bottom margin
+            * table markup in preview was being escaped by mustache. Fixed.
 
 
             Note that Windows users will need to have
