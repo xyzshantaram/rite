@@ -6,6 +6,7 @@ html {
     display: flex;
     justify-content: center;
     background: white;
+    align-items: flex-start;
 }
 
 @font-face {
@@ -113,6 +114,7 @@ a {
 
 #content {
     margin-bottom: 3rem;
+    padding-bottom: 3rem;
     display: none;
 }
 

@@ -64,7 +64,7 @@ function renderMd(md: string) {
             return mustache(TABLE_MARKUP, {
                 header: header,
                 body: body
-            });
+            }, false);
         }
     }
     marked.use({ renderer: renderer });
