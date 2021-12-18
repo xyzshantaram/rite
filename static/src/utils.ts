@@ -1,6 +1,7 @@
 import { invoke, os } from '@tauri-apps/api';
 import { editorAlert } from './prompt';
 import { RiteEditor } from './RiteEditor';
+import CryptoJS from 'crypto-js';
 
 export type CommandHandler = (editor: RiteEditor) => void | Promise<void>;
 
@@ -169,4 +170,15 @@ export const groupByProp = (arr: Iterable<Record<string, any>>, prop: string) =>
     }
 
     return grouped;
+}
+
+export const AESDecrypt = (ciphertext: string, passphrase: string) => {
+    const bytes = CryptoJS.AES.decrypt(ciphertext, passphrase, {
+        format: CryptoJS.format.OpenSSL
+    });
+    return bytes.toString(CryptoJS.enc.Utf8);
+};
+
+export const AESEncrypt = (cleartext: string, passphrase: string) => {
+    return CryptoJS.AES.encrypt(cleartext, passphrase).toString(CryptoJS.format.OpenSSL);
 }

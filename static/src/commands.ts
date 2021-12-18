@@ -2,18 +2,18 @@ import { dialog } from "@tauri-apps/api"
 import { readTextFile } from "@tauri-apps/api/fs"
 import { RiteEditor } from "./RiteEditor"
 import { editorAlert, editorChoose, editorConfirm, editorPrompt, hidePrompt, toChoices } from "./prompt"
-import { CommandHandler, getConfigPath, GH_REPO, GH_REPO_URL, groupByProp, isOlder, PromptChoice, RiteCommands, riteFetch, RiteFile } from "./utils"
+import { AESDecrypt, AESEncrypt, CommandHandler, getConfigPath, GH_REPO, GH_REPO_URL, groupByProp, isOlder, PromptChoice, RiteCommands, riteFetch, RiteFile } from "./utils"
 import { MODIFIABLE_SETTINGS, requestSetting, Setting } from "./config"
 import cf from 'campfire.js'
 import { open } from '@tauri-apps/api/shell'
-import { http } from '@tauri-apps/api'
 import { getPreviewHtml } from "./preview"
 
 class UploadFormResult {
     name: string;
     revision: string;
-    contents: string | null;
+    contents: string;
     public: boolean;
+    password: string;
 }
 
 class OpenFormResult {
@@ -116,6 +116,15 @@ const saveAs = async (editor: RiteEditor) => {
     await editor.save(true);
 }
 
+/**
+ * 
+ * @param editor A RiteEditor instance
+ * @param token The client token
+ * @param url URL of the Rite Cloud instance
+ * @param user username
+ * @param open Whether the user is opening a document or saving it.
+ * @returns 
+ */
 const showCloudMenu = (editor: RiteEditor, token: string, url: string, user: string, open: boolean): Promise<UploadFormResult | OpenFormResult> => {
     document.querySelector("#upload-menu")?.remove();
 
@@ -159,6 +168,8 @@ const showCloudMenu = (editor: RiteEditor, token: string, url: string, user: str
                             : `<input type='text' id='document-revision' required>`
                         }
                 </div>
+
+                ${!open ? `<div class='form-group'><label for='upload-password'>Password to encrypt this file with (Optional)</label><input type='password' id='upload-password'></div>` : ''}
 
                 <div id='outcome-group' class='form-group'>
                     <button type='button' id='upload-cancel'>Cancel</button>
@@ -222,11 +233,13 @@ const showCloudMenu = (editor: RiteEditor, token: string, url: string, user: str
                     else {
                         const publicCheckbox = form.querySelector("#upload-is-public")! as HTMLInputElement;
                         const revisionField = form.querySelector('#document-revision')! as HTMLInputElement;
+                        const encrypted = form.querySelector('#upload-password') as HTMLInputElement;
                         resolve({
                             name: nameField.value,
                             revision: revisionField.value,
                             contents: editor.getContents(),
-                            public: publicCheckbox.checked
+                            public: publicCheckbox.checked,
+                            password: encrypted.value
                         });
                     }
                 }
@@ -240,6 +253,10 @@ const saveToCloud = async (editor: RiteEditor) => {
         return;
     }
 
+    if (uploadDetails.password.trim() !== '') {
+        uploadDetails.contents = AESEncrypt(uploadDetails.contents, uploadDetails.password);
+    }
+
     let url: string = editor.getConfigVar("cloud_url");
     let doc = await riteFetch(`${url}/api/docs/upload`, "POST",
         JSON.stringify({
@@ -249,6 +266,7 @@ const saveToCloud = async (editor: RiteEditor) => {
             public: uploadDetails.public,
             user: editor.getConfigVar("cloud_username"),
             token: editor.getConfigVar("cloud_token"),
+            encrypted: !!(uploadDetails.password)
         })
     );
     let ok = doc.ok;
@@ -284,9 +302,20 @@ const openFromCloud = async (editor: RiteEditor) => {
     }));
 
     let json = JSON.parse(doc.body);
+    let contents = json.contents;
 
     if (doc.ok) {
-        editor.setContents(json.contents);
+        if (json.encrypted) {
+            const passphrase = await editorPrompt('This document is encrypted. Enter the password to decrypt it.', false);
+            try {
+                contents = AESDecrypt(json.contents, passphrase);
+            }
+            catch (e) {
+                await editorAlert(`Error decrypting contents: ${e}`);
+                return;
+            }
+        }
+        editor.setContents(contents);
         editor.currentFile = null;
         editor.updateFileName();
     }

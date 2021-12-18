@@ -7,6 +7,7 @@
     "@tauri-apps/api": "^1.0.0-beta.8",
     "@tauri-apps/cli": "^1.0.0-beta.10",
     "@types/codemirror": "^5.60.4",
+    "@types/crypto-js": "^4.0.2",
     "campfire.js": "^2.3.0",
     "codemirror": "^5.63.1",
     "esbuild": "^0.13.4",
@@ -15,6 +16,7 @@
   "dependencies": {
     "@types/dompurify": "^2.3.2",
     "@types/marked": "^4.0.1",
+    "crypto-js": "^4.1.1",
     "dompurify": "^2.3.4",
     "macrolight": "^1.4.1"
   },

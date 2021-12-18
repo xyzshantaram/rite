@@ -32,7 +32,7 @@
     margin-right: 2rem;
 }
 
-.form-group>select, .form-group>input[type='text'] {
+.form-group>select, .form-group>input[type='text'], .form-group>input[type='password'] {
     margin-left: auto;
     width: 22ch !important;
     border: none;
@@ -60,7 +60,7 @@
     filter: brightness(1.2);
 }
 
-button, .form-group>input[type='text'], .form-group>input[type='checkbox'] {
+button, .form-group>input[type='text'], .form-group>input[type='password'], .form-group>input[type='checkbox'] {
     border: none;
     background-color: var(--ui-elem-bg);
     color: var(--ui-elem-fg);
