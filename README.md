@@ -12,9 +12,10 @@ installed.
 
 - Download the latest release from the
   [Releases](https://github.com/xyzshantaram/rite/releases) page.
-- Install it the way you usually would for your operating system. Users of
-  non-Debian-based Linux distros will have to build from scratch (see
-  [Building from source](#building-from-source)).
+- Install it the way you usually would for your operating system:
+  - `msi` for Windows users
+  - `dmg` for macOS users
+  - `AppImage` or `deb` file for users of Debian-based distros
 - Run it from your application launcher / start menu / terminal.
 
 ### Building from source
