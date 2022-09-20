@@ -18,12 +18,15 @@ installed.
   - `AppImage` or `deb` file for users of Debian-based distros
 - Run it from your application launcher / start menu / terminal.
 
+
+#### Using rite
+
+To learn about using rite, check out the [guide](https://riteapp.co.in/help/).
+
 ### Building from source
 
-- Make sure you've carried out the initial setup for your operating system of
-  choice ([Linux](https://tauri.studio/en/docs/getting-started/setup-linux),
-  [macOS](https://tauri.studio/en/docs/getting-started/setup-macos),
-  [Windows](https://tauri.studio/en/docs/getting-started/setup-windows)).
+- Make sure you've carried out the [initial setup](https://tauri.app/v1/guides/getting-started/prerequisites) for your operating system of
+  choice. Also install the tauri cli with `cargo install tauri-cli`.
 - Clone the repo.
 - `cd rite`
 - Install dependencies by running `yarn`.
@@ -31,10 +34,6 @@ installed.
 - Run it by typing `src-tauri/target/release/rite`.
 - For convenience, you can symlink rite into a directory that's on your path, or
   create an alias in your shell.
-
-### Using rite
-
-To learn about using rite, check out the [guide](https://riteapp.co.in/help/).
 
 ### Development setup
 

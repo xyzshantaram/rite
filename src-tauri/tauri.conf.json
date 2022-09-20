@@ -49,7 +49,6 @@
             "macOS": {
                 "frameworks": [],
                 "minimumSystemVersion": "10.15",
-                "useBootstrapper": false,
                 "exceptionDomain": "",
                 "signingIdentity": null,
                 "entitlements": null
