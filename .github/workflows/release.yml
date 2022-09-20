@@ -22,13 +22,11 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
-      - name: install tauri bundler
-        run: cargo install tauri-bundler --force
       - name: install webkit2gtk on Ubuntu runners
-        if: matrix.platform == 'ubuntu-latest'
+        if: matrix.platform == 'ubuntu-20.04'
         run: |
           sudo apt-get update
-          sudo apt-get install -y webkit2gtk-4.0
+          sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
       - name: install npm dependencies
         run: yarn
       - name: install rust cli
