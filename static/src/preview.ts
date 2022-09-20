@@ -68,7 +68,7 @@ function renderMd(md: string) {
         }
     }
     marked.use({ renderer: renderer });
-    return DOMPurify.sanitize(marked.parse(md));
+    return DOMPurify.sanitize(marked.parse(md), { FORCE_BODY: true, ADD_TAGS: ['style'] });
 }
 
 export function getPreviewHtml(md: string, dark = false) {
