@@ -23,6 +23,7 @@ export interface PromptArgs {
     callback: Function,
     allowEmpty?: boolean,
     allowNonOptions?: boolean
+    isPalette?: boolean
 }
 
 export interface PromptChoice {

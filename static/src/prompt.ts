@@ -117,6 +117,8 @@ const initialisePrompt = (): [(args: PromptArgs) => any, () => any] => {
         }
     }
 
+    let isPalette = false;
+
     prompt.onkeydown = (e) => {
         if (e.key === 'Tab') {
             e.preventDefault();
@@ -131,6 +133,9 @@ const initialisePrompt = (): [(args: PromptArgs) => any, () => any] => {
         }
         else if (e.key === 'Enter') {
             tryCompletingPromptFlow();
+        }
+        if (e.key === 'Escape' && isPalette) {
+            hidePrompt();
         }
     }
 
@@ -151,6 +156,7 @@ const initialisePrompt = (): [(args: PromptArgs) => any, () => any] => {
         allowNonOptions = options.allowNonOptions || true;
         mask.style.display = 'flex';
         field.focus();
+        isPalette = !!options.isPalette;
         window.dispatchEvent(new Event('rite-prompt-show'));
     }
 
@@ -211,15 +217,16 @@ const editorPrompt = (msg: string, allowEmpty = false): Promise<string> => {
     })
 }
 
-const editorChoose = (msg: string, choices: PromptChoice[], nonOptions = false, allowEmpty = false): Promise<string> => {
+const editorChoose = (message: string, choices: PromptChoice[], nonOptions = false, allowEmpty = false, isPalette = false): Promise<string> => {
     return new Promise((resolve, reject) => {
         try {
             showPrompt({
-                message: msg,
-                choices: choices,
+                message,
+                choices,
                 callback: (val: string) => resolve(val),
                 allowEmpty: !!allowEmpty,
-                allowNonOptions: !!nonOptions
+                allowNonOptions: !!nonOptions,
+                isPalette
             })
         }
 

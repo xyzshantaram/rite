@@ -63,7 +63,7 @@ const openPalette = async (editor: RiteEditor) => {
         }
     }
 
-    await editor.execCommand(await editorChoose('Command:', choices, true, true), "palette");
+    await editor.execCommand(await editorChoose('Command:', choices, true, true, true), "palette");
 }
 
 const openSettings = async (editor: RiteEditor) => {
