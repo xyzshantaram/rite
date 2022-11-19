@@ -25,14 +25,13 @@ const initialisePrompt = (): [(args: PromptArgs) => any, () => any] => {
     const prompt = cf.insert(cf.nu('div#prompt'), { atEndOf: mask }) as HTMLElement;
     const promptWrapper = cf.insert(cf.nu('div#prompt-msg-wrapper'), { atEndOf: prompt }) as HTMLElement;
     const msg = cf.insert(cf.nu('div#prompt-message'), { atEndOf: promptWrapper }) as HTMLElement;
+    const options = cf.insert(cf.nu('div#prompt-options',), { atEndOf: prompt }) as HTMLElement;
     const field = cf.insert(
         cf.nu('input#prompt-field', {
             a: { type: 'text', autocomplete: 'off' }
         }),
-        { atEndOf: promptWrapper }
+        { before: options }
     ) as HTMLInputElement;
-
-    const options = cf.insert(cf.nu('div#prompt-options',), { atEndOf: prompt }) as HTMLElement;
 
     let currentChoices: PromptChoice[] = [];
     let currIndex = 1;

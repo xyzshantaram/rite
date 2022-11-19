@@ -28,39 +28,37 @@
 
 #prompt-msg-wrapper {
     justify-content: center;
-    display: flex;
     border-bottom: 2px solid var(--color-auxiliary);
     flex-direction: column;
+    overflow-y: scroll;
+    min-height: 3ch;
 }
 
 #prompt-message {
-    overflow-y: scroll;
     height: calc(100% - 1.5rem);
 }
 
 #prompt-field {
-    width: 100%;
     height: 1rem;
     background: inherit;
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
+    padding-left: 0.25rem;
     margin: 0;
-    margin-left: 0.25rem;
     color: inherit;
     border: none;
     outline: none;
     font-size: inherit;
 }
 
-#prompt-field:focus, #prompt-field:active {
+#prompt-field:focus,
+#prompt-field:active {
     filter: brightness(1.2);
 }
 
 #prompt-options {
-    display: flex;
-    flex-direction: column;
     overflow-y: scroll;
-    height: 100%;
+    min-height: 3ch;
     padding-left: var(--scrollbar-width);
 }
 

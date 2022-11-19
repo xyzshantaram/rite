@@ -289,6 +289,24 @@ const saveToCloud = async (editor: RiteEditor) => {
     }
 }
 
+const viewKeybinds = async (editor: RiteEditor) => {
+    let keybinds: Record<string, string> = editor.getConfigVar('keybinds');
+
+    const parseKeybind = (keybind: string) => {
+        const split = keybind.split('+');
+        return `<kbd>${split[0].replace('C', 'Ctrl+').replace('A', 'Alt+').replace('S', 'Shift+') + `${split[1]}`}</kbd>`;
+    }
+
+    const tmp = cf.template('Keybinds: <ul>{{ list }}</ul>', false);
+
+    let list = '';
+    for (const [key, val] of Object.entries(keybinds)) {
+        list += `<li>${parseKeybind(key)} - ${cf.escape(COMMANDS[val].description)}</li>`;
+    }
+
+    await editorAlert(tmp({ list }));
+}
+
 const openFromCloud = async (editor: RiteEditor) => {
     const openDetails = await cloudAction(editor, "open");
     if (!openDetails || openDetails instanceof UploadFormResult) {
@@ -656,6 +674,11 @@ export const COMMANDS: RiteCommands = {
     "focus_mode": {
         action: toggleFocusMode,
         description: "Toggle focus mode.",
+        palette: true
+    },
+    "view_keybinds": {
+        action: viewKeybinds,
+        description: "Show keybinds",
         palette: true
     }
 }
