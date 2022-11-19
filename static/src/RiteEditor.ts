@@ -57,7 +57,7 @@ export class RiteEditor {
         this.editorRoot = editorRoot;
         this.preview = document.querySelector('div#preview') as HTMLElement;
         this.editor = CodeMirror(editorRoot, {
-            mode: 'gfm', lineNumbers: true, lineWrapping: true,
+            mode: 'gfm', lineNumbers: true, lineWrapping: true, styleActiveLine: { nonEmpty: true }
         });
 
         getPaletteKeybind().then(keybind => {
