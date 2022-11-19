@@ -7,6 +7,7 @@ import { MODIFIABLE_SETTINGS, requestSetting, Setting } from "./config"
 import cf from 'campfire.js'
 import { open } from '@tauri-apps/api/shell'
 import { getPreviewHtml } from "./preview"
+import { Editor } from "codemirror"
 
 class UploadFormResult {
     name: string;
@@ -473,6 +474,85 @@ const openPreview = (editor: RiteEditor) => {
     }
 }
 
+let cursorListener = (instance: Editor) => {
+    const line = instance.getCursor().line + 1;
+    const selector = `.CodeMirror-code>div:nth-child(${line})`;
+    let ln = document.querySelector(selector) as HTMLDivElement;
+    if (ln) {
+        (ln.querySelector('.CodeMirror-linenumber')! as HTMLDivElement).style.display = 'block';
+    }
+    else {
+        console.log('no l');
+    }
+}
+
+const toggleFocusMode = async (editor: RiteEditor) => {
+    if (document.querySelector('#active-line-styles')) {
+        document.querySelector("#active-line-styles")?.remove();
+        document.querySelector("#focus-mode-mask")?.remove();
+        editor.editor.off('keyHandled', cursorListener);
+        editor.editor.off('change', cursorListener);
+        return;
+    }
+
+    if (editor.getConfigVar('light_theme')) {
+        if (!await editorConfirm('Focus mode needs dark theme to be enabled. Continue?')) {
+            return;
+        }
+        await editor.setConfigVar('light_theme', false);
+    }
+
+    editor.editor.on('keyHandled', cursorListener);
+    editor.editor.on('change', cursorListener);
+
+    const css = `
+        .CodeMirror-linenumber {
+            display: none;
+        }
+        .CodeMirror-gutters, .CodeMirror-code>* {
+            z-index: 0;
+        }
+
+        #statusline:hover, .CodeMirror-code > *:hover, .CodeMirror-code > .CodeMirror-activeline {
+            z-index: 2;
+        }
+
+        .CodeMirror-code > .CodeMirror-activeline {
+            background-color: black !important;
+            color: white !important;
+            box-shadow: 0 0 2px 2px black;
+        }
+
+        .CodeMirror {
+            line-height: 22px;
+        }
+        
+        .CodeMirror-cursors .CodeMirror-cursor {
+            border-left-color: grey;
+        }`;
+
+    const style = cf.nu('style#active-line-styles', {
+        raw: true,
+        contents: css,
+    })
+
+    const mask = cf.nu('div#focus-mode-mask', {
+        style: {
+            width: '100%',
+            position: 'fixed',
+            height: '100%',
+            zIndex: 1,
+            background: 'rgba(0, 0, 0, 0.4)',
+            '-webkit-backdrop-filter': 'blur(1px)',
+            pointerEvents: 'none'
+        }
+    })
+
+    const head = document.querySelector('head')!;
+    head.appendChild(style);
+    editor.editorRoot.appendChild(mask);
+}
+
 export const COMMANDS: RiteCommands = {
     "new_file": {
         action: newFile,
@@ -572,6 +652,11 @@ export const COMMANDS: RiteCommands = {
     "help": {
         action: openHelp,
         description: "Show the Rite guide (requires network)",
+        palette: true
+    },
+    "focus_mode": {
+        action: toggleFocusMode,
+        description: "Toggle focus mode.",
         palette: true
     }
 }
