@@ -15,7 +15,8 @@ export const DEFAULT_KEYBINDS: Record<string, string> = {
     "CA+6": "mark_range_h6",
     "CS+s": "save_as",
     "C+n": "new_file",
-    "+F1": "help"
+    "+F1": "help",
+    "CA+f": "focus_mode"
 }
 
 export const parseKeybind = (keybind: string, platform: string) => {
