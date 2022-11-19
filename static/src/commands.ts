@@ -530,8 +530,12 @@ const toggleFocusMode = async (editor: RiteEditor) => {
             z-index: 0;
         }
 
-        #statusline:hover, .CodeMirror-code > *:hover, .CodeMirror-code > .CodeMirror-activeline {
+        #statusline:hover, .CodeMirror-code>*:hover, .CodeMirror-code > .CodeMirror-activeline {
             z-index: 2;
+        }
+
+        .CodeMirror-code>*:hover {
+            color: grey;
         }
 
         .CodeMirror-code > .CodeMirror-activeline {
