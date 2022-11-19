@@ -479,10 +479,9 @@ let cursorListener = (instance: Editor) => {
     const selector = `.CodeMirror-code>div:nth-child(${line})`;
     let ln = document.querySelector(selector) as HTMLDivElement;
     if (ln) {
-        (ln.querySelector('.CodeMirror-linenumber')! as HTMLDivElement).style.display = 'block';
-    }
-    else {
-        console.log('no l');
+        let elt = ln.querySelector('.CodeMirror-linenumber')! as HTMLDivElement;
+        elt.style.display = 'block';
+        elt.style.color = 'white';
     }
 }
 
