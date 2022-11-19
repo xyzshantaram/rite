@@ -8,6 +8,7 @@ import cf from 'campfire.js'
 import { open } from '@tauri-apps/api/shell'
 import { getPreviewHtml } from "./preview"
 import { Editor } from "codemirror"
+import { marked } from 'marked'
 
 class UploadFormResult {
     name: string;
@@ -509,6 +510,24 @@ let cursorListener = (instance: Editor) => {
     }
 }
 
+const generateToc = (editor: RiteEditor) => {
+    const headings: { level: number, text: string, slug: string }[] = [];
+    const renderer = new marked.Renderer();
+    renderer.heading = (text, level, raw, slugger) => {
+        const slug = slugger.slug(raw);
+        headings.push({ level, text, slug });
+        return text;
+    };
+
+    marked(editor.getContents(), { renderer });
+    const generatedToc = headings
+        .map((t) => `${Array(t.level).join("  ")}* [${t.text}](#${t.slug})`)
+        .join("\n");
+
+    editor.editor.replaceSelection(generatedToc, 'end');
+    editor.editor.focus();
+}
+
 const toggleFocusMode = async (editor: RiteEditor) => {
     if (document.querySelector('#active-line-styles')) {
         document.querySelector("#active-line-styles")?.remove();
@@ -615,6 +634,11 @@ export const COMMANDS: RiteCommands = {
         description: "Save current file to a new location.",
         palette: true
     },
+    "toc": {
+        action: generateToc,
+        description: "Insert a table of contents at the current cursor position.",
+        palette: true
+    },
     "preview": {
         action: openPreview,
         description: "Preview the current document.",
@@ -638,6 +662,11 @@ export const COMMANDS: RiteCommands = {
     "close_palette": {
         action: () => { },
         description: "Close palette.",
+        palette: true
+    },
+    "focus_mode": {
+        action: toggleFocusMode,
+        description: "Toggle focus mode.",
         palette: true
     },
     "check_updates": {
@@ -686,19 +715,14 @@ export const COMMANDS: RiteCommands = {
         description: "Copyright and licensing information.",
         palette: true
     },
+    "view_keybinds": {
+        action: viewKeybinds,
+        description: "Show keybinds",
+        palette: true
+    },
     "help": {
         action: openHelp,
         description: "Show the Rite guide (requires network)",
         palette: true
     },
-    "focus_mode": {
-        action: toggleFocusMode,
-        description: "Toggle focus mode.",
-        palette: true
-    },
-    "view_keybinds": {
-        action: viewKeybinds,
-        description: "Show keybinds",
-        palette: true
-    }
 }

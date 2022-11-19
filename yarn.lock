@@ -447,7 +447,7 @@ camelcase@^6.2.0:
 
 campfire.js@^2.3.1:
   version "2.3.1"
-  resolved "https://registry.yarnpkg.com/campfire.js/-/campfire.js-2.3.1.tgz#c0fa412dc2e1933b2240c1ff0b31f21c86e90858"
+  resolved "https://registry.npmjs.org/campfire.js/-/campfire.js-2.3.1.tgz"
   integrity sha512-RZE0g9nynk3sAVH2E1NMJDGYd9iJhmpf3MiOHK43+sIwzjnz8+Bh7uKm4pu0swY3d/SM/pwe0LCKYg0fs6hWlg==
 
 caw@^2.0.0, caw@^2.0.1:
