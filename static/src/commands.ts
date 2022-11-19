@@ -125,7 +125,7 @@ const saveAs = async (editor: RiteEditor) => {
  * @param url URL of the Rite Cloud instance
  * @param user username
  * @param open Whether the user is opening a document or saving it.
- * @returns 
+ * @returns Either an UploadFormResult or an OpenFormResult based on the value of the open flag
  */
 const showCloudMenu = (editor: RiteEditor, token: string, url: string, user: string, open: boolean): Promise<UploadFormResult | OpenFormResult> => {
     document.querySelector("#upload-menu")?.remove();
