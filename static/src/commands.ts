@@ -297,14 +297,20 @@ const viewKeybinds = async (editor: RiteEditor) => {
         return `<kbd>${split[0].replace('C', 'Ctrl+').replace('A', 'Alt+').replace('S', 'Shift+') + `${split[1]}`}</kbd>`;
     }
 
-    const tmp = cf.template('Keybinds: <ul>{{ list }}</ul>', false);
+    const tmp = cf.template(
+        `Current keybindings (change these in {{ configPath }}) 
+        <ul style='margin-inline-start: 0.4rem; padding-inline-start: 0; margin-block-start: 0.4rem'>
+            {{ list }}
+        </ul>`,
+        false
+    );
 
     let list = '';
     for (const [key, val] of Object.entries(keybinds)) {
-        list += `<li>${parseKeybind(key)} - ${cf.escape(COMMANDS[val].description)}</li>`;
+        list += `<li style='list-style-type: none; margin-bottom: 0.4rem'>${parseKeybind(key)} ${cf.escape(COMMANDS[val].description)}</li>`;
     }
 
-    await editorAlert(tmp({ list }));
+    await editorAlert(tmp({ list, configPath: await getConfigPath() }));
 }
 
 const openFromCloud = async (editor: RiteEditor) => {
@@ -643,27 +649,27 @@ export const COMMANDS: RiteCommands = {
     },
     "mark_range_h1": {
         action: (editor) => editor.insertBefore('# ', 2),
-        description: "Mark the current editor selection as an <h1>."
+        description: "Mark the current editor selection as a title (h1)."
     },
     "mark_range_h2": {
         action: (editor) => editor.insertBefore('## ', 3),
-        description: "Mark the current editor selection as an <h2>."
+        description: "Mark the current editor selection as a sub-title (h2)."
     },
     "mark_range_h3": {
         action: (editor) => editor.insertBefore('### ', 4),
-        description: "Mark the current editor selection as an <h3>."
+        description: "Mark the current editor selection as a third-level heading (h3)."
     },
     "mark_range_h4": {
         action: (editor) => editor.insertBefore('#### ', 5),
-        description: "Mark the current editor selection as an <h4>."
+        description: "Mark the current editor selection as a fourth-level heading (h4)."
     },
     "mark_range_h5": {
         action: (editor) => editor.insertBefore('##### ', 6),
-        description: "Mark the current editor selection as an <h5>."
+        description: "Mark the current editor selection as a fifth-level heading (h5)."
     },
     "mark_range_h6": {
         action: (editor) => editor.insertBefore('###### ', 7),
-        description: "Mark the current editor selection as an <h6>."
+        description: "Mark the current editor selection as a sixth-level heading (h6)."
     },
     "about": {
         action: showAboutPrompt,
