@@ -42,9 +42,15 @@ jobs:
 
 
             Changes in this version:
-            * Fixed a couple of preview bugs.
-            * Preview finally has some bottom margin
-            * table markup in preview was being escaped by mustache. Fixed.
+            * Escape now closes the command palette. Finally.
+
+            * Added focus mode, to reduce distractions even further.
+
+            * Fixed longstanding issues with text overflow in command palette. Not perfect, but getting there.
+
+            * Added table of contents generation via `toc` command.
+
+            * Added in-app keybind viewer.
 
 
             Note that Windows users will need to have

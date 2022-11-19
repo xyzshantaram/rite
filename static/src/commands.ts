@@ -717,7 +717,7 @@ export const COMMANDS: RiteCommands = {
     },
     "view_keybinds": {
         action: viewKeybinds,
-        description: "Show keybinds",
+        description: "Show currently-assigned keybindings.",
         palette: true
     },
     "help": {
