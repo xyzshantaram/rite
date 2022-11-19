@@ -559,7 +559,7 @@ const toggleFocusMode = async (editor: RiteEditor) => {
             position: 'fixed',
             height: '100%',
             zIndex: 1,
-            background: 'rgba(0, 0, 0, 0.4)',
+            background: 'rgba(0, 0, 0, 0.6)',
             '-webkit-backdrop-filter': 'blur(1px)',
             pointerEvents: 'none'
         }
