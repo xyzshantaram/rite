@@ -529,11 +529,21 @@ const toggleFocusMode = async (editor: RiteEditor) => {
     editor.editor.on('change', cursorListener);
 
     const css = `
+        #editor>.CodeMirror {
+            background: inherit;
+        }
+        
         .CodeMirror-linenumber {
             display: none;
         }
+
         .CodeMirror-gutters, .CodeMirror-code>* {
             z-index: 0;
+        }
+
+        .CodeMirror-gutters {
+            background: inherit;
+            border-right-color: transparent;
         }
 
         #statusline:hover, .CodeMirror-code>*:hover, .CodeMirror-code > .CodeMirror-activeline {
