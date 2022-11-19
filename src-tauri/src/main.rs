@@ -153,7 +153,7 @@ async fn rite_fetch(
             })
         }
         Err(err) => Err(serde_json::json!({
-            "message": format!("rite_fetch: error {}", err.to_string())
+            "message": format!("rite_fetch: error {}", err)
         })),
     }
 }
