@@ -2,13 +2,33 @@
 
 <p align=center>A minimalist markdown text editor.</p>
 
-![Banner of rite screenshots, showing this readme in both normal and focus mode](res/banner.png)
+![Rite showing this readme in both normal and focus mode](https://github.com/xyzshantaram/rite/blob/main/res/banner.png?raw=true)
 
 - [Download](https://github.com/xyzshantaram/rite/releases)
 - [Docs](https://riteapp.co.in/help)
+- [Rite Cloud](https://riteapp.co.in)
 - [Build from source](#building-from-source)
 - [Contributing](#contributing)
 - [Help](https://github.com/xyzshantaram/rite/issues)
+
+### Introduction
+
+`rite` is an open-source, minimalist text editor designed for use with Markdown.
+
+`rite` also has a cloud backup solution called Rite Cloud.
+
+![Rite command palette](https://github.com/xyzshantaram/rite/blob/main/res/command-palette.png?raw=true)
+
+#### Features
+
+- **Flexible** rite can be used completely offline, or as a client for Rite
+  Cloud.
+- **Fast** rite is built on a lightweight Rust core and starts up instantly.
+- **Small footprint** rite ships as a tiny binary and has RAM usage in the tens
+  of megabytes.
+- **Encrypted cloud storage** with instant sharing
+- **Blog system** Rite Cloud allows you to publish your documents as blogs at
+  the click of a button. See [blogs](https://riteapp.co.in/blog/) for details.
 
 ### Usage
 
