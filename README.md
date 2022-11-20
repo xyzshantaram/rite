@@ -26,14 +26,14 @@
 
 #### Features
 
-- **Flexible** rite can be used completely offline, or as a client for Rite
+- **Flexible**: rite can be used completely offline, or as a client for Rite
   Cloud.
-- **Fast** rite is built on a lightweight Rust core and starts up instantly.
-- **Small footprint** rite ships as a tiny binary and has RAM usage in the tens
+- **Fast**: rite is built on a lightweight Rust core and starts up instantly.
+- **Small footprint**: rite ships as a tiny binary and has RAM usage in the tens
   of megabytes.
 - **Encrypted cloud storage** with instant sharing
-- **Blog system** Rite Cloud allows you to publish your documents as blogs at
-  the click of a button. See [blogs](https://riteapp.co.in/blog/) for details.
+- **Blog system**: Rite Cloud allows you to publish your documents as blogs at
+  the press of a button. See [blogs](https://riteapp.co.in/blog/) for details.
 
 ### Usage
 
