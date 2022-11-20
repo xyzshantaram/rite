@@ -4,12 +4,17 @@
 
 ![Rite showing this readme in both normal and focus mode](https://github.com/xyzshantaram/rite/blob/main/res/banner.png?raw=true)
 
-- [Download](https://github.com/xyzshantaram/rite/releases)
-- [Docs](https://riteapp.co.in/help)
-- [Rite Cloud](https://riteapp.co.in)
-- [Build from source](#building-from-source)
-- [Contributing](#contributing)
-- [Help](https://github.com/xyzshantaram/rite/issues)
+<div align=center>
+
+<img src="https://github.com/xyzshantaram/rite/actions/workflows/release.yml/badge.svg" alt="Build status">
+<a href="https://riteapp.co.in/help"><img src="https://img.shields.io/badge/docs-latest-blue"></a> <img src="https://img.shields.io/github/v/release/xyzshantaram/rite?display_name=tag&label=version" alt="Latest version">
+
+**[Download](https://github.com/xyzshantaram/rite/releases) |
+[Docs](https://riteapp.co.in/help) | [Rite Cloud](https://riteapp.co.in) |
+[Build from source](#building-from-source) | [Contributing](#contributing) |
+[Help](https://github.com/xyzshantaram/rite/issues)**
+
+</div>
 
 ### Introduction
 
