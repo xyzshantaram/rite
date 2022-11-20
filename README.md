@@ -1,10 +1,19 @@
-# rite
+<h1 align=center>rite</h1>
 
-A minimalist markdown text editor.
+<p align=center>A minimalist markdown text editor.</p>
 
 ![Rite editor displaying its own README](https://github.com/xyzshantaram/rite/blob/main/res/rite-1.png?raw=true)
 ![(Rite command palette](https://github.com/xyzshantaram/rite/blob/main/res/rite-2.png?raw=true)
 ![Rite displaying its own README in focus mode](https://github.com/xyzshantaram/rite/blob/main/res/rite-3.png?raw=true)
+
+<p align=center>
+
+[Download](https://github.com/xyzshantaram/rite/releases) |
+[Docs](https://riteapp.co.in/help) | [Build from source](#building-from-source)
+| [Contributing](#contributing) |
+[Help](https://github.com/xyzshantaram/rite/issues)
+
+</p>
 
 ### Usage
 
