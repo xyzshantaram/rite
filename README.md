@@ -2,12 +2,11 @@
 
 A minimalist markdown text editor.
 
-![https://github.com/xyzshantaram/rite/blob/main/rite-1.png?raw=true](Rite
-editor displaying its own README)
-![https://github.com/xyzshantaram/rite/blob/main/rite-2.png?raw=true](Rite
-command palette)
-![https://github.com/xyzshantaram/rite/blob/main/rite-3.png?raw=true](Rite
-displaying its own README in focus mode)
+![res/rite-1.png?raw=true](Rite editor displaying its own README)
+
+![res/rite-2.png?raw=true](Rite command palette)
+
+![res/rite-3.png?raw=true](Rite displaying its own README in focus mode)
 
 ### Usage
 
