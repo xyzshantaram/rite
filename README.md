@@ -31,7 +31,7 @@
 - **Fast**: rite is built on a lightweight Rust core and starts up instantly.
 - **Small footprint**: rite ships as a tiny binary and has RAM usage in the tens
   of megabytes.
-- **Encrypted cloud storage** with instant sharing
+- **Cloud storage** with instant sharing and optional encryption
 - **Blog system**: Rite Cloud allows you to publish your documents as blogs at
   the press of a button. See [blogs](https://riteapp.co.in/blog/) for details.
 
