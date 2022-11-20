@@ -2,6 +2,13 @@
 
 A minimalist markdown text editor.
 
+![https://github.com/xyzshantaram/rite/blob/main/rite-1.png?raw=true](Rite
+editor displaying its own README)
+![https://github.com/xyzshantaram/rite/blob/main/rite-2.png?raw=true](Rite
+command palette)
+![https://github.com/xyzshantaram/rite/blob/main/rite-3.png?raw=true](Rite
+displaying its own README in focus mode)
+
 ### Usage
 
 #### Preliminary
@@ -18,15 +25,16 @@ installed.
   - `AppImage` or `deb` file for users of Debian-based distros
 - Run it from your application launcher / start menu / terminal.
 
-
 #### Using rite
 
 To learn about using rite, check out the [guide](https://riteapp.co.in/help/).
 
 ### Building from source
 
-- Make sure you've carried out the [initial setup](https://tauri.app/v1/guides/getting-started/prerequisites) for your operating system of
-  choice. Also install the tauri cli with `cargo install tauri-cli`.
+- Make sure you've carried out the
+  [initial setup](https://tauri.app/v1/guides/getting-started/prerequisites) for
+  your operating system of choice. Also install the tauri cli with
+  `cargo install tauri-cli`.
 - Clone the repo.
 - `cd rite`
 - Install dependencies by running `yarn`.
