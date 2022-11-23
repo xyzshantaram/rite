@@ -22,7 +22,7 @@
 
 `rite` also has a cloud backup solution called Rite Cloud.
 
-<div align=center><img width=720 height=400 src="https://github.com/xyzshantaram/rite/blob/main/res/command-palette.png?raw=true"></div>
+<div align=center><img width=400 src="https://github.com/xyzshantaram/rite/blob/main/res/command-palette.png?raw=true"></div>
 
 #### Features
 
