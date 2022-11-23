@@ -722,7 +722,7 @@ export const COMMANDS: RiteCommands = {
     },
     "help": {
         action: openHelp,
-        description: "Show the Rite guide (requires network)",
+        description: "Show the Rite guide (requires network).",
         palette: true
     },
 }
