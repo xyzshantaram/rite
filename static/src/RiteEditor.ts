@@ -162,7 +162,8 @@ export class RiteEditor {
             basename(this.currentFile.path)
                 .then(name => {
                     this.statusLine.setFileName(name)
-                }).then(name => appWindow.setTitle(`${this.currentFile?.path} - Rite`))
+                    return name
+                }).then(async name => await appWindow.setTitle(`${name} - Rite`))
                 .catch(err => this.statusLine.setFileName("ERROR: unable to get file name"));
         }
     }
