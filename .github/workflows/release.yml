@@ -21,7 +21,7 @@ jobs:
       - name: install Rust nightly
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly
+          toolchain: stable
       - name: install webkit2gtk on Ubuntu runners
         if: matrix.platform == 'ubuntu-latest'
         run: |
@@ -30,7 +30,7 @@ jobs:
       - name: install npm dependencies
         run: yarn
       - name: install rust cli
-        run: cargo install tauri-cli --git https://github.com/tauri-apps/tauri
+        run: cargo install tauri-cli
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -42,15 +42,7 @@ jobs:
 
 
             Changes in this version:
-            * Escape now closes the command palette. Finally.
 
-            * Added focus mode, to reduce distractions even further.
-
-            * Fixed longstanding issues with text overflow in command palette. Not perfect, but getting there.
-
-            * Added table of contents generation via `toc` command.
-
-            * Added in-app keybind viewer.
 
 
             Note that Windows users will need to have
