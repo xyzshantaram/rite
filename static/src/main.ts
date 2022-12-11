@@ -1,5 +1,5 @@
 import { listen } from '@tauri-apps/api/event';
-import { readTextFile, BaseDirectory } from '@tauri-apps/api/fs';
+import { readTextFile } from '@tauri-apps/api/fs';
 import cf from 'campfire.js';
 import 'codemirror/mode/gfm/gfm';
 import { checkForUpdates, COMMANDS } from './commands';
@@ -232,4 +232,3 @@ import 'codemirror/addon/search/jump-to-line';
 import 'codemirror/addon/display/rulers';
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/addon/selection/active-line';
-import { invoke } from '@tauri-apps/api/tauri';

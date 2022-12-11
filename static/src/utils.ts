@@ -1,4 +1,4 @@
-import { invoke, os } from '@tauri-apps/api';
+import { invoke } from '@tauri-apps/api';
 import { editorAlert } from './prompt';
 import { RiteEditor } from './RiteEditor';
 import CryptoJS from 'crypto-js';

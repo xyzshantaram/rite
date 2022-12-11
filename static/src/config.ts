@@ -1,5 +1,5 @@
 import { createDir } from "@tauri-apps/api/fs";
-import { dirname, resolve } from "@tauri-apps/api/path";
+import { dirname } from "@tauri-apps/api/path";
 import { editorConfirm, editorAlert, editorChoose, editorPrompt, toChoices } from "./prompt";
 import { dumpJSON, existsDir, PromptChoice, writeFileAtomic } from "./utils";
 
