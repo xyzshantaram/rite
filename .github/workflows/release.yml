@@ -43,7 +43,7 @@ jobs:
 
             Changes in this version:
 
-
+            * updated Tauri version to 1.22 from 1.0.0-beta8. Testing is in progress, please report any bugs you may find!
 
             Note that Windows users will need to have
             [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
