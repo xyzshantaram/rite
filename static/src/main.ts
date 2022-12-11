@@ -25,7 +25,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         const platform = await getPlatform();
         const editor = new RiteEditor(editorRoot, COMMANDS, platform);
-        editor.version = await getVersion();
+        editor.setVersion(await getVersion());
 
         let configPath = await getConfigPath();
         let contents: string | null = null;
@@ -44,7 +44,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         (window as any).editor = editor;
 
         await checkForUpdates(editor, false);
-        (window as any).invoke = invoke;
 
         let args;
         try {
