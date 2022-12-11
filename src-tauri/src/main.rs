@@ -14,7 +14,7 @@ use std::{
     process::exit,
 };
 
-use tauri::{api::cli::get_matches, Event, Manager};
+use tauri::{api::cli::get_matches, Manager};
 
 #[tauri::command]
 fn get_config_dir() -> PathBuf {
@@ -218,10 +218,9 @@ fn main() {
         .expect("Error building application.");
 
     app.run(|handle, e| {
-        if let Event::CloseRequested { label, api, .. } = e {
-            let window = handle.get_window(&label).unwrap();
-            api.prevent_close();
-            let _ = window.emit("closerequest", ());
+        if let tauri::RunEvent::ExitRequested { api, .. } = e {
+            api.prevent_exit();
+            handle.emit_all("closerequest", ()).unwrap();
         }
     });
 }

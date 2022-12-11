@@ -1,5 +1,5 @@
 import { listen } from '@tauri-apps/api/event';
-import { readTextFile, writeBinaryFile } from '@tauri-apps/api/fs';
+import { readTextFile, BaseDirectory } from '@tauri-apps/api/fs';
 import cf from 'campfire.js';
 import 'codemirror/mode/gfm/gfm';
 import { checkForUpdates, COMMANDS } from './commands';
@@ -35,6 +35,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             contents = await readTextFile(configPath);
         }
         catch (e) {
+            console.error(e);
             contents = await createConfig(configPath);
             await onboarding();
         }

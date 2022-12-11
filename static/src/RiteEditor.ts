@@ -37,7 +37,7 @@ const StatusLine = (parent: HTMLElement) => {
 
 export class RiteEditor {
     currentFile: RiteFile | null = null;
-    editor: Editor;
+    cm: Editor;
     commands: RiteCommands;
     statusLine: StatusLineControls;
     editorRoot: HTMLElement;
@@ -56,14 +56,14 @@ export class RiteEditor {
         this.commands = commands;
         this.editorRoot = editorRoot;
         this.preview = document.querySelector('div#preview') as HTMLElement;
-        this.editor = CodeMirror(editorRoot, {
+        this.cm = CodeMirror(editorRoot, {
             mode: 'gfm', lineNumbers: true, lineWrapping: true, styleActiveLine: { nonEmpty: true }
         });
 
         getPaletteKeybind().then(keybind => {
-            this.editor.setOption('placeholder', `Press ${keybind} at any time to bring up the command palette.`)
+            this.cm.setOption('placeholder', `Press ${keybind} at any time to bring up the command palette.`)
         }).catch(err => {
-            this.editor.setOption('placeholder', `Press Ctrl+Alt+P at any time to bring up the command palette.`)
+            this.cm.setOption('placeholder', `Press Ctrl+Alt+P at any time to bring up the command palette.`)
         })
 
         this.statusLine = StatusLine(this.editorRoot);
@@ -71,7 +71,7 @@ export class RiteEditor {
         this.updateFileName();
         this.updateDocInfo();
 
-        this.editor.on('change', () => {
+        this.cm.on('change', () => {
             this.setDirty(true);
             this.updateDocInfo();
         })
@@ -88,7 +88,7 @@ export class RiteEditor {
     }
 
     insertAround(start: string, end: string = start) {
-        var doc = this.editor.getDoc();
+        var doc = this.cm.getDoc();
         var cursor = doc.getCursor();
 
         if (doc.somethingSelected()) {
@@ -109,7 +109,7 @@ export class RiteEditor {
     }
 
     insertBefore(insertion: string, cursorOffset = insertion.length) {
-        var doc = this.editor.getDoc();
+        var doc = this.cm.getDoc();
         var cursor = doc.getCursor();
 
         if (doc.somethingSelected()) {
@@ -149,7 +149,7 @@ export class RiteEditor {
     }
 
     async setDocInfoString(count: string | number) {
-        let pos: Position = this.editor.getCursor();
+        let pos: Position = this.cm.getCursor();
         this.statusLine.setRightMost(`${count} words ● Ln ${pos.line + 1}, Col ${pos.ch + 1}`);
     }
 
@@ -235,7 +235,7 @@ export class RiteEditor {
         this.config = config;
         setAppFont(config.font);
         this.registerKeybinds(config.keybinds);
-        this.editor.setOption('lineNumbers', config.line_numbers);
+        this.cm.setOption('lineNumbers', config.line_numbers);
         const editorElem = this.editorRoot.querySelector('.CodeMirror') as HTMLElement;
 
         if (config.portrait_mode) {
@@ -250,8 +250,8 @@ export class RiteEditor {
         }
 
         if (config.indent_size) {
-            this.editor.setOption('tabSize', parseInt(config.indent_size));
-            this.editor.setOption("indentUnit", parseInt(config.indent_size));
+            this.cm.setOption('tabSize', parseInt(config.indent_size));
+            this.cm.setOption("indentUnit", parseInt(config.indent_size));
         }
 
         if (config.light_theme) {
@@ -268,14 +268,14 @@ export class RiteEditor {
             })
         }
 
-        this.editor.setOption('indentWithTabs', !config.use_spaces);
+        this.cm.setOption('indentWithTabs', !config.use_spaces);
     }
 
     setEditorCustomKeys() {
-        let indentSize = () => this.getConfigVar('indent_size') || 2;
-        let wsRe = new RegExp(`^ (([]{${indentSize()}, })| (\t +)) +$`);
-        let startsWsRe = new RegExp(`^ (([]{${indentSize()}, })| (\t +)) +.* `);
-        this.editor.addKeyMap({
+        let indentSize: number = this.getConfigVar('indent_size') || 2;
+        let wsRe = new RegExp(`^ (([]{${indentSize}, })| (\t +)) +$`);
+        let startsWsRe = new RegExp(`^ (([]{${indentSize}, })| (\t +)) +.* `);
+        this.cm.addKeyMap({
             'Ctrl-F': 'findPersistent',
             'Cmd-F': 'findPersistent',
             'Ctrl-H': 'replace',
@@ -288,7 +288,7 @@ export class RiteEditor {
                 } else {
                     cm.replaceSelection(
                         this.getConfigVar('use_spaces')
-                            ? " ".repeat(this.getConfigVar('indent_size'))
+                            ? " ".repeat(indentSize)
                             : "\t",
                         "end"
                     );
@@ -308,22 +308,20 @@ export class RiteEditor {
                         cm.execCommand('delCharBefore');
                     }
                     else {
-                        let size = indentSize();
+                        let size = indentSize;
                         if (!this.config.use_spaces) size = 1;
 
                         let spaced = line.substring(0,
                             cm.getCursor().ch)
                             .match(/^\t*([ ]+).*/);
                         if (spaced) {
-                            size = (spaced[1].length % indentSize()) || indentSize();
+                            size = (spaced[1].length % indentSize) || indentSize;
                         }
                         while (size--) cm.execCommand('delCharBefore');
                     }
                 }
-                if (wsRe.test(line) && this.getConfigVar('use_spaces')) {
-                    reduceIndent();
-                }
-                else if (startsWsRe.test(line) && wsRe.test(line.substring(0, cursor.ch))) {
+                if (wsRe.test(line) && this.getConfigVar('use_spaces') ||
+                    startsWsRe.test(line) && wsRe.test(line.substring(0, cursor.ch))) {
                     reduceIndent();
                 }
                 else {
@@ -370,8 +368,8 @@ export class RiteEditor {
 
     loadFile(file: RiteFile | null) {
         this.currentFile = file;
-        this.editor.setValue(file?.contents || "");
-        this.editor.clearHistory();
+        this.cm.setValue(file?.contents || "");
+        this.cm.clearHistory();
         this.updateFileName();
         this.setDirty(false);
     }
@@ -438,7 +436,7 @@ export class RiteEditor {
         }
 
         this.statusLine.setFileName(file.path);
-        this.currentFile = { path: file.path, contents: this.editor.getValue() };
+        this.currentFile = { path: file.path, contents: this.cm.getValue() };
         this.dirty = false;
 
         this.refreshDirtyAfter(5000);
@@ -466,11 +464,11 @@ export class RiteEditor {
     }
 
     getContents() {
-        return this.editor.getValue();
+        return this.cm.getValue();
     }
 
     setContents(c: string) {
-        this.editor.setValue(c);
+        this.cm.setValue(c);
     }
 
     wordCount() {
@@ -481,7 +479,7 @@ export class RiteEditor {
                 actuallyResolve(val);
             }
             try {
-                const data = this.editor.getValue();
+                const data = this.cm.getValue();
                 if (data.length > 5000000) {
                     resolve('file too long.');
                     return;

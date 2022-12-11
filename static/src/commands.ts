@@ -298,7 +298,7 @@ const viewKeybinds = async (editor: RiteEditor) => {
         return `<kbd>${split[0].replace('C', 'Ctrl+').replace('A', 'Alt+').replace('S', 'Shift+') + `${split[1]}`}</kbd>`;
     }
 
-    const tmp = cf.template(
+    const tmpl = cf.template(
         `Current keybindings (change these in {{ configPath }}) 
         <ul style='margin-inline-start: 0.4rem; padding-inline-start: 0; margin-block-start: 0.4rem'>
             {{ list }}
@@ -311,7 +311,7 @@ const viewKeybinds = async (editor: RiteEditor) => {
         list += `<li style='list-style-type: none; margin-bottom: 0.4rem'>${parseKeybind(key)} ${cf.escape(COMMANDS[val].description)}</li>`;
     }
 
-    await editorAlert(tmp({ list, configPath: await getConfigPath() }));
+    await editorAlert(tmpl({ list, configPath: await getConfigPath() }));
 }
 
 const openFromCloud = async (editor: RiteEditor) => {
@@ -463,13 +463,13 @@ const openHelp = async (_: RiteEditor) => {
 }
 
 const showPreview = (editor: RiteEditor) => {
-    editor.editor.setOption('readOnly', true);
+    editor.cm.setOption('readOnly', true);
     editor.editorRoot.style.display = 'none';
     editor.preview.style.display = 'flex';
 }
 
 const hidePreview = (editor: RiteEditor) => {
-    editor.editor.setOption('readOnly', false);
+    editor.cm.setOption('readOnly', false);
     editor.editorRoot.style.display = 'flex';
     editor.preview.style.display = 'none';
 }
@@ -524,16 +524,16 @@ const generateToc = (editor: RiteEditor) => {
         .map((t) => `${Array(t.level).join("  ")}* [${t.text}](#${t.slug})`)
         .join("\n");
 
-    editor.editor.replaceSelection(generatedToc, 'end');
-    editor.editor.focus();
+    editor.cm.replaceSelection(generatedToc, 'end');
+    editor.cm.focus();
 }
 
 const toggleFocusMode = async (editor: RiteEditor) => {
     if (document.querySelector('#active-line-styles')) {
         document.querySelector("#active-line-styles")?.remove();
         document.querySelector("#focus-mode-mask")?.remove();
-        editor.editor.off('keyHandled', cursorListener);
-        editor.editor.off('change', cursorListener);
+        editor.cm.off('keyHandled', cursorListener);
+        editor.cm.off('change', cursorListener);
         return;
     }
 
@@ -544,8 +544,8 @@ const toggleFocusMode = async (editor: RiteEditor) => {
         await editor.setConfigVar('light_theme', false);
     }
 
-    editor.editor.on('keyHandled', cursorListener);
-    editor.editor.on('change', cursorListener);
+    editor.cm.on('keyHandled', cursorListener);
+    editor.cm.on('change', cursorListener);
 
     const css = `
         #editor>.CodeMirror {
