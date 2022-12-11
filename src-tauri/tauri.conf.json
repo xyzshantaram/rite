@@ -98,7 +98,8 @@
                 "width": 1024,
                 "height": 768,
                 "resizable": true,
-                "fullscreen": false
+                "fullscreen": false,
+                "label": "main"
             }
         ],
         "security": {

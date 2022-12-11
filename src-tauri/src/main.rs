@@ -14,7 +14,7 @@ use std::{
     process::exit,
 };
 
-use tauri::{api::cli::get_matches, Manager};
+use tauri::{api::cli::get_matches, Manager, RunEvent, WindowEvent};
 
 #[tauri::command]
 fn get_config_dir() -> PathBuf {
@@ -203,7 +203,7 @@ fn main() {
         }
     };
 
-    let app = tauri::Builder::default()
+    tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             get_config_dir,
             log,
@@ -215,12 +215,20 @@ fn main() {
             rite_fetch
         ])
         .build(context)
-        .expect("Error building application.");
-
-    app.run(|handle, e| {
-        if let tauri::RunEvent::ExitRequested { api, .. } = e {
-            api.prevent_exit();
-            handle.emit_all("closerequest", ()).unwrap();
-        }
-    });
+        .expect("Error building application.")
+        .run(|handle, event| {
+            if let RunEvent::WindowEvent {
+                label,
+                event: WindowEvent::CloseRequested { api, .. },
+                ..
+            } = event
+            {
+                api.prevent_close();
+                handle
+                    .get_window(&label)
+                    .expect("Window should not be none")
+                    .emit("closerequest", ())
+                    .unwrap();
+            }
+        });
 }
