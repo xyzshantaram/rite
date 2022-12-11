@@ -134,7 +134,7 @@ export const getPlatform = async () => {
 }
 
 export const getPaletteKeybind = async () => {
-    return (await getPlatform() === 'darwin') ? '⌘+Option+P' : "Ctrl+Alt+P";
+    return (await getPlatform() === 'macos') ? '⌘+Option+P' : "Ctrl+Alt+P";
 }
 
 export const onboarding = async () => {

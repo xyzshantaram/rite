@@ -55,6 +55,7 @@ export class RiteEditor {
     constructor(editorRoot: HTMLElement, commands: RiteCommands, platform: string) {
         this.commands = commands;
         this.editorRoot = editorRoot;
+        this.platform = platform;
         this.preview = document.querySelector('div#preview') as HTMLElement;
         this.cm = CodeMirror(editorRoot, {
             mode: 'gfm', lineNumbers: true, lineWrapping: true, styleActiveLine: { nonEmpty: true }
