@@ -63,6 +63,9 @@
             "active": false
         },
         "allowlist": {
+            "globalShortcut": {
+                "all": true
+            },
             "dialog": {
                 "all": true
             },

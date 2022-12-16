@@ -25,20 +25,5 @@ export const parseKeybind = (keybind: string, platform: string) => {
 
     let isMac = platform === 'macos';
 
-    return (e: KeyboardEvent) => {
-        let toCheckTrue: boolean[] = [];
-        let toCheckFalse: boolean[] = [];
-
-        // check for cmd instead of ctrl on macs
-        let cKey = isMac ? e.metaKey : e.ctrlKey;
-
-        (components[0].includes("C") ? toCheckTrue : toCheckFalse).push(cKey);
-        (components[0].includes("S") ? toCheckTrue : toCheckFalse).push(e.shiftKey);
-        (components[0].includes("A") ? toCheckTrue : toCheckFalse).push(e.altKey);
-
-        let check = (a: boolean[]) => a.every((b: boolean) => b);
-
-        return (!check(toCheckFalse) && check(toCheckTrue)
-            && e.key.toLocaleLowerCase() == alpha);
-    }
+    return components[0].replace('C', "CommandOrControl+").replace("S", "Shift+").replace("A", "Alt+") + alpha;
 }

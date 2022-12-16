@@ -9,6 +9,8 @@ import CodeMirror from "codemirror";
 import { exit } from "@tauri-apps/api/process";
 import { MODIFIABLE_SETTINGS } from "./config";
 import { appWindow } from "@tauri-apps/api/window";
+import * as shortcuts from '@tauri-apps/api/globalShortcut';
+import { COMMANDS } from "./commands";
 
 interface StatusLineControls {
     elem: HTMLElement;
@@ -84,7 +86,6 @@ export class RiteEditor {
             this.acceptingKeybinds = true;
         });
 
-        this.registerKeybindListener();
         this.setEditorCustomKeys();
     }
 
@@ -388,31 +389,11 @@ export class RiteEditor {
         }
     }
 
-    async processKeypress(e: KeyboardEvent) {
-        if (!this.acceptingKeybinds) return;
-
-        for (const keybind of this.keybinds) {
-            if (keybind.checker(e)) {
-                await this.execCommand(keybind.action, 'keybind');
-                return;
-            }
-        }
-    }
-
     registerKeybinds(rawKeybinds: Record<string, string>) {
-        this.keybinds = [];
-        this.keybinds = Object.keys(rawKeybinds).map(elem => {
-            return {
-                checker: parseKeybind(elem, this.platform),
-                action: rawKeybinds[elem]
-            };
+        Object.keys(rawKeybinds).map(elem => {
+            const cmd = rawKeybinds[elem];
+            shortcuts.register(parseKeybind(elem, this.platform), () => COMMANDS[cmd].action(this))
         })
-    }
-
-    registerKeybindListener() {
-        window.addEventListener('keyup', async (e) => {
-            await this.processKeypress(<KeyboardEvent>e);
-        });
     }
 
     async save(isSaveAs: boolean = false) {

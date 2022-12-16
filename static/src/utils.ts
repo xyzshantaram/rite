@@ -8,7 +8,7 @@ export type CommandHandler = (editor: RiteEditor) => void | Promise<void>;
 export type RiteSettings = Record<string, any>;
 
 export interface RiteKeybind {
-    checker: Function,
+    combo: string,
     action: string
 }
 
