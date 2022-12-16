@@ -439,6 +439,9 @@ export const checkForUpdates = async (editor: RiteEditor, manual = true) => {
     try {
         let res = await riteFetch(`https://api.github.com/repos/${GH_REPO}/releases/latest`);
         let latestRelease = JSON.parse(res.body);
+        if (latestRelease.prerelease || latestRelease.draft) {
+            return;
+        }
         let latestVersion = latestRelease.tag_name.replace('v', '');
         if (isOlder(currentVersion, latestVersion)) {
             await editorAlert(`A new version of rite is available! 
