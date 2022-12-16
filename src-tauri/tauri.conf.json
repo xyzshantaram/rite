@@ -10,21 +10,7 @@
         "beforeBuildCommand": "node esbuild.config.js"
     },
     "tauri": {
-        "cli": {
-            "longDescription": null,
-            "beforeHelp": null,
-            "afterHelp": null,
-            "description": "rite, a minimalist text editor",
-            "args": [
-                {
-                    "name": "filename",
-                    "index": 1,
-                    "takesValue": true,
-                    "numberOfValues": 1,
-                    "description": "File name to open."
-                }
-            ]
-        },
+        "cli": {},
         "bundle": {
             "active": true,
             "targets": [
