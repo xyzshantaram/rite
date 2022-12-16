@@ -18,12 +18,3 @@ export const DEFAULT_KEYBINDS: Record<string, string> = {
     "+F1": "help",
     "CA+f": "focus_mode"
 }
-
-export const parseKeybind = (keybind: string, platform: string) => {
-    let components = keybind.split("+");
-    let alpha = components[1].toLocaleLowerCase();
-
-    let isMac = platform === 'macos';
-
-    return components[0].replace('C', "CommandOrControl+").replace("S", "Shift+").replace("A", "Alt+") + alpha;
-}

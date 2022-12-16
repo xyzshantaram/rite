@@ -1,7 +1,7 @@
 import { basename } from "@tauri-apps/api/path";
 import { Editor, Position } from "codemirror";
 import { dumpJSON, RiteCommands, RiteFile, RiteSettings, setAppFont, RiteKeybind, setCSSVar, getPaletteKeybind, writeFileAtomic } from "./utils";
-import { DEFAULT_KEYBINDS, parseKeybind } from "./keybinds";
+import { DEFAULT_KEYBINDS } from "./keybinds";
 import { editorAlert, editorAlertFatal, editorConfirm } from "./prompt";
 import { dialog, path } from "@tauri-apps/api";
 import cf from 'campfire.js';
@@ -9,7 +9,6 @@ import CodeMirror from "codemirror";
 import { exit } from "@tauri-apps/api/process";
 import { MODIFIABLE_SETTINGS } from "./config";
 import { appWindow } from "@tauri-apps/api/window";
-import * as shortcuts from '@tauri-apps/api/globalShortcut';
 import { COMMANDS } from "./commands";
 
 interface StatusLineControls {
@@ -53,6 +52,7 @@ export class RiteEditor {
     version: string;
     isComputingWordCount: boolean = false;
     preview: HTMLElement;
+    focused: boolean = true;
 
     constructor(editorRoot: HTMLElement, commands: RiteCommands, platform: string) {
         this.commands = commands;
@@ -236,7 +236,8 @@ export class RiteEditor {
     async setConfig(config: RiteSettings) {
         this.config = config;
         setAppFont(config.font);
-        this.registerKeybinds(config.keybinds);
+        this.registerFocusListeners();
+        this.registerKeybindListeners(config.keybinds);
         this.cm.setOption('lineNumbers', config.line_numbers);
         const editorElem = this.editorRoot.querySelector('.CodeMirror') as HTMLElement;
 
@@ -389,13 +390,48 @@ export class RiteEditor {
         }
     }
 
-    registerKeybinds(rawKeybinds: Record<string, string>) {
-        Object.keys(rawKeybinds).map(elem => {
-            const cmd = rawKeybinds[elem];
-            shortcuts.register(parseKeybind(elem, this.platform), () => {
-                if (!this.acceptingKeybinds) return;
-                else COMMANDS[cmd].action(this);
-            })
+    registerFocusListeners() {
+        window.addEventListener('focus', () => {
+            this.focused = true;
+        })
+        window.addEventListener('blur', () => {
+            this.focused = false;
+        })
+    }
+
+    parseKeybinds(rawKeybinds: Record<string, string>) {
+        return Object.entries(rawKeybinds).map(([elem, cmd]) => {
+            const isMac = this.platform === 'macos';
+            const [modifiers, alpha] = elem.split('+');
+            const components = {
+                ctrl: modifiers.includes('C'),
+                shift: modifiers.includes('S'),
+                alt: modifiers.includes('A'),
+            }
+
+            return {
+                checker: (e: KeyboardEvent) => {
+                    if (components.ctrl) {
+                        if (!e[isMac ? 'metaKey' : 'ctrlKey']) return false;
+                    }
+                    if (components.alt && !e.altKey) return;
+                    if (components.shift && !e.shiftKey) return;
+                    if (e.key === (alpha || '+')) return true;
+                },
+                action: () => COMMANDS[cmd].action(this)
+            }
+        })
+    }
+
+    registerKeybindListeners(rawKeybinds: Record<string, string>) {
+        const actions = this.parseKeybinds(rawKeybinds);
+        window.addEventListener('keydown', async (e) => {
+            for (const action of actions) {
+                if (action.checker(e)) {
+                    await action.action();
+                    break;
+                }
+            }
         })
     }
 
