@@ -22,25 +22,11 @@ class OpenFormResult {
     uuid: string | null;
 }
 
-type JSobj = Record<string, unknown>;
-
 const openAndReadFile = async (): Promise<RiteFile> => {
     return new Promise(async (resolve, reject) => {
         try {
-            const path = <string>await dialog.open({
-                multiple: false,
-                directory: false
-            })
-
-            if (path === null) resolve({
-                contents: "",
-                path: ""
-            });
-
-            resolve({
-                path: path,
-                contents: await readTextFile(path)
-            });
+            const path = <string>await dialog.open({ multiple: false, directory: false });
+            resolve(path ? { path: path, contents: await readTextFile(path) } : { path: "", contents: "" });
         }
         catch (e) {
             reject(e);
