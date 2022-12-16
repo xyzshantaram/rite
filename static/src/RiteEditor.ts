@@ -392,7 +392,10 @@ export class RiteEditor {
     registerKeybinds(rawKeybinds: Record<string, string>) {
         Object.keys(rawKeybinds).map(elem => {
             const cmd = rawKeybinds[elem];
-            shortcuts.register(parseKeybind(elem, this.platform), () => COMMANDS[cmd].action(this))
+            shortcuts.register(parseKeybind(elem, this.platform), () => {
+                if (!this.acceptingKeybinds) return;
+                else COMMANDS[cmd].action(this);
+            })
         })
     }
 
