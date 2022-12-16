@@ -183,3 +183,15 @@ export const AESDecrypt = (ciphertext: string, passphrase: string) => {
 export const AESEncrypt = (cleartext: string, passphrase: string) => {
     return CryptoJS.AES.encrypt(cleartext, passphrase).toString(CryptoJS.format.OpenSSL);
 }
+
+export const readTextFile = (path: string) => {
+    return invoke<string>('read_file', { path });
+}
+
+export const normalizePath = (path: string) => {
+    return invoke<string>('normalize_path', { path });
+}
+
+export const ensureParentDir = (path: string) => {
+    return invoke<void>('ensure_parent_dir', { path });
+}

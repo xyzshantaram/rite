@@ -1,8 +1,7 @@
 import { dialog } from "@tauri-apps/api"
-import { readTextFile } from "@tauri-apps/api/fs"
 import { RiteEditor } from "./RiteEditor"
 import { editorAlert, editorChoose, editorConfirm, editorPrompt, hidePrompt, toChoices } from "./prompt"
-import { AESDecrypt, AESEncrypt, CommandHandler, getConfigPath, GH_REPO, GH_REPO_URL, groupByProp, isOlder, PromptChoice, RiteCommands, riteFetch, RiteFile } from "./utils"
+import { AESDecrypt, AESEncrypt, CommandHandler, getConfigPath, GH_REPO, GH_REPO_URL, groupByProp, isOlder, PromptChoice, RiteCommands, riteFetch, RiteFile, readTextFile } from "./utils"
 import { MODIFIABLE_SETTINGS, requestSetting, Setting } from "./config"
 import cf from 'campfire.js'
 import { open } from '@tauri-apps/api/shell'

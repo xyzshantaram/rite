@@ -1,3 +1,5 @@
+use crate::{args, ARGS};
+use path_absolutize::*;
 use rand::Rng;
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
@@ -6,8 +8,6 @@ use std::{
     io::Write,
     path::{Path, PathBuf},
 };
-
-use crate::{args, ARGS};
 
 #[tauri::command]
 pub fn get_args() -> args::Args {
@@ -167,23 +167,19 @@ pub async fn rite_fetch(
     }
 }
 
-use relative_path::RelativePath;
-use std::env::current_dir;
-
 fn e_to_string(e: std::io::Error) -> String {
     format!("{:#?}", e)
 }
 
 #[tauri::command]
-pub fn normalize_path(path: String) -> Result<PathBuf, String> {
-    let root = current_dir().map_err(e_to_string)?;
-    let relative_path = RelativePath::new(&path);
-    let full_path = relative_path.to_path(&root);
-    Ok(full_path)
+pub fn normalize_path(path: PathBuf) -> Result<PathBuf, String> {
+    path.absolutize()
+        .map(|e| e.to_path_buf())
+        .map_err(|e| format!("{:#?}", e))
 }
 
 #[tauri::command]
 pub fn read_file(path: String) -> Result<String, String> {
-    let full_path = normalize_path(path)?;
+    let full_path = normalize_path(PathBuf::from(path))?;
     std::fs::read_to_string(full_path).map_err(e_to_string)
 }

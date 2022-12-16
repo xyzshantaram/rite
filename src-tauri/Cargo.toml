@@ -21,10 +21,11 @@ serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.2.2", features = ["cli", "dialog-all", "fs-all", "global-shortcut-all", "http-all", "notification-all", "os-all", "path-all", "process-all", "shell-open", "window-all"] }
 dirs = "4.0.0"
 rand = "0.8"
-clap = "2.33"
+clap = { version = "4.0", features = ["derive"] }
 reqwest = { version = "0.11.0", features = ["json"] }
 tokio = { version = "1.0.2", features = ["full"] }
-
+lazy_static = "1.4.0"
+path-absolutize = "3.0.14"
 
 # Uncomment this to get the WebKit debugger in the release build
 [profile.release.package.wry]

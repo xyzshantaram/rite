@@ -1,14 +1,14 @@
 import { listen } from '@tauri-apps/api/event';
-import { readTextFile } from '@tauri-apps/api/fs';
 import cf from 'campfire.js';
 import 'codemirror/mode/gfm/gfm';
 import { checkForUpdates, COMMANDS } from './commands';
 import { createConfig } from './config';
 import { RiteEditor as RiteEditor } from './RiteEditor';
-import { getConfigPath, onboarding, getPlatform, existsDir, RiteFile, rustLog, writeFileAtomic, exists } from './utils';
-import { cli } from '@tauri-apps/api';
+import { getConfigPath, onboarding, getPlatform, RiteFile, rustLog, normalizePath, writeFileAtomic, ensureParentDir, readTextFile } from './utils';
+import { invoke } from '@tauri-apps/api';
 import { exit } from '@tauri-apps/api/process';
 import { getVersion } from '@tauri-apps/api/app';
+import { editorAlert } from './prompt';
 
 window.addEventListener('DOMContentLoaded', async () => {
     const app = document.querySelector('#app') as HTMLElement;
@@ -36,7 +36,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             contents = await readTextFile(configPath);
         }
         catch (e) {
-            console.error(e);
             contents = await createConfig(configPath);
             await onboarding();
         }
@@ -46,37 +45,31 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         await checkForUpdates(editor, false);
 
-        let args;
-        try {
-            args = (await cli.getMatches()).args;
-        }
-        catch (e) {
-            rustLog(`Error: ${e}`);
+        const die = (msg: string) => {
+            rustLog(msg);
             exit(1);
         }
-        if (args) {
-            if (args.filename && args.filename.occurrences > 0) {
-                let path = `${args.filename.value}`;
-                let file: RiteFile = {
-                    path,
-                    contents: ''
-                };
-                try {
-                    if (await exists(path)) {
-                        console.log(await readTextFile(path));
-                        file.contents = await readTextFile(path);
-                    }
-                    else {
-                        await writeFileAtomic(path, "");
-                    }
 
-                    editor.loadFile(file);
+        const args = await invoke<any>('get_args');
+        let file: RiteFile | null = null;
+        if (args.filename) {
+            const path = await normalizePath(args.filename).catch(die) as string;
+            file = { path, contents: '' };
+            try {
+                file.contents = await readTextFile(args.filename);
+            }
+            catch (e) {
+                if (e.includes("kind: NotFound")) {
+                    await editorAlert(`File ${args.filename} not found. It will be created.`);
+                    await ensureParentDir(path);
+                    await writeFileAtomic(path, '');
                 }
-                catch (e) {
-                    rustLog(`Error while loading file ${path}: ${e}`)
+                else {
+                    die(`Error ${e} while initialising editor`);
                 }
             }
         }
+        editor.loadFile(file);
 
         await listen('closerequest', () => {
             editor.close();
@@ -86,12 +79,12 @@ window.addEventListener('DOMContentLoaded', async () => {
         rustLog(`Error ${e} while initialising editor`);
         exit(1);
     }
-})
+});
 
 // syntax highlighting modes
 
-import 'codemirror/mode/javascript/javascript'
-import 'codemirror/mode/python/python'
+import 'codemirror/mode/javascript/javascript';
+import 'codemirror/mode/python/python';
 import 'codemirror/mode/apl/apl';
 import 'codemirror/mode/asn.1/asn.1';
 import 'codemirror/mode/asterisk/asterisk';
@@ -233,3 +226,4 @@ import 'codemirror/addon/search/jump-to-line';
 import 'codemirror/addon/display/rulers';
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/addon/selection/active-line';
+
