@@ -277,10 +277,13 @@ const saveToCloud = async (editor: RiteEditor) => {
 
 const viewKeybinds = async (editor: RiteEditor) => {
     let keybinds: Record<string, string> = editor.getConfigVar('keybinds');
-
+    const isMac = editor.platform === 'macos';
     const parseKeybind = (keybind: string) => {
         const split = keybind.split('+');
-        return `<kbd>${split[0].replace('C', editor.platform === 'macos' ? '⌘+' : "Ctrl+").replace('A', 'Alt+').replace('S', 'Shift+') + split[1]}</kbd>`;
+        return `<kbd>${split[0].replace('C', isMac ? '⌘+' : "Ctrl+")
+                .replace('A', isMac ? 'Option+' : 'Alt+')
+                .replace('S', 'Shift+') + split[1]
+            }</kbd>`;
     }
 
     const tmpl = cf.template(
