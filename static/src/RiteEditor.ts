@@ -1,7 +1,7 @@
 import { basename } from "@tauri-apps/api/path";
 import { Editor, Position } from "codemirror";
 import { dumpJSON, RiteCommands, RiteFile, RiteSettings, setAppFont, RiteKeybind, setCSSVar, getPaletteKeybind, writeFileAtomic } from "./utils";
-import { DEFAULT_KEYBINDS } from "./keybinds";
+import { DEFAULT_KEYBINDS, IDENTITY_KEY_CODES, KEY_CODES } from "./keybinds";
 import { editorAlert, editorAlertFatal, editorConfirm } from "./prompt";
 import { dialog, path } from "@tauri-apps/api";
 import cf from 'campfire.js';
@@ -53,6 +53,7 @@ export class RiteEditor {
     isComputingWordCount: boolean = false;
     preview: HTMLElement;
     focused: boolean = true;
+    pressedKeys: Set<string> = new Set();
 
     constructor(editorRoot: HTMLElement, commands: RiteCommands, platform: string) {
         this.commands = commands;
@@ -400,39 +401,63 @@ export class RiteEditor {
     }
 
     parseKeybinds(rawKeybinds: Record<string, string>) {
+        const getCode = (alpha: string) => {
+            if (IDENTITY_KEY_CODES.includes(alpha)) return alpha;
+
+            if ((KEY_CODES as any)[alpha]) {
+                const typedAlpha = alpha as keyof typeof KEY_CODES;
+                return KEY_CODES[typedAlpha];
+            }
+
+            if ("1234567890".includes(alpha)) {
+                return `Digit${alpha}`;
+            }
+
+            const upper = alpha.toUpperCase();
+            if ("ABCDEFGHIJKLMNOPQRSTUVWXYZ".includes(upper)) {
+                return `Key${upper}`;
+            }
+        }
+
         return Object.entries(rawKeybinds).map(([elem, cmd]) => {
-            const isMac = this.platform === 'macos';
             const [modifiers, alpha] = elem.split('+');
             const components = {
                 ctrl: modifiers.includes('C'),
                 shift: modifiers.includes('S'),
                 alt: modifiers.includes('A'),
+                alpha
             }
 
             return {
-                checker: (e: KeyboardEvent) => {
-                    if (components.ctrl) {
-                        if (!e[isMac ? 'metaKey' : 'ctrlKey']) return false;
-                    }
-                    if (components.alt && !e.altKey) return;
-                    if (components.shift && !e.shiftKey) return;
-                    if (e.key === (alpha || '+')) return true;
-                },
+                components,
+                code: getCode(alpha),
                 action: () => COMMANDS[cmd].action(this)
             }
         })
     }
 
     registerKeybindListeners(rawKeybinds: Record<string, string>) {
-        const actions = this.parseKeybinds(rawKeybinds);
-        window.addEventListener('keydown', async (e) => {
-            for (const action of actions) {
-                if (action.checker(e)) {
-                    await action.action();
-                    break;
-                }
+        const keybinds = this.parseKeybinds(rawKeybinds);
+        const isMac = this.platform === 'macos';
+
+        window.onkeydown = (e) => {
+            if (!this.acceptingKeybinds) return;
+            this.pressedKeys.add(e.key);
+            for (const keybind of keybinds) {
+                if (keybind.components.ctrl && !this.pressedKeys.has(isMac ? "Meta" : "Control")) continue;
+                if (keybind.components.alt && !this.pressedKeys.has("Alt")) continue;
+                if (keybind.components.shift && !this.pressedKeys.has("Shift")) continue;
+                if (e.code === keybind.code) return keybind.action();
             }
-        })
+        }
+
+        window.onkeyup = (e) => {
+            this.pressedKeys.delete(e.key);
+        }
+
+        window.onblur = (_) => {
+            this.pressedKeys.clear();
+        }
     }
 
     async save(isSaveAs: boolean = false) {

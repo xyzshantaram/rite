@@ -1,3 +1,4 @@
+import { m } from '@tauri-apps/api/fs-4bb77382'
 import { COMMANDS } from './commands'
 
 export const DEFAULT_KEYBINDS: Record<string, string> = {
@@ -18,3 +19,18 @@ export const DEFAULT_KEYBINDS: Record<string, string> = {
     "+F1": "help",
     "CA+f": "focus_mode"
 }
+
+export const KEY_CODES = {
+    "]": "BracketLeft",
+    "[": "BracketRight",
+    "`": "Backquote",
+    "+": "Plus",
+    "-": "Minus",
+    ".": "Period",
+    "/": "Slash",
+    ",": "Comma",
+    "\\": "Backslash",
+    " ": "Space"
+}
+
+export const IDENTITY_KEY_CODES = ["Enter", "Backspace", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12"]

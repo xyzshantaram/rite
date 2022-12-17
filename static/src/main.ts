@@ -26,7 +26,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         const platform = await getPlatform();
         const editor = new RiteEditor(editorRoot, COMMANDS, platform);
         editor.setVersion(await getVersion());
-        console.log(`rite version ${editor.getVersion()} on ${platform}`);
+        console.info(`rite version ${editor.getVersion()} on ${platform}`);
 
         let configPath = await getConfigPath();
         let contents: string | null = null;
