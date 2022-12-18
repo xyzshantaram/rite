@@ -421,17 +421,25 @@ export class RiteEditor {
 
         return Object.entries(rawKeybinds).map(([elem, cmd]) => {
             const [modifiers, alpha] = elem.split('+');
-            const components = {
-                ctrl: modifiers.includes('C'),
-                shift: modifiers.includes('S'),
-                alt: modifiers.includes('A'),
-                alpha
+            let n = 0;
+            if (modifiers.includes('C')) {
+                n |= 0b100;
+            }
+            if (modifiers.includes('S')) {
+                n |= 0b010;
+            }
+            if (modifiers.includes('A')) {
+                n |= 0b001;
             }
 
             return {
-                components,
+                alpha,
                 code: getCode(alpha),
-                action: () => COMMANDS[cmd].action(this)
+                n,
+                action: () => {
+                    console.log(cmd)
+                    COMMANDS[cmd].action(this)
+                }
             }
         })
     }
@@ -444,10 +452,11 @@ export class RiteEditor {
             if (!this.acceptingKeybinds) return;
             this.pressedKeys.add(e.key);
             for (const keybind of keybinds) {
-                if (keybind.components.ctrl && !this.pressedKeys.has(isMac ? "Meta" : "Control")) continue;
-                if (keybind.components.alt && !this.pressedKeys.has("Alt")) continue;
-                if (keybind.components.shift && !this.pressedKeys.has("Shift")) continue;
-                if (e.code === keybind.code) return keybind.action();
+                let n = 0;
+                if (this.pressedKeys.has(isMac ? 'Meta' : 'Control')) n |= 0b100;
+                if (this.pressedKeys.has("Shift")) n |= 0b010;
+                if (this.pressedKeys.has("Alt")) n |= 0b001;
+                if (n === keybind.n && e.code === keybind.code) return keybind.action();
             }
         }
 
