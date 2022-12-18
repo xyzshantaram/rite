@@ -43,9 +43,7 @@ jobs:
 
             Changes in this version:
 
-            * More macOS keybind shenanigans.
-            * Rewrote CLI handling
-            * File reading now done on rust side, should be much more robust
+            * KEYBINDINGS FINALLY FIXED!!!!!
 
 
             Note that Windows users will need to have
