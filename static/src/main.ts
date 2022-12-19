@@ -226,4 +226,3 @@ import 'codemirror/addon/search/jump-to-line';
 import 'codemirror/addon/display/rulers';
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/addon/selection/active-line';
-

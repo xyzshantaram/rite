@@ -126,6 +126,12 @@ export const MODIFIABLE_SETTINGS: Record<string, Setting> = {
         message: 'Check for updates on startup?',
         default: true
     },
+    eighty_col_ruler: {
+        type: 'confirm',
+        message: 'Display a ruler at 80 columns?',
+        prettyName: "80-column ruler",
+        default: false
+    }
 }
 
 const defaultConfig = (): Record<string, any> => {

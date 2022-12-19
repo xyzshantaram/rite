@@ -61,7 +61,10 @@ export class RiteEditor {
         this.platform = platform;
         this.preview = document.querySelector('div#preview') as HTMLElement;
         this.cm = CodeMirror(editorRoot, {
-            mode: 'gfm', lineNumbers: true, lineWrapping: true, styleActiveLine: { nonEmpty: true }
+            mode: 'gfm',
+            lineNumbers: true,
+            lineWrapping: true,
+            styleActiveLine: { nonEmpty: true },
         });
 
         getPaletteKeybind().then(keybind => {
@@ -247,6 +250,10 @@ export class RiteEditor {
         }
         else {
             editorElem.style.maxWidth = '100%';
+        }
+
+        if (config.eighty_col_ruler) {
+            this.cm.setOption('rulers', [{ column: 80, color: 'var(--color-auxiliary)', lineStyle: 'dashed' }]);
         }
 
         if (config.font_size) {
