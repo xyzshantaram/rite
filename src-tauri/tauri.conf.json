@@ -1,7 +1,7 @@
 {
     "package": {
         "productName": "rite",
-        "version": "0.17.0"
+        "version": "0.18.0"
     },
     "build": {
         "distDir": "../static",
@@ -92,7 +92,7 @@
             }
         ],
         "security": {
-            "csp": "default-src blob: data: filesystem: ws: wss: http: https: tauri: 'unsafe-eval' 'unsafe-inline' 'self' img-src: 'self'"
+            "csp": null
         }
     }
 }
