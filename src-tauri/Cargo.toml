@@ -1,6 +1,6 @@
 [package]
 name = "rite"
-version = "0.18.0"
+version = "0.18.1"
 description = "Your new distraction-free writing app."
 authors = ["shantaram <me@shantaram.xyz>"]
 license = "MIT"

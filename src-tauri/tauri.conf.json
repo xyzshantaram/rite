@@ -1,98 +1,98 @@
 {
-    "package": {
-        "productName": "rite",
-        "version": "0.18.0"
+  "package": {
+    "productName": "rite",
+    "version": "0.18.1"
+  },
+  "build": {
+    "distDir": "../static",
+    "devPath": "http://127.0.0.1:5500/static/",
+    "beforeDevCommand": "node esbuild.watcher.js",
+    "beforeBuildCommand": "node esbuild.config.js"
+  },
+  "tauri": {
+    "cli": {},
+    "bundle": {
+      "active": true,
+      "targets": [
+        "msi",
+        "deb",
+        "dmg",
+        "appimage"
+      ],
+      "identifier": "xyz.shantaram.rite",
+      "icon": [
+        "icons/32x32.png",
+        "icons/128x128.png",
+        "icons/128x128@2x.png",
+        "icons/icon.icns",
+        "icons/icon.ico"
+      ],
+      "resources": [],
+      "copyright": "Copyright 2021 Siddharth Singh, The MIT License",
+      "category": "Utility",
+      "shortDescription": "A distraction-free markdown text editor.",
+      "longDescription": "",
+      "macOS": {
+        "frameworks": [],
+        "minimumSystemVersion": "10.15",
+        "exceptionDomain": "",
+        "signingIdentity": null,
+        "entitlements": null
+      },
+      "windows": {
+        "certificateThumbprint": null,
+        "digestAlgorithm": "sha256",
+        "timestampUrl": ""
+      }
     },
-    "build": {
-        "distDir": "../static",
-        "devPath": "http://127.0.0.1:5500/static/",
-        "beforeDevCommand": "node esbuild.watcher.js",
-        "beforeBuildCommand": "node esbuild.config.js"
+    "updater": {
+      "active": false
     },
-    "tauri": {
-        "cli": {},
-        "bundle": {
-            "active": true,
-            "targets": [
-                "msi",
-                "deb",
-                "dmg",
-                "appimage"
-            ],
-            "identifier": "xyz.shantaram.rite",
-            "icon": [
-                "icons/32x32.png",
-                "icons/128x128.png",
-                "icons/128x128@2x.png",
-                "icons/icon.icns",
-                "icons/icon.ico"
-            ],
-            "resources": [],
-            "copyright": "Copyright 2021 Siddharth Singh, The MIT License",
-            "category": "Utility",
-            "shortDescription": "A distraction-free markdown text editor.",
-            "longDescription": "",
-            "macOS": {
-                "frameworks": [],
-                "minimumSystemVersion": "10.15",
-                "exceptionDomain": "",
-                "signingIdentity": null,
-                "entitlements": null
-            },
-            "windows": {
-                "certificateThumbprint": null,
-                "digestAlgorithm": "sha256",
-                "timestampUrl": ""
-            }
-        },
-        "updater": {
-            "active": false
-        },
-        "allowlist": {
-            "globalShortcut": {
-                "all": true
-            },
-            "dialog": {
-                "all": true
-            },
-            "fs": {
-                "scope": ["**"],
-                "all": true
-            },
-            "notification": {
-                "all": true
-            },
-            "path": {
-                "all": true
-            },
-            "os": {
-                "all": true
-            },
-            "shell": {
-                "open": true
-            },
-            "http": {
-                "all": true
-            },
-            "window": {
-                "all": true
-            },
-            "process": {
-                "all": true
-            }
-        },
-        "windows": [
-            {
-                "title": "Rite",
-                "width": 1024,
-                "height": 768,
-                "resizable": true,
-                "fullscreen": false,
-                "label": "main"
-            }
-        ],
-        "security": {
-            "csp": null
-        }
+    "allowlist": {
+      "globalShortcut": {
+        "all": true
+      },
+      "dialog": {
+        "all": true
+      },
+      "fs": {
+        "scope": ["**"],
+        "all": true
+      },
+      "notification": {
+        "all": true
+      },
+      "path": {
+        "all": true
+      },
+      "os": {
+        "all": true
+      },
+      "shell": {
+        "open": true
+      },
+      "http": {
+        "all": true
+      },
+      "window": {
+        "all": true
+      },
+      "process": {
+        "all": true
+      }
+    },
+    "windows": [
+      {
+        "title": "Rite",
+        "width": 1024,
+        "height": 768,
+        "resizable": true,
+        "fullscreen": false,
+        "label": "main"
+      }
+    ],
+    "security": {
+      "csp": null
     }
+  }
 }
